@@ -41,6 +41,7 @@ System.config({
     "babel-runtime": "npm:babel-runtime@5.8.20",
     "bootstrap": "github:twbs/bootstrap@3.3.5",
     "core-js": "npm:core-js@0.9.18",
+    "d3": "github:mbostock/d3@3.5.6",
     "fetch": "github:github/fetch@0.9.0",
     "font-awesome": "npm:font-awesome@4.4.0",
     "github:aurelia/animator-css@0.16.0": {
