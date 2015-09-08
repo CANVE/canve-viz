@@ -1,6 +1,6 @@
 # CANVE Visualizer
 
-CANVE visualizer app scaffolded with (generator-aurelia)[https://github.com/zewa666/generator-aurelia].
+CANVE visualizer app scaffolded with [generator-aurelia](https://github.com/zewa666/generator-aurelia).
 
 Proof of concept stage to investigate Aurelia and D3 integration.
 
