@@ -9,13 +9,9 @@ export class SourceCode {
   constructor(pubSub) {
     this.pubSub = pubSub;
     this.pubSub.subscribe('node.clicked', payload => {
+      // TODO: put payload in scope so that it can be rendered in source-code.html template
       console.log(`*** source-code subscribe: ${payload}`);
     });
   }
 
-  subscribe(){
-    this.pubSub.subscribe('node.clicked', payload => {
-      console.log(`*** source-code subscribe: ${payload}`);
-    });
-  }
 }
