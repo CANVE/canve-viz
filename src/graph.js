@@ -3,26 +3,26 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
 
 @customAttribute('graph')
-@inject(Element)
+@inject(Element, EventAggregator)
 export class Graph {
-  static inject = [EventAggregator];
-  constructor(element) {
+
+  constructor(element, pubSub) {
     this.element = element;
-    this.eventAggregator = new EventAggregator();
+    this.pubSub = pubSub;
     this.svg = d3.select(this.element)
       .append('svg')
       .attr('width', 960)
       .attr('height', 500);
   }
 
-  publish(payload, that){
-    console.log('*** graph.js publish: ' + payload);
-    that.eventAggregator.publish('node.clicked', payload);
-  }
+  // publish(payload, that){
+  //   console.log(`*** graph.js publish: ${payload}`);
+  //   that.eventAggregator.publish('node.clicked', payload);
+  // }
 
   update(data) {
     // Is there a better way in ES6? Need this ref for call tp publish in d3 click handler
-    let that = this;
+    // let that = this;
     let groups = this.svg.selectAll('g')
       .data(data);
 
@@ -36,7 +36,8 @@ export class Graph {
       .attr('r', 40)
       .on('mouseover', function(){d3.select(this).style('fill', 'aliceblue');})
       .on('mouseout', function(){d3.select(this).style('fill', 'white');})
-      .on('click', function(d){that.publish(d, that);});
+      // .on('click', function(d) { that.publish(d, that); })
+      .on('click', d => this.pubSub.publish('node.clicked', d));
 
     groupsEnter.append('text')
       .attr('dx', function(d){return -20;})

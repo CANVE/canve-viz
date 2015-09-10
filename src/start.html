@@ -1,7 +1,9 @@
 <template>
   <require from="graph"></require>
+  <require from="source-code"></require>
 
   <input type="text" value.bind="search" class="form-control" id="search" placeholder="search code...">
 
   <div graph.bind="search"></div>
+  <source-code></source-code>
 </template>
