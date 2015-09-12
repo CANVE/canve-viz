@@ -2,6 +2,7 @@ import {inject} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-fetch-client';
 import 'fetch';
 import Papa from 'npm:papaparse@4.1.2/papaparse.js';
+import DataCleaner from 'data-cleaner';
 
 @inject(HttpClient)
 export class Start {
@@ -24,16 +25,18 @@ export class Start {
       .then(edgesResponse => edgesResponse.text());
   }
 
-  // TODO Data cleaning service?
   // TODO Background task for loading node-source files
   activate() {
     return Promise.all([
       this.fetchData('nodes'),
       this.fetchData('edges')
     ]).then(results => {
-      this.graphData.nodes = Papa.parse(results[0], {header: true});
+      let rawNodes = Papa.parse(results[0], {header: true});
+      console.dir(rawNodes.data);
+      // TODO: Inject DataCleaner rather than instantiating it here
+      this.graphData.nodes = new DataCleaner().clean(rawNodes.data);
+      console.dir(this.graphData.nodes);
       this.graphData.edges = Papa.parse(results[1], {header: true});
-      console.dir(this.graphData);
     }).catch(err => console.error(err.stack));
   }
 
