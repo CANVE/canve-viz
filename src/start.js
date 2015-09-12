@@ -44,7 +44,9 @@ export class Start {
       this.fetchNodes(),
       this.fetchEdges()
     ]).then(results => {
-      console.dir(results);
+      this.graphData.nodes = Papa.parse(results[0], {header: true});
+      this.graphData.edges = Papa.parse(results[1], {header: true});
+      console.dir(this.graphData);
     }).catch(err => console.error(err.stack));
   }
 
