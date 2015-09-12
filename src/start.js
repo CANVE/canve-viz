@@ -4,19 +4,20 @@ import 'fetch';
 import Papa from 'npm:papaparse@4.1.2/papaparse.js';
 import DataCleaner from 'data-cleaner';
 
-@inject(HttpClient)
+@inject(HttpClient, DataCleaner)
 export class Start {
   graphData = {};
 
   // TODO baseUrl should be configurable
   // serverLocalCORS.py in canve/visualizer must be running
-  constructor(http){
+  constructor(http, dataCleaner){
     http.configure(config => {
       config
         .withBaseUrl('http://localhost:31338/');
     });
 
     this.http = http;
+    this.dataCleaner = dataCleaner;
   }
 
   fetchData(dataType) {
@@ -32,11 +33,9 @@ export class Start {
       this.fetchData('edges')
     ]).then(results => {
       let rawNodes = Papa.parse(results[0], {header: true});
-      console.dir(rawNodes.data);
-      // TODO: Inject DataCleaner rather than instantiating it here
-      this.graphData.nodes = new DataCleaner().clean(rawNodes.data);
-      console.dir(this.graphData.nodes);
+      this.graphData.nodes = this.dataCleaner.clean(rawNodes.data);
       this.graphData.edges = Papa.parse(results[1], {header: true});
+      console.dir(this.graphData);
     }).catch(err => console.error(err.stack));
   }
 
