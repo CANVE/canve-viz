@@ -29,6 +29,10 @@ export default class DataCleaner {
     if (node.kind === 'lazy value') { // because showing laziness seems a little over of scope...
       node.kind = 'value';
     }
+
+    if (node.displayName === undefined) {
+      node.displayName = node.kind + ' ' + node.name;
+    }
   }
 
   clean(nodes) {
