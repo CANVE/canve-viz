@@ -33,8 +33,9 @@ export class Start {
       this.fetchData('edges')
     ]).then(results => {
       let rawNodes = Papa.parse(results[0], {header: true});
-      this.graphData.nodes = this.dataCleaner.clean(rawNodes.data);
-      this.graphData.edges = Papa.parse(results[1], {header: true});
+      let rawEdges = Papa.parse(results[1], {header: true});
+      this.graphData.nodes = this.dataCleaner.cleanNodes(rawNodes.data);
+      this.graphData.edges = this.dataCleaner.cleanEdges(rawEdges.data);
       console.dir(this.graphData);
     }).catch(err => console.error(err.stack));
   }
