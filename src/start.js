@@ -8,7 +8,7 @@ export class Start {
   graphData = {};
 
   // TODO baseUrl should be configurable
-  // Works given that serverLocalCORS.py is started in canve/visualizer
+  // serverLocalCORS.py in canve/visualizer must be running
   constructor(http){
     http.configure(config => {
       config
@@ -18,31 +18,18 @@ export class Start {
     this.http = http;
   }
 
-  fetchNodes() {
-    return this.http.fetch('canve-data/nodes', { headers: { 'Content-Type': 'text/plain' } })
-      .then(nodesResponse => nodesResponse.text());
-  }
-
-  fetchEdges() {
-    return this.http.fetch('canve-data/edges', { headers: { 'Content-Type': 'text/plain' } })
+  fetchData(dataType) {
+    // send and receive text/plain to avoid pre-flight OPTIONS request which simple python server can't do
+    return this.http.fetch(`canve-data/${dataType}`, { headers: { 'Content-Type': 'text/plain' } })
       .then(edgesResponse => edgesResponse.text());
   }
 
-  // TODO Also need edges and some data cleaning - service?
-  // TODO Background task for loading node-source files?
-  // activate() {
-  //   return this.http.fetch('canve-data/nodes', { headers: { 'Content-Type': 'text/plain' } })
-  //     .then(nodesResponse => nodesResponse.text())
-  //     .then(nodesText => Papa.parse(nodesText, {header: true}))
-  //     .then(this.http.fetch('canve-data/edges', { headers: { 'Content-Type': 'text/plain' }}))
-  //     // .then(edgesResponse => edgesResponse.text())
-  //     // .then(edgesText => Papa.parse(edgesText, {header: true}))
-  //     .catch(err => console.error(err.stack));
-  // }
+  // TODO Data cleaning service?
+  // TODO Background task for loading node-source files
   activate() {
     return Promise.all([
-      this.fetchNodes(),
-      this.fetchEdges()
+      this.fetchData('nodes'),
+      this.fetchData('edges')
     ]).then(results => {
       this.graphData.nodes = Papa.parse(results[0], {header: true});
       this.graphData.edges = Papa.parse(results[1], {header: true});
