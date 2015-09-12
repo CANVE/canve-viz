@@ -5,7 +5,7 @@ import Papa from 'npm:papaparse@4.1.2/papaparse.js';
 
 @inject(HttpClient)
 export class Start {
-  // graphData = {};
+  graphData = {};
 
   // TODO baseUrl should be configurable
   // Works given that serverLocalCORS.py is started in canve/visualizer
@@ -22,12 +22,12 @@ export class Start {
   // TODO Background task for loading node-source files?
   activate() {
     return this.http.fetch('canve-data/nodes', { headers: { 'Content-Type': 'text/plain' } })
-      .then(response => response.text())
-      .then(nodesText => {
-        let parseResults = Papa.parse(nodesText, {header: true});
-        console.dir(parseResults.data);
-        // TODO: should check for parseResults.error
-      });
+      .then(nodesResponse => nodesResponse.text())
+      .then(nodesText => Papa.parse(nodesText, {header: true}))
+      .then(this.http.fetch('canve-data/edges', { headers: { 'Content-Type': 'text/plain' }}))
+      // .then(edgesResponse => edgesResponse.text())
+      // .then(edgesText => Papa.parse(edgesText, {header: true}))
+      .catch(err => console.error(err.stack));
   }
 
 }
