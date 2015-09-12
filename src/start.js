@@ -19,13 +19,13 @@ export class Start {
   }
 
   fetchNodes() {
-      return this.http.fetch('canve-data/nodes', { headers: { 'Content-Type': 'text/plain' } })
-        .then(nodesResponse => nodesResponse.text());
+    return this.http.fetch('canve-data/nodes', { headers: { 'Content-Type': 'text/plain' } })
+      .then(nodesResponse => nodesResponse.text());
   }
 
   fetchEdges() {
-      return this.http.fetch('canve-data/edges', { headers: { 'Content-Type': 'text/plain' } })
-        .then(edgesResponse => edgesResponse.text());
+    return this.http.fetch('canve-data/edges', { headers: { 'Content-Type': 'text/plain' } })
+      .then(edgesResponse => edgesResponse.text());
   }
 
   // TODO Also need edges and some data cleaning - service?
@@ -43,7 +43,7 @@ export class Start {
     return Promise.all([
       this.fetchNodes(),
       this.fetchEdges()
-    ]).then(function(results) {
+    ]).then(results => {
       console.dir(results);
     }).catch(err => console.error(err.stack));
   }
