@@ -18,16 +18,34 @@ export class Start {
     this.http = http;
   }
 
+  fetchNodes() {
+      return this.http.fetch('canve-data/nodes', { headers: { 'Content-Type': 'text/plain' } })
+        .then(nodesResponse => nodesResponse.text());
+  }
+
+  fetchEdges() {
+      return this.http.fetch('canve-data/edges', { headers: { 'Content-Type': 'text/plain' } })
+        .then(edgesResponse => edgesResponse.text());
+  }
+
   // TODO Also need edges and some data cleaning - service?
   // TODO Background task for loading node-source files?
+  // activate() {
+  //   return this.http.fetch('canve-data/nodes', { headers: { 'Content-Type': 'text/plain' } })
+  //     .then(nodesResponse => nodesResponse.text())
+  //     .then(nodesText => Papa.parse(nodesText, {header: true}))
+  //     .then(this.http.fetch('canve-data/edges', { headers: { 'Content-Type': 'text/plain' }}))
+  //     // .then(edgesResponse => edgesResponse.text())
+  //     // .then(edgesText => Papa.parse(edgesText, {header: true}))
+  //     .catch(err => console.error(err.stack));
+  // }
   activate() {
-    return this.http.fetch('canve-data/nodes', { headers: { 'Content-Type': 'text/plain' } })
-      .then(nodesResponse => nodesResponse.text())
-      .then(nodesText => Papa.parse(nodesText, {header: true}))
-      .then(this.http.fetch('canve-data/edges', { headers: { 'Content-Type': 'text/plain' }}))
-      // .then(edgesResponse => edgesResponse.text())
-      // .then(edgesText => Papa.parse(edgesText, {header: true}))
-      .catch(err => console.error(err.stack));
+    return Promise.all([
+      this.fetchNodes(),
+      this.fetchEdges()
+    ]).then(function(results) {
+      console.dir(results);
+    }).catch(err => console.error(err.stack));
   }
 
 }
