@@ -4,19 +4,25 @@ import d3 from 'd3';
 import GraphLibD3 from 'graphlib-d3';
 import GraphModel from 'graph-model';
 import GraphFinder from 'graph-finder';
+import GraphModifier from 'graph-modifier';
 
+/* jshint ignore:start */
 @customAttribute('graph')
-@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier)
+/* jshint ignore:end */
 export class Graph {
+  /* jshint ignore:start */
   @bindable data;
   @bindable query;
+  /* jshint ignore:end */
 
-  constructor(element, pubSub, graphUtils, graphModel, graphFinder) {
+  constructor(element, pubSub, graphUtils, graphModel, graphFinder, graphModifier) {
     this.element = element;
     this.pubSub = pubSub;
     this.graphUtils = graphUtils;
     this.graphModel = graphModel;
     this.graphFinder = graphFinder;
+    this.graphModifier = graphModifier;
     this.initSvg();
   }
 
@@ -90,7 +96,7 @@ export class Graph {
   }
 
   fireGraphDisplay(nodeId) {
-
+    this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1);
   }
 
   dataChanged(newValue) {

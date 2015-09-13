@@ -9,10 +9,32 @@ export default class GraphModifier {
   }
 
   /**
+   * Add node neighbors to display graph
+   */
+  addNodeNeighbors(graph, id, degree) {
+    if (degree === 0) {
+      return;
+    }
+
+    this.graphModel.globalGraphModel.nodeEdges(id).forEach(edge => {
+      this.addNodeToDisplay(graph, edge.v);
+      this.addNodeToDisplay(graph, edge.w);
+      graph.setEdge(edge.v, edge.w, this.graphModel.globalGraphModel.edge(edge.v, edge.w));
+
+      if (edge.v !== id) {
+        this.addNodeNeighbors(graph, edge.v, degree - 1);
+      }
+      if (edge.w !== id) {
+        this.addNodeNeighbors(graph, edge.w, degree - 1);
+      }
+    });
+  }
+
+  /**
    * Adds node's links to all other nodes already on the display.
    */
   addNeighborLinksToDisplay(graph, id) {
-    this.graphModel.globalGraphModel.nodeEdges(id).forEach(function(edge) {
+    this.graphModel.globalGraphModel.nodeEdges(id).forEach(edge => {
       if (edge.v === id && graph.hasNode(edge.w) || edge.w === id && graph.hasNode(edge.v)) {
         graph.setEdge(edge, this.graphModel.globalGraphModel.edge(edge));
       }
@@ -38,7 +60,7 @@ export default class GraphModifier {
    * as the current one is very naive in that sense.
    */
   addNodeEnv(graph, id, degree) {
-    this.addNodeToDisplay(id);
+    this.addNodeToDisplay(graph, id);
     this.addNodeNeighbors(graph, id, degree);
     return graph;
   }
