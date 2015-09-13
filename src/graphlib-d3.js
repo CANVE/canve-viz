@@ -1,4 +1,4 @@
-export default class GraphUtils {
+export default class GraphLibD3 {
 
   /**
    * Map from graphlib graph represnetation to d3 graph representation:

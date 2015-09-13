@@ -1,22 +1,27 @@
 import {inject, customAttribute, bindable} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
-import GraphUtils from 'graph-utils';
+import GraphLibD3 from 'graphlib-d3';
+import GraphModel from 'graph-model';
+import GraphFinder from 'graph-finder';
 
 @customAttribute('graph')
-@inject(Element, EventAggregator, GraphUtils)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder)
 export class Graph {
   @bindable data;
   @bindable query;
 
-  constructor(element, pubSub, graphUtils) {
+  constructor(element, pubSub, graphUtils, graphModel, graphFinder) {
     this.element = element;
     this.pubSub = pubSub;
     this.graphUtils = graphUtils;
+    this.graphModel = graphModel;
+    this.graphFinder = graphFinder;
     this.initSvg();
   }
 
   initSvg() {
+    this.displayGraph = null;
     this.sphereFontSize = 12;
 
     // create svg for working out dimensions necessary for rendering labels' text
@@ -84,11 +89,19 @@ export class Graph {
 
   }
 
+  fireGraphDisplay(nodeId) {
+
+  }
+
   dataChanged(newValue) {
-    console.log('dataChanged');
     if (newValue) {
-      let d3GraphData = this.graphUtils.mapToD3(newValue);
-      this.updateForceLayout(d3GraphData);
+      // TODO: visualizer applyGraphFilters, debugListSpecialNodes
+      this.graphModel.initRadii();
+      this.displayGraph = this.graphModel.emptyGraph();
+
+      // init the vis with a small sample of the total data
+      let unusedTypes = this.graphFinder.findUnusedTypes(this.graphModel.globalGraphModel);
+      this.fireGraphDisplay(unusedTypes[0]);
     }
   }
 
