@@ -16,6 +16,9 @@ export default class GraphModel {
         definition:   node.definition
       });
     });
+    graphData.edges.forEach(edge => {
+      this.globalGraph.setEdge(edge.id1, edge.id2, { edgeKind: edge.edgeKind });
+    });
     console.dir(this.globalGraph);
   }
 
