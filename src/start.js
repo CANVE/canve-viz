@@ -3,14 +3,14 @@ import {HttpClient} from 'aurelia-fetch-client';
 import 'fetch';
 import Papa from 'npm:papaparse@4.1.2/papaparse.js';
 import DataCleaner from 'data-cleaner';
+import GraphModel from 'graph-model';
 
-@inject(HttpClient, DataCleaner)
+@inject(HttpClient, DataCleaner, GraphModel)
 export class Start {
-  graphData = {};
 
   // TODO baseUrl should be configurable
   // serverLocalCORS.py in canve/visualizer must be running
-  constructor(http, dataCleaner){
+  constructor(http, dataCleaner, graphModel, pubSub){
     http.configure(config => {
       config
         .withBaseUrl('http://localhost:31338/');
@@ -18,6 +18,7 @@ export class Start {
 
     this.http = http;
     this.dataCleaner = dataCleaner;
+    this.graphModel = graphModel;
   }
 
   fetchData(dataType) {
@@ -26,7 +27,6 @@ export class Start {
       .then(edgesResponse => edgesResponse.text());
   }
 
-  // TODO Background task for loading node-source files
   activate() {
     return Promise.all([
       this.fetchData('nodes'),
@@ -34,9 +34,12 @@ export class Start {
     ]).then(results => {
       let rawNodes = Papa.parse(results[0], {header: true});
       let rawEdges = Papa.parse(results[1], {header: true});
-      this.graphData.nodes = this.dataCleaner.cleanNodes(rawNodes.data);
-      this.graphData.edges = this.dataCleaner.cleanEdges(rawEdges.data);
-      console.dir(this.graphData);
+      let graphData = {
+        nodes: this.dataCleaner.cleanNodes(rawNodes.data),
+        edges: this.dataCleaner.cleanEdges(rawEdges.data)
+      };
+      this.graphModel.populateModel(graphData);
+      this.foo = this.graphModel.globalGraphModel;
     }).catch(err => console.error(err.stack));
   }
 

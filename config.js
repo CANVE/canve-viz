@@ -42,8 +42,10 @@ System.config({
     "bootstrap": "github:twbs/bootstrap@3.3.5",
     "core-js": "npm:core-js@0.9.18",
     "d3": "github:mbostock/d3@3.5.6",
+    "dagre": "npm:dagre@0.7.4",
     "fetch": "github:github/fetch@0.9.0",
     "font-awesome": "npm:font-awesome@4.4.0",
+    "graphlib": "npm:graphlib@1.0.7",
     "papaparse": "npm:papaparse@4.1.2",
     "github:aurelia/animator-css@0.16.0": {
       "aurelia-metadata": "github:aurelia/metadata@0.8.0",
@@ -173,8 +175,20 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.1",
       "systemjs-json": "github:systemjs/plugin-json@0.1.0"
     },
+    "npm:dagre@0.7.4": {
+      "graphlib": "npm:graphlib@1.0.7",
+      "lodash": "npm:lodash@3.10.1",
+      "process": "github:jspm/nodelibs-process@0.1.1"
+    },
     "npm:font-awesome@4.4.0": {
       "css": "github:systemjs/plugin-css@0.1.13"
+    },
+    "npm:graphlib@1.0.7": {
+      "lodash": "npm:lodash@3.10.1",
+      "process": "github:jspm/nodelibs-process@0.1.1"
+    },
+    "npm:lodash@3.10.1": {
+      "process": "github:jspm/nodelibs-process@0.1.1"
     },
     "npm:papaparse@4.1.2": {
       "process": "github:jspm/nodelibs-process@0.1.1"
