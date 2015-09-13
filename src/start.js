@@ -10,7 +10,7 @@ export class Start {
 
   // TODO baseUrl should be configurable
   // serverLocalCORS.py in canve/visualizer must be running
-  constructor(http, dataCleaner, graphModel){
+  constructor(http, dataCleaner, graphModel, pubSub){
     http.configure(config => {
       config
         .withBaseUrl('http://localhost:31338/');
@@ -34,10 +34,12 @@ export class Start {
     ]).then(results => {
       let rawNodes = Papa.parse(results[0], {header: true});
       let rawEdges = Papa.parse(results[1], {header: true});
-      let graphData = {};
-      graphData.nodes = this.dataCleaner.cleanNodes(rawNodes.data);
-      graphData.edges = this.dataCleaner.cleanEdges(rawEdges.data);
+      let graphData = {
+        nodes: this.dataCleaner.cleanNodes(rawNodes.data),
+        edges: this.dataCleaner.cleanEdges(rawEdges.data)
+      };
       this.graphModel.populateModel(graphData);
+      this.foo = this.graphModel.globalGraphModel;
     }).catch(err => console.error(err.stack));
   }
 

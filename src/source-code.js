@@ -7,12 +7,10 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 export class SourceCode {
 
   constructor(pubSub) {
-    // this.sourceListing = 'foo';
     this.pubSub = pubSub;
     this.pubSub.subscribe('node.clicked', payload => {
-      // TODO: put payload in scope so that it can be rendered in source-code.html template
-      console.log(`*** source-code subscribe: ${payload}`);
-      this.sourceListing = payload;
+      // TODO: lazy load source via some identifier in payload
+      this.sourceListing = payload.name;
     });
   }
 

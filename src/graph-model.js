@@ -6,6 +6,10 @@ export default class GraphModel {
     this.globalGraph = new Dagre.graphlib.Graph({ multigraph: true});
   }
 
+  get globalGraphModel() {
+    return this.globalGraph;
+  }
+
   populateModel(graphData) {
     graphData.nodes.forEach(node => {
       this.globalGraph.setNode(node.id, {
@@ -19,7 +23,6 @@ export default class GraphModel {
     graphData.edges.forEach(edge => {
       this.globalGraph.setEdge(edge.id1, edge.id2, { edgeKind: edge.edgeKind });
     });
-    console.dir(this.globalGraph);
   }
 
 }
