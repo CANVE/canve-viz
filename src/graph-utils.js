@@ -16,7 +16,7 @@ export default class GraphUtils {
 
     var nodeIdIndex = {};
 
-    var nodes = displayGraph.nodes().map(function(id, index) {
+    var nodes = displayGraph.nodes().map((id, index) => {
       nodeIdIndex[id] = index;
 
       var d3Node = displayGraph.node(id);
@@ -28,7 +28,7 @@ export default class GraphUtils {
       return d3Node;
     });
 
-    var links = displayGraph.edges().map(function(edge) {
+    var links = displayGraph.edges().map(edge => {
       return { source: nodeIdIndex[edge.v], // vertex specified as index into nodes array
                target: nodeIdIndex[edge.w], // vertex specified as index into nodes array
                v: edge.v,                   // pass on the graphlib node id
