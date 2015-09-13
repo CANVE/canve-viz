@@ -2,8 +2,15 @@
   <require from="graph"></require>
   <require from="source-code"></require>
 
+  <!-- Search -->
+  <!-- TODO Make custom attr or element to wrap Awesomplete -->
   <input type="text" value.bind="search" class="form-control" id="search" placeholder="search code...">
 
+  <!-- Visualization -->
+  <!-- TODO Multiple bindings for data and search -->
   <div graph.bind="foo"></div>
+
+  <!-- Source code -->
   <source-code></source-code>
+
 </template>

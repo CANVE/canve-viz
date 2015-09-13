@@ -7,6 +7,7 @@ import GraphUtils from 'graph-utils';
 @inject(Element, EventAggregator, GraphUtils)
 export class Graph {
 
+  // TODO: Bring in window and sizing logic from visualizer
   constructor(element, pubSub, graphUtils) {
     this.element = element;
     this.pubSub = pubSub;
@@ -17,6 +18,7 @@ export class Graph {
       .attr('height', 500);
   }
 
+  // TODO: Bring in force layout logic from visualizer for nodes and edges
   update(data) {
     let groups = this.svg.selectAll('g')
       .data(data);
