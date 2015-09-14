@@ -16,10 +16,10 @@ export class Graph {
   @bindable query;
   /* jshint ignore:end */
 
-  constructor(element, pubSub, graphUtils, graphModel, graphFinder, graphModifier) {
+  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier) {
     this.element = element;
     this.pubSub = pubSub;
-    this.graphUtils = graphUtils;
+    this.graphLibD3 = graphLibD3;
     this.graphModel = graphModel;
     this.graphFinder = graphFinder;
     this.graphModifier = graphModifier;
@@ -65,11 +65,11 @@ export class Graph {
       .on('tick', this.tick);
 
     // TODO Bring in drag logic from visualizer
-    var drag = this.forceLayout.drag();
-    drag.on('dragstart', d => {
+    this.drag = this.forceLayout.drag();
+    this.drag.on('dragstart', d => {
       console.log('dragstart');
     });
-    drag.on('dragend', node => {
+    this.drag.on('dragend', node => {
       console.log('dragend');
     });
   }
@@ -104,7 +104,180 @@ export class Graph {
    *
    */
   updateForceLayout(displayGraph, removals) {
+    // sync the d3 graph data structure from the graphlib one
+    var d3Data = this.graphLibD3.mapToD3(displayGraph);
 
+    // d3 rejoin
+    var d3DisplayLinks = this.presentationSVG
+      .select('.links').selectAll('.link')
+      .data(d3Data.links, edge => { return edge.v + edge.w; } );
+
+    // TODO: Extract edge to color mapping to graph display helper
+    // Rest of the d3 (re)join ceremony... handling entering and exiting elements,
+    // and defining the callbacks over the elements
+    d3DisplayLinks
+      .enter().append('polyline')
+      .attr('class', 'link')
+      .attr('id', edge => { // for allowing indexed access
+        return 'link' + edge.v + 'to' + edge.w;
+      })
+      .style('stroke-width', 1)
+      .style('stroke', edge => {
+        if (edge.edgeKind === 'declares member') return d3.rgb('white').darker(2);
+        if (edge.edgeKind === 'extends')         return d3.rgb('blue');
+        if (edge.edgeKind === 'is of type')      return d3.rgb('blue');
+        if (edge.edgeKind === 'uses')            return d3.rgb('green');
+      })
+      .attr('marker-mid', edge => {
+        if (edge.edgeKind === 'uses')            return 'url(#arrow)';
+      })
+      .attr('stroke-dasharray', edge => {
+        if (edge.edgeKind === 'declares member') return 'none';
+        if (edge.edgeKind === 'extends')         return '4,3';
+        if (edge.edgeKind === 'is of type')      return '4,3';
+        if (edge.edgeKind === 'uses')            return 'none';
+      });
+
+
+    var extendEdges = d3Data.links.filter(edge => {
+      if (edge.edgeKind === 'extends')    return true;
+      if (edge.edgeKind === 'is of type') return true;
+      return false;
+    });
+
+    var d3ExtensionArcs = this.presentationSVG
+      .select('.extensionArcs').selectAll('.extensionArc')
+      .data(extendEdges, edge => { return edge.v + edge.w; });
+
+    d3ExtensionArcs
+      .enter().append('path')
+      .attr('class', 'extensionArc')
+      .attr('id', edge => { // for allowing indexed access
+        return 'arc' + edge.v + 'to' + edge.w;
+      });
+
+    var d3DisplayNodes = this.presentationSVG
+      .select('.nodes').selectAll('.node')
+      .data(d3Data.nodes, node => { return node.id; });
+
+    d3DisplayNodes
+      .enter().append('g').attr('class', 'node')
+      .attr('id', node => { // for allowing access by index to any node created by d3
+        return 'node' + node.id;
+      })
+      .call(this.drag)
+      .append('circle')
+      .attr('class', 'circle')
+      .attr('r', node => { return node.radius; })
+      .style('fill', this.nodeColor)
+      .style('cursor', 'pointer')
+      .append('title') // this is the default html tooltip definition
+      .attr('class', 'tooltip')
+      .text(d => { return d.displayName + ' (debug id ' + d.id + ')'; });
+
+    // TODO Bring in interactionState from visualizer
+    // d3DisplayNodes
+    //   .on('mousedown', node => {
+    //     mouseDown = new Date();
+    //     mouseDownCoords = d3.mouse(this.presentationSVG.node());
+    //     interactionState.longStablePressEnd = false;
+    //   });
+
+      // .on('mouseup', node => {
+      //   mouseUp = new Date()
+      //
+      //   mouseUpCoords = d3.mouse(presentationSVG.node())
+      //
+      //   if (mouseUp.getTime() - mouseDown.getTime() > 500)
+      //     if (Math.abs(mouseUpCoords[0] - mouseDownCoords[0]) < 10 &&
+      //         Math.abs(mouseUpCoords[1] - mouseDownCoords[1]) < 10) {
+      //           interactionState.longStablePressEnd = true
+      //           console.log('long stable click')
+      //           node.fixed = false
+      //     }
+      // })
+
+      // .on('dblclick', function(node) {
+      //   console.log(node.id)
+      // })
+
+      //
+      // mouse over and mouse out events use a named transition (see https://gist.github.com/mbostock/24bdd02df2a72866b0ec)
+      // in order to both not collide with other events' transitions, such as the click transitions,
+      // and to cancel each other per.
+      //
+
+      // .on('mouseover', function(node) { // see better implementation at http://jsfiddle.net/cuckovic/FWKt5/
+      //   for (edge of displayGraph.nodeEdges(node.id)) {
+      //     // highlight the edge
+      //     var selector = '#link' + edge.v + 'to' + edge.w
+      //     presentationSVG.select(selector).transition().style('stroke-width', 3)
+      //     // highlight its nodes
+      //     toggleHighlightState(edge.v, 'highlight')
+      //     toggleHighlightState(edge.w, 'highlight')
+      //   }
+      // })
+
+      // .on('mouseout', function(node) {
+      //   for (edge of displayGraph.nodeEdges(node.id)) {
+      //     // unhighlight the edge
+      //     var selector = '#link' + edge.v + 'to' + edge.w
+      //     presentationSVG.select(selector).transition().style('stroke-width', 1).delay(300)
+      //     // unhighlight its nodes
+      //     toggleHighlightState(edge.v, 'unhighlight')
+      //     toggleHighlightState(edge.w, 'unhighlight')
+      //   }
+      // })
+
+    d3DisplayNodes.exit().on('mousedown', null)
+      .on('mouseup', null)
+      .on('dblclick', null)
+      .on('mouseover', null)
+      .on('mouseout', null);
+
+    d3DisplayNodes.exit().transition('showOrRemove').delay(500)
+     .duration(1000).ease('poly(2)')
+     .style('fill-opacity', 0).style('stroke-opacity', 0).remove();
+
+    d3ExtensionArcs.exit().transition('showOrRemove').delay(250)
+      .duration(500).style('fill-opacity', 0).style('stroke-opacity', 0).remove();
+
+    d3DisplayLinks.exit().transition('showOrRemove').delay(250)
+      .duration(1000).style('stroke-opacity', 0).remove();
+
+    //
+    // defer the resumption of the force simulation, when
+    // it visually-cognitively makes sense
+    //
+    var forceResumeDelay = removals ? 1500 : 0;
+    setTimeout( () => {
+      // bind the force layout to the d3 bindings (re)made above,
+      // and animate it.
+      this.forceLayout.nodes(d3Data.nodes)
+        .links(d3Data.links);
+
+      // after the (re)join, fire away the animation of the force layout
+      this.forceLayout.start();
+    }, forceResumeDelay);
+
+  }
+
+  rewarmForceLayout() {
+    this.forceLayout.resume();
+  }
+
+  // TODO Extract to graph display utility
+  nodeColor(node) {
+    if (node.kind === 'trait')           return d3.rgb('blue').darker(2);
+    if (node.kind === 'class')           return d3.rgb('blue').brighter(1);
+    if (node.kind === 'object')          return d3.rgb('blue').brighter(1.6);
+    if (node.kind === 'anonymous class') return d3.rgb('gray').brighter(0.9);
+    if (node.kind === 'method')
+      if (node.name.indexOf('$') > 0)   return d3.rgb('gray').brighter(0.9);
+      else                              return d3.rgb('green');
+    if (node.kind === 'constructor')     return 'url(#MyRadialGradientDef)';
+    if (node.kind === 'value')           return d3.rgb('green').brighter(1.3);
+    if (node.kind === 'package')         return d3.rgb('white').darker(2);
   }
 
   /**
