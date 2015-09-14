@@ -62,7 +62,7 @@ export class Graph {
       .gravity(0.4)
       .linkDistance(20)
       .charge(-150)
-      .on("tick", this.tick);
+      .on('tick', this.tick);
 
     // TODO Bring in drag logic from visualizer
     var drag = this.forceLayout.drag();
@@ -90,13 +90,81 @@ export class Graph {
     ]);
   }
 
-  // TODO: Bring in updateForceLayout from visualizer
-  updateForceLayout(d3GraphData) {
+  /*
+   * update the display with the display graph,
+   * by (re)joining the data with the display, the d3 way.
+   *
+   * for a deliberation see:
+   *   http://bost.ocks.org/mike/join/, and/or
+   *   http://www.jeromecukier.net/blog/2015/05/19/you-may-not-need-d3/
+   *
+   * Note: yes, we do need to do all of this every time the data updates.
+   *       given most of it are callback definitions, this isn't egregiously wasteful,
+   *       and the little leeway for optimization is superfluous.
+   *
+   */
+  updateForceLayout(displayGraph, removals) {
 
+  }
+
+  /**
+   * Recompute and adjust the node rim's style,
+   * based on the intersection of two state properties.
+   * (we currently leave the transition duration to the caller, as this
+   * function currently doesn't deal with the source state only the target state).
+   */
+  adjustedNodeRimVisualization(node, transitionDuration) {
+    var color,
+      width;
+
+    // matrix for computing the appropriate style
+    if (node.selectStatus === 'selected' && node.highlightStatus === 'highlighted') {
+      color = d3.rgb('red').darker(1); width = 4;
+    }
+
+    if (node.selectStatus === 'selected' && node.highlightStatus === 'unhighlighted') {
+      color = d3.rgb('red').darker(1);
+      width = 2;
+    }
+
+    if (node.selectStatus === 'unselected' && node.highlightStatus === 'highlighted') {
+      color = 'orange';
+      width = 2;
+    }
+
+    if (node.selectStatus === 'unselected'  &&  node.highlightStatus === 'unhighlighted') {
+      color = '#fff';
+      width = 1;
+    }
+
+    if (transitionDuration === undefined) {
+      transitionDuration = 0;
+    }
+
+    // apply the style
+    var selector = '#node' + node.id;
+    var presentationCircle = this.presentationSVG.select(selector).select('.circle');
+
+    presentationCircle
+      .transition('nodeHighlighting').duration(transitionDuration)
+      .style('stroke', color)
+      .style('stroke-width', width);
   }
 
   fireGraphDisplay(nodeId) {
     this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1);
+    let node = this.displayGraph.node(nodeId);
+    let selector = '#node' + nodeId;
+    this.presentationSVG.select(selector).select('.circle')
+      .transition('nodeHighlighting').duration(500).style('stroke', 'orange').style('stroke-width', 6)
+      .each('end', () => this.adjustedNodeRimVisualization(node, 2000) );
+
+    this.updateForceLayout(this.displayGraph);
+
+    // TODO Bring over expandNode fromvisualizer
+    // if (node.expandStatus === 'collapsed') {
+    //   this.expandNode(node);
+    // }
   }
 
   dataChanged(newValue) {
