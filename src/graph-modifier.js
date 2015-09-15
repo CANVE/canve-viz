@@ -1,5 +1,6 @@
 import {inject} from 'aurelia-framework';
 import GraphModel from 'graph-model';
+import { calcBBox } from 'graph-text';
 
 @inject(GraphModel)
 export default class GraphModifier {
@@ -11,21 +12,21 @@ export default class GraphModifier {
   /**
    * Add node neighbors to display graph
    */
-  addNodeNeighbors(graph, id, degree) {
+  addNodeNeighbors(graph, id, degree, svgText) {
     if (degree === 0) {
       return;
     }
 
     this.graphModel.globalGraphModel.nodeEdges(id).forEach(edge => {
-      this.addNodeToDisplay(graph, edge.v);
-      this.addNodeToDisplay(graph, edge.w);
+      this.addNodeToDisplay(graph, edge.v, svgText);
+      this.addNodeToDisplay(graph, edge.w, svgText);
       graph.setEdge(edge.v, edge.w, this.graphModel.globalGraphModel.edge(edge.v, edge.w));
 
       if (edge.v !== id) {
-        this.addNodeNeighbors(graph, edge.v, degree - 1);
+        this.addNodeNeighbors(graph, edge.v, degree - 1, svgText);
       }
       if (edge.w !== id) {
-        this.addNodeNeighbors(graph, edge.w, degree - 1);
+        this.addNodeNeighbors(graph, edge.w, degree - 1, svgText);
       }
     });
   }
@@ -41,13 +42,19 @@ export default class GraphModifier {
     });
   }
 
-  addNodeToDisplay(graph, id) {
+  addNodeToDisplay(graph, id, svgText) {
     if (graph.node(id) === undefined) {
+
       let node = this.graphModel.globalGraphModel.node(id);
       node.id              = id;
       node.expandStatus    = 'collapsed';
       node.selectStatus    = 'unselected';
       node.highlightStatus = 'unhighlighted';
+      node.textBbox = calcBBox(svgText, node);
+
+      // FIXME: they're all zero, maybe need it on globalGraph after all
+      console.dir(node.textBbox);
+
       graph.setNode(id, node);
 
       this.addNeighborLinksToDisplay(graph, id);
@@ -59,9 +66,9 @@ export default class GraphModifier {
    * for any humbly large degree, this needs to be re-implemented for efficient Big O(V,fembelish),
    * as the current one is very naive in that sense.
    */
-  addNodeEnv(graph, id, degree) {
-    this.addNodeToDisplay(graph, id);
-    this.addNodeNeighbors(graph, id, degree);
+  addNodeEnv(graph, id, degree, svgText) {
+    this.addNodeToDisplay(graph, id, svgText);
+    this.addNodeNeighbors(graph, id, degree, svgText);
     return graph;
   }
 

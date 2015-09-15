@@ -5,6 +5,7 @@ import GraphLibD3 from 'graphlib-d3';
 import GraphModel from 'graph-model';
 import GraphFinder from 'graph-finder';
 import GraphModifier from 'graph-modifier';
+import { calcBBox } from 'graph-text';
 
 /* jshint ignore:start */
 @customAttribute('graph')
@@ -36,7 +37,7 @@ export class Graph {
       .attr('width', 0)
       .attr('height', 0);
 
-    var svgText = hiddenSVG.append('svg:text')
+    this.svgText = hiddenSVG.append('svg:text')
        .attr('y', -500)
        .attr('x', -500)
        .style('font-size', this.sphereFontSize);
@@ -280,6 +281,7 @@ export class Graph {
     if (node.kind === 'package')         return d3.rgb('white').darker(2);
   }
 
+  // TODO Extract to graph display utility
   /**
    * Recompute and adjust the node rim's style,
    * based on the intersection of two state properties.
@@ -325,7 +327,7 @@ export class Graph {
   }
 
   fireGraphDisplay(nodeId) {
-    this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1);
+    this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
     let node = this.displayGraph.node(nodeId);
     let selector = '#node' + nodeId;
     this.presentationSVG.select(selector).select('.circle')
