@@ -20,7 +20,7 @@ function splitByLengthAndCamelOrWord(text) {
    }
  }
 
-function formattedText(node) {
+export function formattedText(node) {
   var text = [],
     splitName = splitByLengthAndCamelOrWord(node.displayName);
 
@@ -32,7 +32,13 @@ function formattedText(node) {
  }
 
 export function calcBBox(svgText, node) {
+  // if (!svgText) {
+  //   debugger;
+  // }
   svgText.selectAll('tspan').remove();
+  // if (!node) {
+  //   debugger;
+  // }
   formattedText(node).forEach(line => {
     svgText.append('tspan')
       .attr('text-anchor', 'middle')

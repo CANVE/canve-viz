@@ -5,7 +5,7 @@ import GraphLibD3 from 'graphlib-d3';
 import GraphModel from 'graph-model';
 import GraphFinder from 'graph-finder';
 import GraphModifier from 'graph-modifier';
-import { calcBBox } from 'graph-text';
+import { formattedText } from 'graph-text';
 
 /* jshint ignore:start */
 @customAttribute('graph')
@@ -336,12 +336,76 @@ export class Graph {
 
     this.updateForceLayout(this.displayGraph);
 
-    // TODO Bring over expandNode fromvisualizer
-    // if (node.expandStatus === 'collapsed') {
-    //   this.expandNode(node);
-    // }
+    if (node.expandStatus === 'collapsed') {
+      this.expandNode(node);
+    }
   }
 
+  /**
+   * Api requires specifying the distance for each edge,
+   * without any option to keep some edges unchanged,
+   * so this is more tedious that it could have been.
+   */
+  extendExpandedNodeEdges(node) {
+    this.forceLayout.linkDistance(link => {
+      return Math.max(20, this.displayGraph.node(link.source.id).radius + this.displayGraph.node(link.target.id).radius + 10);
+    });
+  }
+
+  expandNode(node) {
+    node.expandStatus = 'expanded';
+
+    // assign expanded radius based on the bounding box needed for rendering the text,
+    // plus some padding of the same size as the active font size
+    var expandedRadius = Math.max(node.textBbox.width, node.textBbox.height)/2 + this.sphereFontSize;
+    node.radius = expandedRadius;
+
+    // TODO bring over from visualizer
+    this.extendExpandedNodeEdges(node);
+
+    var selector = '#node' + node.id;
+
+    // Can't use arrow function here because of d3.select(this)
+    var self = this;
+    this.presentationSVG.select(selector).each(function(group) {
+      var g = d3.select(this);
+      g.select('.circle')
+        .transition('nodeResizing').duration(200).attr('r', node.radius).attr('stroke-width', Math.max(3, Math.sqrt(node.radius)/2))
+        .each('end', function(node) {
+          var svgText = g.append('text')
+            .style('font-size', self.sphereFontSize)
+            .style('fill', '#fff')
+            .style('stroke-width', '0px')
+            .attr('text-anchor', 'middle')
+            .attr('alignment-baseline', 'middle')
+            .attr('y', -(node.textBbox.height/4))
+            .style('cursor', 'pointer')
+            .attr('pointer-events', 'none');
+
+          formattedText(node).forEach((line, i) => {
+            self.svgText.append('tspan')
+              .attr('x', 0)
+              .attr('dy', function() {
+                if (i === 0) return 0;
+                else return '1.2em';
+              })
+             .text(line);
+          });
+      });
+    });
+
+    // logNodeNeighbors(globalGraph, node.id)
+
+    // if (node.definition === 'project')
+    //   showSourceCode(node)
+    // if (node.definition === 'external')
+    //   console.log(node.displayName + ' is defined externally to the project being visualized')
+
+    this.rewarmForceLayout();
+  }
+
+
+  // TODO: bBoxCalc...
   dataChanged(newValue) {
     if (newValue) {
       // TODO: visualizer applyGraphFilters, debugListSpecialNodes
