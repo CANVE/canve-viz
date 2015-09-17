@@ -45,7 +45,7 @@ export class Graph {
     // Does it need to be position absolute?
     this.presentationSVG = d3.select(this.element)
       .append('svg:svg')
-      .style('position', 'aboslute')
+      .style('position', 'absolute')
       .style('z-index', 0);
 
     this.initForceLayout();
@@ -86,6 +86,12 @@ export class Graph {
 
     this.presentationSVGWidth = width -1;
     this.presentationSVGHeight = height - 1;
+    console.log(`=== windowSizeAdapter: ${this.presentationSVGWidth} x ${this.presentationSVGHeight}`);
+    this.presentationSVG
+      .attr('width', this.presentationSVGWidth)
+      .attr('height', this.presentationSVGHeight);
+
+
     this.forceLayout.size([
       this.presentationSVGWidth, this.presentationSVGHeight
     ]);
@@ -259,6 +265,7 @@ export class Graph {
 
       // after the (re)join, fire away the animation of the force layout
       this.forceLayout.start();
+      console.log('forceLayout started');
     }, forceResumeDelay);
 
   }
@@ -360,7 +367,6 @@ export class Graph {
     var expandedRadius = Math.max(node.textBbox.width, node.textBbox.height)/2 + this.sphereFontSize;
     node.radius = expandedRadius;
 
-    // TODO bring over from visualizer
     this.extendExpandedNodeEdges(node);
 
     var selector = '#node' + node.id;
