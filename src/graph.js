@@ -63,7 +63,7 @@ export class Graph {
       .gravity(0.4)
       .linkDistance(20)
       .charge(-150)
-      .on('tick', this.tick);
+      .on('tick', this.tick.bind(this));
 
     // TODO Bring in drag logic from visualizer
     this.drag = this.forceLayout.drag();
@@ -75,9 +75,45 @@ export class Graph {
     });
   }
 
-  // TODO Figure out intention of nested function in visualizer tick
-  tick() {
-    console.log('tick');
+  /**
+   * When the force simulation is running, synchronizes the location
+   * of the d3 managed svg elements to the current simulation values
+   */
+  syncView() {
+    let count = 0;
+
+    this.d3DisplayLinks.attr("points", d => {
+      var source = d.source.x + "," + d.source.y + " ";
+      var mid    = (d.source.x + d.target.x)/2 + "," + (d.source.y + d.target.y)/2 + " ";
+      var target = d.target.x + "," + d.target.y;
+      return source + mid + target;
+    });
+
+    this.d3DisplayNodes.attr("transform", (d, i) => {
+      return "translate(" + d.x + "," + d.y + ")";
+    });
+
+    this.d3ExtensionArcs.attr("d", edge => {
+      var edgeRadius = edge.source.radius * 1.3;
+      return ('M' + (edge.source.x - edgeRadius) + ',' + (edge.source.y) +
+        ' A1,1 0 0 1 ' +
+        (edge.source.x + edgeRadius) + ',' + (edge.source.y));
+    })
+    .attr('transform', edge => {
+      // get the direction of the edge as an angle
+      var edgeAngleDeg = Math.atan((edge.source.y - edge.target.y) / (edge.source.x - edge.target.x)) * 180 / Math.PI;
+      if (edge.source.x < edge.target.x) edgeAngleDeg += 180;
+      // rotate arc according to this angle
+      return 'rotate(' + (edgeAngleDeg - 90) + ' ' + edge.source.x + ' ' + edge.source.y + ')';
+    });
+  }
+
+  tick(additionalConstraintFunc) {
+    // TODO Bring these over from visualizer
+    // avoidOverlaps()
+    // keepWithinDisplayBounds()
+    // if (typeof additionalConstraintFunc === 'function') additionalConstraintFunc()
+    this.syncView();
   }
 
   windowSizeAdapter() {
@@ -115,14 +151,14 @@ export class Graph {
     var d3Data = this.graphLibD3.mapToD3(displayGraph);
 
     // d3 rejoin
-    var d3DisplayLinks = this.presentationSVG
+    this.d3DisplayLinks = this.presentationSVG
       .select('.links').selectAll('.link')
       .data(d3Data.links, edge => { return edge.v + edge.w; } );
 
     // TODO: Extract edge to color mapping to graph display helper
     // Rest of the d3 (re)join ceremony... handling entering and exiting elements,
     // and defining the callbacks over the elements
-    d3DisplayLinks
+    this.d3DisplayLinks
       .enter().append('polyline')
       .attr('class', 'link')
       .attr('id', edge => { // for allowing indexed access
@@ -145,29 +181,28 @@ export class Graph {
         if (edge.edgeKind === 'uses')            return 'none';
       });
 
-
     var extendEdges = d3Data.links.filter(edge => {
       if (edge.edgeKind === 'extends')    return true;
       if (edge.edgeKind === 'is of type') return true;
       return false;
     });
 
-    var d3ExtensionArcs = this.presentationSVG
+    this.d3ExtensionArcs = this.presentationSVG
       .select('.extensionArcs').selectAll('.extensionArc')
       .data(extendEdges, edge => { return edge.v + edge.w; });
 
-    d3ExtensionArcs
+    this.d3ExtensionArcs
       .enter().append('path')
       .attr('class', 'extensionArc')
       .attr('id', edge => { // for allowing indexed access
         return 'arc' + edge.v + 'to' + edge.w;
       });
 
-    var d3DisplayNodes = this.presentationSVG
+    this.d3DisplayNodes = this.presentationSVG
       .select('.nodes').selectAll('.node')
       .data(d3Data.nodes, node => { return node.id; });
 
-    d3DisplayNodes
+    this.d3DisplayNodes
       .enter().append('g').attr('class', 'node')
       .attr('id', node => { // for allowing access by index to any node created by d3
         return 'node' + node.id;
@@ -182,7 +217,7 @@ export class Graph {
       .attr('class', 'tooltip')
       .text(d => { return d.displayName + ' (debug id ' + d.id + ')'; });
 
-    // TODO Bring in interactionState from visualizer
+    // TODO Bring in interaction mouse handlers from visualizer
     // d3DisplayNodes
     //   .on('mousedown', node => {
     //     mouseDown = new Date();
@@ -236,20 +271,20 @@ export class Graph {
       //   }
       // })
 
-    d3DisplayNodes.exit().on('mousedown', null)
+    this.d3DisplayNodes.exit().on('mousedown', null)
       .on('mouseup', null)
       .on('dblclick', null)
       .on('mouseover', null)
       .on('mouseout', null);
 
-    d3DisplayNodes.exit().transition('showOrRemove').delay(500)
+    this.d3DisplayNodes.exit().transition('showOrRemove').delay(500)
      .duration(1000).ease('poly(2)')
      .style('fill-opacity', 0).style('stroke-opacity', 0).remove();
 
-    d3ExtensionArcs.exit().transition('showOrRemove').delay(250)
+    this.d3ExtensionArcs.exit().transition('showOrRemove').delay(250)
       .duration(500).style('fill-opacity', 0).style('stroke-opacity', 0).remove();
 
-    d3DisplayLinks.exit().transition('showOrRemove').delay(250)
+    this.d3DisplayLinks.exit().transition('showOrRemove').delay(250)
       .duration(1000).style('stroke-opacity', 0).remove();
 
     //
