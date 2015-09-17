@@ -1,7 +1,7 @@
-export default class GraphUtils {
+export default class GraphLibD3 {
 
   /**
-   * Map from graphlib graph represnetation to d3 graph representation:
+   * Map from graphlib graph representation to d3 graph representation:
    *
    * for d3, links must be specified as pairs of d3 nodes array *indices*
    * via `source` and `target` attributes, as per:

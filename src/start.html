@@ -7,8 +7,7 @@
   <input type="text" value.bind="search" class="form-control" id="search" placeholder="search code...">
 
   <!-- Visualization -->
-  <!-- TODO Multiple bindings for data and search -->
-  <div graph.bind="foo"></div>
+  <div graph="data.bind: foo; query.bind: search"></div>
 
   <!-- Source code -->
   <source-code></source-code>
