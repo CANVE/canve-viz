@@ -30,6 +30,11 @@ export class Graph {
   initSvg() {
     this.displayGraph = null;
     this.sphereFontSize = 12;
+    this.interactionState = {
+      longStablePressEnd: false,
+      ctrlDown: false,
+      searchDialogEnabled: false
+    };
 
     // create svg for working out dimensions necessary for rendering labels' text
     var hiddenSVG = d3.select(this.element)
@@ -217,59 +222,7 @@ export class Graph {
       .attr('class', 'tooltip')
       .text(d => { return d.displayName + ' (debug id ' + d.id + ')'; });
 
-    // TODO Bring in interaction mouse handlers from visualizer
-    // d3DisplayNodes
-    //   .on('mousedown', node => {
-    //     mouseDown = new Date();
-    //     mouseDownCoords = d3.mouse(this.presentationSVG.node());
-    //     interactionState.longStablePressEnd = false;
-    //   });
-
-      // .on('mouseup', node => {
-      //   mouseUp = new Date()
-      //
-      //   mouseUpCoords = d3.mouse(presentationSVG.node())
-      //
-      //   if (mouseUp.getTime() - mouseDown.getTime() > 500)
-      //     if (Math.abs(mouseUpCoords[0] - mouseDownCoords[0]) < 10 &&
-      //         Math.abs(mouseUpCoords[1] - mouseDownCoords[1]) < 10) {
-      //           interactionState.longStablePressEnd = true
-      //           console.log('long stable click')
-      //           node.fixed = false
-      //     }
-      // })
-
-      // .on('dblclick', function(node) {
-      //   console.log(node.id)
-      // })
-
-      //
-      // mouse over and mouse out events use a named transition (see https://gist.github.com/mbostock/24bdd02df2a72866b0ec)
-      // in order to both not collide with other events' transitions, such as the click transitions,
-      // and to cancel each other per.
-      //
-
-      // .on('mouseover', function(node) { // see better implementation at http://jsfiddle.net/cuckovic/FWKt5/
-      //   for (edge of displayGraph.nodeEdges(node.id)) {
-      //     // highlight the edge
-      //     var selector = '#link' + edge.v + 'to' + edge.w
-      //     presentationSVG.select(selector).transition().style('stroke-width', 3)
-      //     // highlight its nodes
-      //     toggleHighlightState(edge.v, 'highlight')
-      //     toggleHighlightState(edge.w, 'highlight')
-      //   }
-      // })
-
-      // .on('mouseout', function(node) {
-      //   for (edge of displayGraph.nodeEdges(node.id)) {
-      //     // unhighlight the edge
-      //     var selector = '#link' + edge.v + 'to' + edge.w
-      //     presentationSVG.select(selector).transition().style('stroke-width', 1).delay(300)
-      //     // unhighlight its nodes
-      //     toggleHighlightState(edge.v, 'unhighlight')
-      //     toggleHighlightState(edge.w, 'unhighlight')
-      //   }
-      // })
+    this.registerForceMouseHandlers();
 
     this.d3DisplayNodes.exit().on('mousedown', null)
       .on('mouseup', null)
@@ -303,6 +256,62 @@ export class Graph {
       console.log('forceLayout started');
     }, forceResumeDelay);
 
+  }
+
+  registerForceMouseHandlers() {
+    var mouseDown,
+      mouseDownCoords,
+      mouseUpCoords,
+      mouseUp;
+
+    this.d3DisplayNodes
+      .on('mousedown', node => {
+        mouseDown = new Date();
+        mouseDownCoords = d3.mouse(this.presentationSVG.node());
+        this.interactionState.longStablePressEnd = false;
+      })
+      .on('mouseup', node => {
+        let mouseUp = new Date();
+      })
+      .on('mouseup', node => {
+        mouseUp = new Date();
+        mouseUpCoords = d3.mouse(this.presentationSVG.node());
+        if (mouseUp.getTime() - mouseDown.getTime() > 500)
+          if (Math.abs(mouseUpCoords[0] - mouseDownCoords[0]) < 10 &&
+              Math.abs(mouseUpCoords[1] - mouseDownCoords[1]) < 10) {
+                this.interactionState.longStablePressEnd = true;
+                node.fixed = false;
+          }
+      })
+      .on('dblclick', node => {
+        console.log(node.id);
+      });
+      //
+      // mouse over and mouse out events use a named transition (see https://gist.github.com/mbostock/24bdd02df2a72866b0ec)
+      // in order to both not collide with other events' transitions, such as the click transitions,
+      // and to cancel each other per.
+      //
+      // .on('mouseover', function(node) { // see better implementation at http://jsfiddle.net/cuckovic/FWKt5/
+      //   for (edge of displayGraph.nodeEdges(node.id)) {
+      //     // highlight the edge
+      //     var selector = '#link' + edge.v + 'to' + edge.w
+      //     presentationSVG.select(selector).transition().style('stroke-width', 3)
+      //     // highlight its nodes
+      //     toggleHighlightState(edge.v, 'highlight')
+      //     toggleHighlightState(edge.w, 'highlight')
+      //   }
+      // })
+
+      // .on('mouseout', function(node) {
+      //   for (edge of displayGraph.nodeEdges(node.id)) {
+      //     // unhighlight the edge
+      //     var selector = '#link' + edge.v + 'to' + edge.w
+      //     presentationSVG.select(selector).transition().style('stroke-width', 1).delay(300)
+      //     // unhighlight its nodes
+      //     toggleHighlightState(edge.v, 'unhighlight')
+      //     toggleHighlightState(edge.w, 'unhighlight')
+      //   }
+      // })
   }
 
   rewarmForceLayout() {
@@ -445,8 +454,7 @@ export class Graph {
     this.rewarmForceLayout();
   }
 
-
-  // TODO: bBoxCalc...
+  // A brand new graph
   dataChanged(newValue) {
     if (newValue) {
       // TODO: visualizer applyGraphFilters, debugListSpecialNodes
@@ -459,6 +467,7 @@ export class Graph {
     }
   }
 
+  // user typed some text into the auto-complete
   queryChanged(newValue) {
     if (newValue) {
       console.log(`queryChanged: ${newValue}`);
