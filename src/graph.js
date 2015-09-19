@@ -70,14 +70,61 @@ export class Graph {
       .charge(-150)
       .on('tick', this.tick.bind(this));
 
-    // TODO Bring in drag logic from visualizer
+    this.registerDragHandlers();
+  }
+
+  /**
+   * Determine d3 drag-end v.s. a click, by mouse movement
+   * (this is the price of using the d3 drag event,
+   *  see e.g. // see http://stackoverflow.com/questions/19931307/d3-differentiate-between-click-and-drag-for-an-element-which-has-a-drag-behavior)
+   */
+  registerDragHandlers() {
+    var dragStartMouseCoords,
+      dragEndMouseCoords;
+
     this.drag = this.forceLayout.drag();
+
     this.drag.on('dragstart', d => {
-      console.log('dragstart');
+      dragStartMouseCoords = d3.mouse(this.presentationSVG.node());
     });
+
     this.drag.on('dragend', node => {
-      console.log('dragend');
+      if (this.interactionState.longStablePressEnd) return;
+      dragEndMouseCoords = d3.mouse(this.presentationSVG.node());
+
+      if (Math.abs(dragStartMouseCoords[0] - dragEndMouseCoords[0]) === 0 &&
+          Math.abs(dragStartMouseCoords[1] - dragEndMouseCoords[1]) === 0) {
+          // consider it a "click"
+          // is the ctrl key down during the click?
+          if (this.interactionState.ctrlDown) {
+            this.toggleNodeSelect(node);
+          } else {
+            this.toggleNodeExpansion(node);
+          }
+      }
+      else {
+        // consider it a drag end and fix the node position
+        node.fixed = true;
+      }
     });
+  }
+
+  toggleNodeExpansion(node) {
+    if (node.expandStatus === 'collapsed') {
+      this.expandNode(node);
+    } else if (node.expandStatus === 'expanded') {
+      this.collapseNode(node);
+    }
+  }
+
+  toggleNodeSelect(node) {
+    if (node.selectStatus === 'unselected') {
+      node.selectStatus = 'selected';
+      this.adjustedNodeRimVisualization(node, 500);
+    } else if (node.selectStatus === 'selected') {
+      node.selectStatus = 'unselected';
+      this.adjustedNodeRimVisualization(node, 500);
+    }
   }
 
   /**
@@ -278,40 +325,54 @@ export class Graph {
         mouseUpCoords = d3.mouse(this.presentationSVG.node());
         if (mouseUp.getTime() - mouseDown.getTime() > 500)
           if (Math.abs(mouseUpCoords[0] - mouseDownCoords[0]) < 10 &&
-              Math.abs(mouseUpCoords[1] - mouseDownCoords[1]) < 10) {
-                this.interactionState.longStablePressEnd = true;
-                node.fixed = false;
+            Math.abs(mouseUpCoords[1] - mouseDownCoords[1]) < 10) {
+              this.interactionState.longStablePressEnd = true;
+              node.fixed = false;
           }
       })
       .on('dblclick', node => {
         console.log(node.id);
-      });
+      })
       //
       // mouse over and mouse out events use a named transition (see https://gist.github.com/mbostock/24bdd02df2a72866b0ec)
       // in order to both not collide with other events' transitions, such as the click transitions,
       // and to cancel each other per.
+      // see better implementation at http://jsfiddle.net/cuckovic/FWKt5/
       //
-      // .on('mouseover', function(node) { // see better implementation at http://jsfiddle.net/cuckovic/FWKt5/
-      //   for (edge of displayGraph.nodeEdges(node.id)) {
-      //     // highlight the edge
-      //     var selector = '#link' + edge.v + 'to' + edge.w
-      //     presentationSVG.select(selector).transition().style('stroke-width', 3)
-      //     // highlight its nodes
-      //     toggleHighlightState(edge.v, 'highlight')
-      //     toggleHighlightState(edge.w, 'highlight')
-      //   }
-      // })
+      .on('mouseover', node => {
+        for (let edge of this.displayGraph.nodeEdges(node.id)) {
+          // highlight the edge
+          var selector = '#link' + edge.v + 'to' + edge.w;
+          this.presentationSVG.select(selector).transition().style('stroke-width', 3);
+          // highlight its nodes
+          this.toggleHighlightState(edge.v, 'highlight');
+          this.toggleHighlightState(edge.w, 'highlight');
+        }
+      })
+      .on('mouseout', node => {
+        for (let edge of this.displayGraph.nodeEdges(node.id)) {
+          // unhighlight the edge
+          var selector = '#link' + edge.v + 'to' + edge.w;
+          this.presentationSVG.select(selector).transition().style('stroke-width', 1).delay(300);
+          // unhighlight its nodes
+          this.toggleHighlightState(edge.v, 'unhighlight');
+          this.toggleHighlightState(edge.w, 'unhighlight');
+        }
+      });
+  }
 
-      // .on('mouseout', function(node) {
-      //   for (edge of displayGraph.nodeEdges(node.id)) {
-      //     // unhighlight the edge
-      //     var selector = '#link' + edge.v + 'to' + edge.w
-      //     presentationSVG.select(selector).transition().style('stroke-width', 1).delay(300)
-      //     // unhighlight its nodes
-      //     toggleHighlightState(edge.v, 'unhighlight')
-      //     toggleHighlightState(edge.w, 'unhighlight')
-      //   }
-      // })
+  toggleHighlightState(nodeId, targetState) {
+    var node = this.displayGraph.node(nodeId);
+
+    if (targetState === 'highlight') {
+      node.highlightStatus = 'highlighted';
+      this.adjustedNodeRimVisualization(node, 200);
+    }
+
+    if (targetState === 'unhighlight') {
+      node.highlightStatus = 'unhighlighted';
+      this.adjustedNodeRimVisualization(node, 500);
+    }
   }
 
   rewarmForceLayout() {
@@ -450,6 +511,25 @@ export class Graph {
     //   showSourceCode(node)
     // if (node.definition === 'external')
     //   console.log(node.displayName + ' is defined externally to the project being visualized')
+
+    this.rewarmForceLayout();
+  }
+
+  collapseNode(node) {
+    var selector = '#node' + node.id;
+
+    node.expandStatus = 'collapsed';
+    node.radius = node.collapsedRadius;
+
+    // can't use arrow function due to d3.select(this)
+    this.presentationSVG.select(selector).each(function(group) {
+      var g = d3.select(this);
+      g.selectAll("text").remove();
+      g.select(".circle")
+        .transition('nodeResizing')
+        .duration(400)
+        .attr("r", node.radius);
+    });
 
     this.rewarmForceLayout();
   }
