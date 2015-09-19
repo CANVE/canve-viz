@@ -469,11 +469,13 @@ export class Graph {
     });
   }
 
+  /**
+   * Assign expanded radius based on the bounding box needed for rendering the text,
+   * plus some padding of the same size as the active font size
+   */
   expandNode(node) {
     node.expandStatus = 'expanded';
 
-    // assign expanded radius based on the bounding box needed for rendering the text,
-    // plus some padding of the same size as the active font size
     // FIXME doesnt work for first one initial render
     var bbox = this.calcBBox(node);
     var expandedRadius = Math.max(bbox.width, bbox.height)/2 + this.sphereFontSize;
