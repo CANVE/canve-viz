@@ -37,22 +37,16 @@ export class Graph {
     };
 
     // create svg for working out dimensions necessary for rendering labels' text
-    // experiment make it visible to debug bbox
     var hiddenSVG = d3.select(this.element)
       .append('svg:svg')
-      // .attr('width', 0)
-      .attr('width', 500)
-      // .attr('height', 0);
-      .attr('height', 500);
+      .attr('width', 0)
+      .attr('height', 0);
 
     this.svgText = hiddenSVG.append('svg:text')
-      //  .attr('y', -500)
-      //  .attr('x', -500)
-       .attr('y', 100)
-       .attr('x', 100)
-       .style('font-size', this.sphereFontSize);
+      .attr('y', -500)
+      .attr('x', -500)
+      .style('font-size', this.sphereFontSize);
 
-    // Does it need to be position absolute?
     this.presentationSVG = d3.select(this.element)
       .append('svg:svg')
       .style('position', 'absolute')
@@ -562,13 +556,7 @@ export class Graph {
   // A brand new graph
   dataChanged(newValue) {
     if (newValue) {
-      // TODO: visualizer applyGraphFilters, debugListSpecialNodes
-
-      // Experiment, calcBbox here
-      this.graphModel.globalGraphModel.nodes().forEach(nodeId => {
-        let currentNode = this.graphModel.globalGraphModel.node(nodeId);
-        currentNode.textBbox = this.calcBBox(currentNode);
-      });
+      // TODO: port from visualizer: applyGraphFilters, debugListSpecialNodes
 
       this.graphModel.initRadii();
       this.displayGraph = this.graphModel.emptyGraph();
