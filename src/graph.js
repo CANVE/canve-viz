@@ -5,7 +5,7 @@ import GraphLibD3 from 'graphlib-d3';
 import GraphModel from 'graph-model';
 import GraphFinder from 'graph-finder';
 import GraphModifier from 'graph-modifier';
-import { formattedText } from 'graph-text';
+import { formattedText, calcBBox } from 'graph-text';
 
 /* jshint ignore:start */
 @customAttribute('graph')
@@ -43,11 +43,10 @@ export class Graph {
       .attr('height', 0);
 
     this.svgText = hiddenSVG.append('svg:text')
-       .attr('y', -500)
-       .attr('x', -500)
-       .style('font-size', this.sphereFontSize);
+      .attr('y', -500)
+      .attr('x', -500)
+      .style('font-size', this.sphereFontSize);
 
-    // Does it need to be position absolute?
     this.presentationSVG = d3.select(this.element)
       .append('svg:svg')
       .style('position', 'absolute')
@@ -464,12 +463,16 @@ export class Graph {
     });
   }
 
+  /**
+   * Assign expanded radius based on the bounding box needed for rendering the text,
+   * plus some padding of the same size as the active font size
+   */
   expandNode(node) {
     node.expandStatus = 'expanded';
 
-    // assign expanded radius based on the bounding box needed for rendering the text,
-    // plus some padding of the same size as the active font size
-    var expandedRadius = Math.max(node.textBbox.width, node.textBbox.height)/2 + this.sphereFontSize;
+    // FIXME doesnt work for first one initial render
+    var bbox = calcBBox(this.svgText, node);
+    var expandedRadius = Math.max(bbox.width, bbox.height)/2 + this.sphereFontSize;
     node.radius = expandedRadius;
 
     this.extendExpandedNodeEdges(node);
@@ -481,7 +484,10 @@ export class Graph {
     this.presentationSVG.select(selector).each(function(group) {
       var g = d3.select(this);
       g.select('.circle')
-        .transition('nodeResizing').duration(200).attr('r', node.radius).attr('stroke-width', Math.max(3, Math.sqrt(node.radius)/2))
+        .transition('nodeResizing')
+        .duration(200)
+        .attr('r', node.radius)
+        .attr('stroke-width', Math.max(3, Math.sqrt(node.radius)/2))
         .each('end', function(node) {
           var svgText = g.append('text')
             .style('font-size', self.sphereFontSize)
@@ -494,7 +500,7 @@ export class Graph {
             .attr('pointer-events', 'none');
 
           formattedText(node).forEach((line, i) => {
-            self.svgText.append('tspan')
+            svgText.append('tspan')
               .attr('x', 0)
               .attr('dy', function() {
                 if (i === 0) return 0;
@@ -537,7 +543,8 @@ export class Graph {
   // A brand new graph
   dataChanged(newValue) {
     if (newValue) {
-      // TODO: visualizer applyGraphFilters, debugListSpecialNodes
+      // TODO: port from visualizer: applyGraphFilters, debugListSpecialNodes
+
       this.graphModel.initRadii();
       this.displayGraph = this.graphModel.emptyGraph();
 

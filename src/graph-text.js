@@ -28,18 +28,12 @@ export function formattedText(node) {
    text.push(line);
   });
 
-   return text;
+  return text;
  }
 
 export function calcBBox(svgText, node) {
-  // if (!svgText) {
-  //   debugger;
-  // }
   svgText.selectAll('tspan').remove();
-  // if (!node) {
-  //   debugger;
-  // }
-  formattedText(node).forEach(line => {
+  formattedText(node).forEach(function(line) {
     svgText.append('tspan')
       .attr('text-anchor', 'middle')
       .attr('x', 0)
