@@ -50,10 +50,10 @@ export default class GraphModifier {
       node.expandStatus    = 'collapsed';
       node.selectStatus    = 'unselected';
       node.highlightStatus = 'unhighlighted';
-      node.textBbox = calcBBox(svgText, node);
+      // node.textBbox = calcBBox(svgText, node);
 
       // FIXME: they're all zero, maybe need it on globalGraph after all
-      console.dir(node.textBbox);
+      // console.dir(node.textBbox);
 
       graph.setNode(id, node);
 

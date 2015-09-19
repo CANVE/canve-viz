@@ -37,14 +37,19 @@ export class Graph {
     };
 
     // create svg for working out dimensions necessary for rendering labels' text
+    // experiment make it visible to debug bbox
     var hiddenSVG = d3.select(this.element)
       .append('svg:svg')
-      .attr('width', 0)
-      .attr('height', 0);
+      // .attr('width', 0)
+      .attr('width', 500)
+      // .attr('height', 0);
+      .attr('height', 500);
 
     this.svgText = hiddenSVG.append('svg:text')
-       .attr('y', -500)
-       .attr('x', -500)
+      //  .attr('y', -500)
+      //  .attr('x', -500)
+       .attr('y', 100)
+       .attr('x', 100)
        .style('font-size', this.sphereFontSize);
 
     // Does it need to be position absolute?
@@ -469,7 +474,9 @@ export class Graph {
 
     // assign expanded radius based on the bounding box needed for rendering the text,
     // plus some padding of the same size as the active font size
-    var expandedRadius = Math.max(node.textBbox.width, node.textBbox.height)/2 + this.sphereFontSize;
+    // FIXME doesnt work for first one initial render
+    var bbox = this.calcBBox(node);
+    var expandedRadius = Math.max(bbox.width, bbox.height)/2 + this.sphereFontSize;
     node.radius = expandedRadius;
 
     this.extendExpandedNodeEdges(node);
@@ -481,7 +488,10 @@ export class Graph {
     this.presentationSVG.select(selector).each(function(group) {
       var g = d3.select(this);
       g.select('.circle')
-        .transition('nodeResizing').duration(200).attr('r', node.radius).attr('stroke-width', Math.max(3, Math.sqrt(node.radius)/2))
+        .transition('nodeResizing')
+        .duration(200)
+        .attr('r', node.radius)
+        .attr('stroke-width', Math.max(3, Math.sqrt(node.radius)/2))
         .each('end', function(node) {
           var svgText = g.append('text')
             .style('font-size', self.sphereFontSize)
@@ -534,10 +544,30 @@ export class Graph {
     this.rewarmForceLayout();
   }
 
+  // Experiment, calcBbox here
+  calcBBox(node) {
+    this.svgText.selectAll('tspan').remove();
+    formattedText(node).forEach(line => {
+      this.svgText.append('tspan')
+        .attr("text-anchor", "middle")
+        .attr('x', 0)
+        .attr('dy', '1.2em')
+        .text(line);
+    });
+    return this.svgText.node().getBBox();
+  }
+
   // A brand new graph
   dataChanged(newValue) {
     if (newValue) {
       // TODO: visualizer applyGraphFilters, debugListSpecialNodes
+
+      // Experiment, calcBbox here
+      this.graphModel.globalGraphModel.nodes().forEach(nodeId => {
+        let currentNode = this.graphModel.globalGraphModel.node(nodeId);
+        currentNode.textBbox = this.calcBBox(currentNode);
+      });
+
       this.graphModel.initRadii();
       this.displayGraph = this.graphModel.emptyGraph();
 
