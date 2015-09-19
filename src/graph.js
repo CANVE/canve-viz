@@ -5,7 +5,7 @@ import GraphLibD3 from 'graphlib-d3';
 import GraphModel from 'graph-model';
 import GraphFinder from 'graph-finder';
 import GraphModifier from 'graph-modifier';
-import { formattedText } from 'graph-text';
+import { formattedText, calcBBox } from 'graph-text';
 
 /* jshint ignore:start */
 @customAttribute('graph')
@@ -471,7 +471,7 @@ export class Graph {
     node.expandStatus = 'expanded';
 
     // FIXME doesnt work for first one initial render
-    var bbox = this.calcBBox(node);
+    var bbox = calcBBox(this.svgText, node);
     var expandedRadius = Math.max(bbox.width, bbox.height)/2 + this.sphereFontSize;
     node.radius = expandedRadius;
 
@@ -538,19 +538,6 @@ export class Graph {
     });
 
     this.rewarmForceLayout();
-  }
-
-  // Experiment, calcBbox here
-  calcBBox(node) {
-    this.svgText.selectAll('tspan').remove();
-    formattedText(node).forEach(line => {
-      this.svgText.append('tspan')
-        .attr("text-anchor", "middle")
-        .attr('x', 0)
-        .attr('dy', '1.2em')
-        .text(line);
-    });
-    return this.svgText.node().getBBox();
   }
 
   // A brand new graph
