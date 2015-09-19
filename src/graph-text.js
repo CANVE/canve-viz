@@ -40,6 +40,5 @@ export function calcBBox(svgText, node) {
       .attr('dy', '1.2em')
       .text(line);
   });
-  console.dir(svgText.node().getBBox());
   return svgText.node().getBBox();
 }
