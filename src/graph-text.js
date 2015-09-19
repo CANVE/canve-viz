@@ -24,6 +24,8 @@ export function formattedText(node) {
   var text = [],
     splitName = splitByLengthAndCamelOrWord(node.displayName);
 
+  console.log('*** formattedText: ' + node.displayName);
+
   splitName.forEach(function(line) {
    text.push(line);
   });

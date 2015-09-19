@@ -494,7 +494,7 @@ export class Graph {
             .attr('pointer-events', 'none');
 
           formattedText(node).forEach((line, i) => {
-            self.svgText.append('tspan')
+            svgText.append('tspan')
               .attr('x', 0)
               .attr('dy', function() {
                 if (i === 0) return 0;
