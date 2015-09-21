@@ -6,10 +6,15 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 @inject(EventAggregator)
 export class SearchGraph {
   @bindable data;
-  
+
   constructor(pubSub) {
     this.pubSub = pubSub;
     // TODO somewhere publish user's selected search query
+  }
+
+  dataChanged(newVal) {
+    console.log('search-graph newVal:');
+    console.dir(newVal);
   }
 
 }
