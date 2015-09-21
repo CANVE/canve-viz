@@ -1,10 +1,12 @@
 <template>
   <require from="graph"></require>
   <require from="source-code"></require>
+  <require from="search-graph"></require>
 
   <!-- Search -->
   <!-- TODO Make custom attr or element to wrap Awesomplete -->
-  <input type="text" value.bind="search" class="form-control" id="search" placeholder="search code...">
+  <!-- <input type="text" value.bind="search" class="form-control" id="search" placeholder="search code..."> -->
+  <search-graph data.bind="foo"></search-graph>
 
   <!-- Visualization (better name than foo for the data) -->
   <div graph="data.bind: foo; query.bind: search"></div>
