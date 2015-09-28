@@ -449,6 +449,8 @@ export class Graph {
     this.updateForceLayout(this.displayGraph);
 
     if (node.expandStatus === 'collapsed') {
+      // Delay the bounding box calculation to the end when DOM is rendered
+      // https://github.com/CANVE/canve-viz/issues/18
       this.taskQueue.queueMicroTask(() => {
         this.expandNode(node);
       });
