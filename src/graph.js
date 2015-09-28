@@ -1,4 +1,4 @@
-import {inject, customAttribute, bindable} from 'aurelia-framework';
+import {inject, customAttribute, bindable, TaskQueue} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
 import GraphLibD3 from 'graphlib-d3';
@@ -9,7 +9,7 @@ import { formattedText, calcBBox } from 'graph-text';
 
 /* jshint ignore:start */
 @customAttribute('graph')
-@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, TaskQueue)
 /* jshint ignore:end */
 export class Graph {
   /* jshint ignore:start */
@@ -17,13 +17,14 @@ export class Graph {
   @bindable query;
   /* jshint ignore:end */
 
-  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier) {
+  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, taskQueue) {
     this.element = element;
     this.pubSub = pubSub;
     this.graphLibD3 = graphLibD3;
     this.graphModel = graphModel;
     this.graphFinder = graphFinder;
     this.graphModifier = graphModifier;
+    this.taskQueue = taskQueue;
     this.initSvg();
   }
 
@@ -448,7 +449,9 @@ export class Graph {
     this.updateForceLayout(this.displayGraph);
 
     if (node.expandStatus === 'collapsed') {
-      this.expandNode(node);
+      this.taskQueue.queueMicroTask(() => {
+        this.expandNode(node);
+      });
     }
   }
 
@@ -468,16 +471,14 @@ export class Graph {
    * plus some padding of the same size as the active font size
    */
   expandNode(node) {
-    node.expandStatus = 'expanded';
-
-    // FIXME doesnt work for first one initial render
     var bbox = calcBBox(this.svgText, node);
     var expandedRadius = Math.max(bbox.width, bbox.height)/2 + this.sphereFontSize;
+    var selector = '#node' + node.id;
+
+    node.expandStatus = 'expanded';
     node.radius = expandedRadius;
 
     this.extendExpandedNodeEdges(node);
-
-    var selector = '#node' + node.id;
 
     // Can't use arrow function here because of d3.select(this)
     var self = this;
