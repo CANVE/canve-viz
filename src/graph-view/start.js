@@ -2,8 +2,8 @@ import {inject} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-fetch-client';
 import 'fetch';
 import Papa from 'npm:papaparse@4.1.2/papaparse.js';
-import DataCleaner from 'data-cleaner';
-import GraphModel from 'graph/graph-model';
+import DataCleaner from './data-cleaner';
+import GraphModel from '../graph/graph-model';
 
 @inject(HttpClient, DataCleaner, GraphModel)
 export class Start {
