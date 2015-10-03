@@ -1,11 +1,11 @@
 import {inject, customAttribute, bindable, TaskQueue} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
-import GraphLibD3 from 'graphlib-d3';
-import GraphModel from 'graph-model';
-import GraphFinder from 'graph-finder';
-import GraphModifier from 'graph-modifier';
-import { formattedText, calcBBox } from 'graph-text';
+import GraphLibD3 from './graphlib-d3';
+import GraphModel from './graph-model';
+import GraphFinder from './graph-finder';
+import GraphModifier from './graph-modifier';
+import { formattedText, calcBBox } from './graph-text';
 
 /* jshint ignore:start */
 @customAttribute('graph')

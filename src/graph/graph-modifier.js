@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
-import GraphModel from 'graph-model';
-import { calcBBox } from 'graph-text';
+import GraphModel from './graph-model';
+import { calcBBox } from './graph-text';
 
 @inject(GraphModel)
 export default class GraphModifier {
