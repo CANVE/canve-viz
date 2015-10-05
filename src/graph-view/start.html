@@ -1,6 +1,5 @@
 <template>
-  <require from="graph"></require>
-  <require from="source-code"></require>
+  <require from="../graph/graph"></require>
   <require from="search-graph"></require>
 
   <!-- Search -->
@@ -8,8 +7,5 @@
 
   <!-- Visualization (TODO better name than foo for the data) -->
   <div graph="data.bind: foo; query.bind: search"></div>
-
-  <!-- Source code (TODO may not need this if tween the d3 node to display the source) -->
-  <source-code></source-code>
 
 </template>
