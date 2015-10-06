@@ -47,6 +47,7 @@ System.config({
     "fetch": "github:github/fetch@0.9.0",
     "font-awesome": "npm:font-awesome@4.4.0",
     "graphlib": "npm:graphlib@1.0.7",
+    "jquery": "github:components/jquery@2.1.4",
     "papaparse": "npm:papaparse@4.1.2",
     "github:aurelia/animator-css@0.16.0": {
       "aurelia-metadata": "github:aurelia/metadata@0.8.0",

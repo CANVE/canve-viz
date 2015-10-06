@@ -1,7 +1,9 @@
 import {inject} from 'aurelia-framework';
 import {customElement, bindable} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import * as Awesomplete from 'npm:awesomplete@1.0.0/awesomplete.js';
+// import * as Awesomplete from 'npm:awesomplete@1.0.0/awesomplete.js';
+import $ from 'jquery';
+import 'npm:awesomplete@1.0.0/awesomplete.js';
 
 @customElement('search-graph')
 @inject(Element, EventAggregator)
@@ -20,8 +22,11 @@ export class SearchGraph {
     let nodeNames = newVal.map( node => {
       return node.name;
     });
-    // new Awesomplete.constructor(this.element, { list: nodeNames });
-    Awesomplete.constructor(this.element, { list: nodeNames });
+    new Awesomplete(
+      $(this.element).find('input').get(0),
+      { list: nodeNames }
+    );
+    // Awesomplete.constructor(this.element, { list: nodeNames });
   }
 
 }
