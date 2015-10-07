@@ -18,12 +18,15 @@ export class SearchGraph {
     let nodeNames = newVal.map( node => {
       return node.displayName;
     });
+    let $inputElement = $(this.element).find('input');
+    let domInputElement = $inputElement.get(0);
+
     new Awesomplete(
-      $(this.element).find('input').get(0),
+      domInputElement,
       { list: nodeNames }
     );
-    $(this.element).find('input').get(0).addEventListener('awesomplete-selectcomplete', () => {
-      let selectedVal = $(this.element).find('input').val();
+    domInputElement.addEventListener('awesomplete-selectcomplete', () => {
+      let selectedVal = $inputElement.val();
       console.log(`awesomeplete value selected: ${selectedVal}`);
       // TODO publish user's selected search query
     });
