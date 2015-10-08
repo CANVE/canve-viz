@@ -15,16 +15,44 @@ export class SearchGraph {
   }
 
   dataChanged(newVal) {
-    let nodeNames = newVal.map( node => {
-      return node.displayName;
+    let nodes = newVal.nodes().map(function(id) {
+      return {
+        id: id,
+        data: newVal.node(id)
+      };
     });
+
     let $inputElement = $(this.element).find('input');
     let domInputElement = $inputElement.get(0);
 
-    new Awesomplete(
-      domInputElement,
-      { list: nodeNames }
-    );
+    new Awesomplete( domInputElement, {
+      minChars: 1,
+      maxItems: 100,
+      list: nodes,
+      item: function (node, input) {
+        let suggestedElem = document.createElement('li');
+        suggestedElem.appendChild(document.createTextNode(node.data.displayName + ' (' + node.id + ')'));
+        return suggestedElem;
+      },
+      filter: function (node, input) {
+        return node.data.name.toLowerCase().indexOf(input.toLowerCase()) > -1 ||
+          node.id === input;
+      },
+      sort: function compare(a, b) {
+        if (a.data.name < b.data.name) return -1;
+        if (a.data.name > b.data.name) return 1;
+        return 0;
+      },
+      replace: function(text) {
+        // gathers the node id of the selection
+        var id = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
+        var node = newVal.node(id);
+        console.log('user selected ' + text);
+        // fireGraphDisplay(id)
+        // searchDialogDisable()
+      }
+    });
+
     domInputElement.addEventListener('awesomplete-selectcomplete', () => {
       let selectedVal = $inputElement.val();
       console.log(`awesomeplete value selected: ${selectedVal}`);
