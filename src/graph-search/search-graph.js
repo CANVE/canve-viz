@@ -29,12 +29,12 @@ export class SearchGraph {
       minChars: 1,
       maxItems: 100,
       list: nodes,
-      item: function (node, input) {
+      item: (node, input) => {
         let suggestedElem = document.createElement('li');
         suggestedElem.appendChild(document.createTextNode(node.data.displayName + ' (' + node.id + ')'));
         return suggestedElem;
       },
-      filter: function (node, input) {
+      filter: (node, input) => {
         return node.data.name.toLowerCase().indexOf(input.toLowerCase()) > -1 ||
           node.id === input;
       },
@@ -43,21 +43,19 @@ export class SearchGraph {
         if (a.data.name > b.data.name) return 1;
         return 0;
       },
-      replace: function(text) {
-        // gathers the node id of the selection
+      replace: (text) => {
         var id = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
         var node = newVal.node(id);
-        console.log('user selected ' + text);
-        // fireGraphDisplay(id)
-        // searchDialogDisable()
+        this.pubSub.publish('search.node', id);
       }
     });
 
-    domInputElement.addEventListener('awesomplete-selectcomplete', () => {
-      let selectedVal = $inputElement.val();
-      console.log(`awesomeplete value selected: ${selectedVal}`);
-      // TODO publish user's selected search query
-    });
+    // Maybe don't need this if we have replace function above
+    // domInputElement.addEventListener('awesomplete-selectcomplete', () => {
+    //   let selectedVal = $inputElement.val();
+    //   console.log(`awesomeplete value selected: ${selectedVal}`);
+    //   // TODO publish user's selected search query
+    // });
   }
 
 }
