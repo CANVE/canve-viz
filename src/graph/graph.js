@@ -26,6 +26,10 @@ export class Graph {
     this.graphModifier = graphModifier;
     this.taskQueue = taskQueue;
     this.initSvg();
+
+    this.pubSub.subscribe('search.node', nodeId => {
+      this.fireGraphDisplay(nodeId);
+    });
   }
 
   initSvg() {

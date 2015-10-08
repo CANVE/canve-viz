@@ -40,6 +40,7 @@ export class Start {
       };
       this.graphModel.populateModel(graphData);
       this.foo = this.graphModel.globalGraphModel;
+      this.searchTerms = this.graphModel.globalGraphModel;
     }).catch(err => console.error(err.stack));
   }
 

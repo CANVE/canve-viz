@@ -4,6 +4,7 @@
   "undef": true,
   "eqeqeq": true,
   "globals": {
-    "console": false
+    "console": false,
+    "Awesomplete": false
   }
 }

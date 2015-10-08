@@ -37,6 +37,7 @@ System.config({
     "aurelia-templating-resources": "github:aurelia/templating-resources@0.15.0",
     "aurelia-templating-router": "github:aurelia/templating-router@0.16.0",
     "aurelia/fetch-client": "github:aurelia/fetch-client@0.1.1",
+    "awesomplete": "npm:awesomplete@1.0.0",
     "babel": "npm:babel-core@5.8.23",
     "babel-runtime": "npm:babel-runtime@5.8.20",
     "bootstrap": "github:twbs/bootstrap@3.3.5",
@@ -46,6 +47,7 @@ System.config({
     "fetch": "github:github/fetch@0.9.0",
     "font-awesome": "npm:font-awesome@4.4.0",
     "graphlib": "npm:graphlib@1.0.7",
+    "jquery": "github:components/jquery@2.1.4",
     "papaparse": "npm:papaparse@4.1.2",
     "github:aurelia/animator-css@0.16.0": {
       "aurelia-metadata": "github:aurelia/metadata@0.8.0",

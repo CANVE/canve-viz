@@ -75,6 +75,7 @@
       "aurelia-templating-binding": "github:aurelia/templating-binding@^0.15.0",
       "aurelia-templating-resources": "github:aurelia/templating-resources@^0.15.0",
       "aurelia-templating-router": "github:aurelia/templating-router@^0.16.0",
+      "awesomplete": "npm:awesomplete@^1.0.0",
       "bootstrap": "github:twbs/bootstrap@^3.3.4",
       "core-js": "npm:core-js@^0.9.4",
       "d3": "github:mbostock/d3@^3.5.6",
@@ -82,6 +83,7 @@
       "fetch": "github:github/fetch@^0.9.0",
       "font-awesome": "npm:font-awesome@^4.3.0",
       "graphlib": "npm:graphlib@^1.0.7",
+      "jquery": "github:components/jquery@^2.1.4",
       "papaparse": "npm:papaparse@^4.1.2"
     },
     "devDependencies": {
