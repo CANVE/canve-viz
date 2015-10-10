@@ -25,6 +25,20 @@ gulp.task('tdd', function (done) {
 });
 
 /**
+ * Continuous Integration (headless)
+ */
+gulp.task('ci', function (done) {
+    karma.start({
+        configFile: __dirname + '/../../karma.conf.js',
+        singleRun: true,
+        autoWatch: false,
+        browsers: ['PhantomJS'],
+    }, function(e) {
+        done();
+    });
+});
+
+/**
  * Run test once with code coverage and exit
  */
 gulp.task('cover', function (done) {
