@@ -1,5 +1,7 @@
 # CANVE Visualizer
 
+[![Build Status](https://travis-ci.org/CANVE/canve-viz.svg?branch=feature%2F22-setup-unit-testing)](https://travis-ci.org/CANVE/canve-viz)
+
 CANVE visualizer app scaffolded with [generator-aurelia](https://github.com/zewa666/generator-aurelia).
 
 Proof of concept stage to investigate Aurelia and D3 integration.
