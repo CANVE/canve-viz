@@ -35,17 +35,20 @@ export class DataCleaner {
     }
   }
 
+  swapEdgeDirection(edge) {
+    let t = edge.id1;
+    edge.id1 = edge.id2;
+    edge.id2 = t;
+  }
+
   // make an 'owned by' edge equivalent to a 'declares member' edge
   // the nature of the real-world difference will be sorted out by using this
   // code, but as it currently stands they are considered just the same here.
   // in the end, this will be handled in the Scala code itself
   ownerShipNormalize(edge) {
     if (edge.edgeKind === 'owned by') {
-      // swap edge's direction
-      let t = edge.id1;
-      edge.id1 = edge.id2;
-      edge.id2 = t;
       edge.edgeKind = 'declares member';
+      this.swapEdgeDirection(edge);
     }
   }
 
