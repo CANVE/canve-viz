@@ -1,0 +1,20 @@
+sudo: false
+
+env:
+  global:
+    secure: z4aoygJRlIKtoyu0ujoU7y6aHHSIcv+2X43Vdgj2biL6WCvYAfbRVOebKQVmTtF8ATUHQz61y6YAJOxnxlwIqjYe2qUQKORmIN5ZZTAfjV2pP7wb+y35dpdrLphfTVzJoTCQum8Nmi/C2tbeEqrD6QeVSrD5YP8KgYf4QBsbxZc9iBg1fximVkz7negme/oPj6kjiErKoNS8xW/zDU8Ll6oeaLfFYa3X7tinJ0aBxI+zwyYhPZaFgQUkSxiBc/tAAKAzOqdD1hkSRohCIx+Q+Nuo6iospItMpV3s88PljoFlbA/ehfAwBgMnNROgKq+gQmNHmdD4/uZokNWmvQzrq821ixC72sUdozLenQ6hEKuBEVG76frPj70hJu/A3Vv5c3pQCjmsrEz8erUGmBOhASaoooJ/yl/sjbByf5dnRnyg+vXVcupOnChTYFCH1XBPaNWwZrLVCCvDBzQKFt74kx4eGlH9JJFKI7St4Yifen7Mu8VUpjd2rqx+f7O5Qm90hxxCqO7gPpbasHdWesFWIT21oAF0n1LVgKqnqfM71uCQjz4oqChdz74lJZE7Gfb/LhKOhsrtNqD8D8e+LGg2g8Bo/3e4fm5jWQOch/Ax/GA5TZ/IJGPtd7MBpAMPnCNlTZY9/iSF7LsM1vX9VbLotfMKg9UZT4Z5yTcHl/djGkQ=
+
+before_install:
+- npm install -g jspm
+- jspm config registries.github.auth $JSPM_GITHUB_AUTH_TOKEN
+
+language: node_js
+
+node_js:
+- '4.1'
+
+before_script:
+- npm install -g gulp
+- jspm install
+
+script: gulp ci

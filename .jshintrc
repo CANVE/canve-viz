@@ -5,6 +5,13 @@
   "eqeqeq": true,
   "globals": {
     "console": false,
-    "Awesomplete": false
+    "Awesomplete": false,
+    "module": false,
+    "require": false,
+    "__dirname": false,
+    "describe": false,
+    "beforeEach": false,
+    "it": false,
+    "expect": false
   }
 }
