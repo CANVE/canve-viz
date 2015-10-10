@@ -1,4 +1,4 @@
-export default class DataCleaner {
+export class DataCleaner {
 
   adjustNames(node) {
     if (node.kind === 'anonymous class' && node.name === '$anon') {
