@@ -5,3 +5,4 @@ before_script:
   - npm install -g gulp
   - npm install -g jspm
 script: gulp ci
+sudo: false
