@@ -72,4 +72,13 @@ export default class GraphModifier {
     return graph;
   }
 
+  // https://github.com/cpettitt/graphlib/wiki/API-Reference
+  // a trivial implementation for now, just to get some traction on undo feature,
+  // of course the real solution will also have to remove edges and neighbours
+  removeNodeEnv(graph, id, degree, svgText) {
+    // let node = graph.node(id);
+    graph.removeNode(id);
+    return graph;
+  }
+
 }

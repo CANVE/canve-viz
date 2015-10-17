@@ -49,13 +49,11 @@ export class SearchGraph {
         this.pubSub.publish('search.node', id);
       }
     });
+  }
 
-    // Maybe don't need this if we have replace function above
-    // domInputElement.addEventListener('awesomplete-selectcomplete', () => {
-    //   let selectedVal = $inputElement.val();
-    //   console.log(`awesomeplete value selected: ${selectedVal}`);
-    //   // TODO publish user's selected search query
-    // });
+  // temporarily placed click handler to quickly test undo feature
+  undo() {
+    this.pubSub.publish('action.undo');
   }
 
 }

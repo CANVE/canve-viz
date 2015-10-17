@@ -1,6 +1,7 @@
 import {inject, customAttribute, bindable, TaskQueue} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
+import UndoManager from 'npm:undo-manager@1.0.3/undomanager.js';
 import GraphLibD3 from './graphlib-d3';
 import GraphModel from './graph-model';
 import GraphFinder from './graph-finder';
@@ -9,7 +10,7 @@ import { formattedText, calcBBox } from './graph-text';
 
 /* jshint ignore:start */
 @customAttribute('graph')
-@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, TaskQueue)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, TaskQueue, UndoManager)
 /* jshint ignore:end */
 export class Graph {
   /* jshint ignore:start */
@@ -17,7 +18,7 @@ export class Graph {
   @bindable query;
   /* jshint ignore:end */
 
-  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, taskQueue) {
+  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, taskQueue, UndoManager) {
     this.element = element;
     this.pubSub = pubSub;
     this.graphLibD3 = graphLibD3;
@@ -25,10 +26,30 @@ export class Graph {
     this.graphFinder = graphFinder;
     this.graphModifier = graphModifier;
     this.taskQueue = taskQueue;
+
+    // TODO: Wrap this and all usages in GraphActionManager, o.w. things are gonna get messy
+    this.undoManager = UndoManager;
+
     this.initSvg();
 
     this.pubSub.subscribe('search.node', nodeId => {
-      this.fireGraphDisplay(nodeId);
+      this.addNodeAction(nodeId);
+    });
+
+    // Just for a quick test, ultimately should have ActionManager that toolbar can invoke, so no need for pubsub
+    this.pubSub.subscribe('action.undo', () => {
+      this.undoManager.undo();
+    });
+  }
+
+  addNodeAction(nodeId) {
+    // first creation
+    this.fireGraphDisplay(nodeId);
+
+    // make undo-able
+    this.undoManager.add({
+      undo: () => this.unfireGraphDisplay(nodeId),
+      redo: () => this.fireGraphDisplay(nodeId)
     });
   }
 
@@ -459,6 +480,12 @@ export class Graph {
         this.expandNode(node);
       });
     }
+  }
+
+  // a trivial implementation for now, just to get some traction on undo feature
+  unfireGraphDisplay(nodeId) {
+    this.graphModifier.removeNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+    this.updateForceLayout(this.displayGraph);
   }
 
   /**
