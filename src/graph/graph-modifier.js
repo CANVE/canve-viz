@@ -31,6 +31,14 @@ export default class GraphModifier {
     });
   }
 
+  // TODO Need to consider degree?
+  removeNodeNeighbors(graph, id) {
+    this.graphModel.globalGraphModel.nodeEdges(id).forEach(edge => {
+      graph.removeNode(edge.v);
+      graph.removeNode(edge.w);
+    });
+  }
+
   /**
    * Adds node's links to all other nodes already on the display.
    */
@@ -73,11 +81,9 @@ export default class GraphModifier {
   }
 
   // https://github.com/cpettitt/graphlib/wiki/API-Reference
-  // a trivial implementation for now, just to get some traction on undo feature,
-  // of course the real solution will also have to remove edges and neighbours
   removeNodeEnv(graph, id, degree, svgText) {
-    // let node = graph.node(id);
     graph.removeNode(id);
+    this.removeNodeNeighbors(graph, id);
     return graph;
   }
 
