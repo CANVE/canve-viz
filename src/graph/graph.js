@@ -1,7 +1,7 @@
 import {inject, customAttribute, bindable, TaskQueue} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
-import UndoManager from 'npm:undo-manager@1.0.3/undomanager.js';
+import {ActionManager} from './action-manager';
 import GraphLibD3 from './graphlib-d3';
 import GraphModel from './graph-model';
 import GraphFinder from './graph-finder';
@@ -10,7 +10,7 @@ import { formattedText, calcBBox } from './graph-text';
 
 /* jshint ignore:start */
 @customAttribute('graph')
-@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, TaskQueue, UndoManager)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, TaskQueue, ActionManager)
 /* jshint ignore:end */
 export class Graph {
   /* jshint ignore:start */
@@ -18,7 +18,7 @@ export class Graph {
   @bindable query;
   /* jshint ignore:end */
 
-  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, taskQueue, UndoManager) {
+  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, taskQueue, ActionManager) {
     this.element = element;
     this.pubSub = pubSub;
     this.graphLibD3 = graphLibD3;
@@ -26,9 +26,7 @@ export class Graph {
     this.graphFinder = graphFinder;
     this.graphModifier = graphModifier;
     this.taskQueue = taskQueue;
-
-    // TODO: Wrap this and all usages in GraphActionManager, o.w. things are gonna get messy
-    this.undoManager = UndoManager;
+    this.actionManager = ActionManager;
 
     this.initSvg();
 
@@ -37,9 +35,9 @@ export class Graph {
     });
 
     // Just for a quick test, ultimately should have ActionManager that toolbar can invoke, so no need for pubsub
-    this.pubSub.subscribe('action.undo', () => {
-      this.undoManager.undo();
-    });
+    // this.pubSub.subscribe('action.undo', () => {
+    //   this.undoManager.undo();
+    // });
   }
 
   addNodeAction(nodeId) {
@@ -47,10 +45,14 @@ export class Graph {
     this.fireGraphDisplay(nodeId);
 
     // make undo-able
-    this.undoManager.add({
-      undo: () => this.unfireGraphDisplay(nodeId),
-      redo: () => this.fireGraphDisplay(nodeId)
-    });
+    this.actionManager.addAction(this,
+      this.unfireGraphDisplay, [nodeId],
+      this.fireGraphDisplay, [nodeId]
+    );
+    // this.undoManager.add({
+    //   undo: () => this.unfireGraphDisplay(nodeId),
+    //   redo: () => this.fireGraphDisplay(nodeId)
+    // });
   }
 
   initSvg() {

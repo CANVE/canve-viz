@@ -1,7 +1,11 @@
 <template>
-  <require from="../graph/graph"></require>
+  <require from="../graph-menu/graph-menu"></require>
   <require from="../graph-search/search-graph"></require>
+  <require from="../graph/graph"></require>
 
+  <!-- Menu -->
+  <graph-menu></graph-menu>
+  
   <!-- Search -->
   <search-graph data.bind="searchTerms"></search-graph>
 
