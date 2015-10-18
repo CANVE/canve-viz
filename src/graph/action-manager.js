@@ -16,10 +16,22 @@ export class ActionManager {
   }
 
   undo() {
-    this.undoManager.undo();
+    if (this.canUndo()) {
+      this.undoManager.undo();
+    }
   }
 
   redo() {
-    this.undoManager.redo();
+    if (this.canRedo()) {
+      this.undoManager.redo();
+    }
+  }
+
+  canUndo() {
+    return this.undoManager.hasUndo();
+  }
+
+  canRedo() {
+    return this.undoManager.hasRedo();
   }
 }

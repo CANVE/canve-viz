@@ -18,4 +18,12 @@ export class SearchGraph {
     this.actionManager.redo();
   }
 
+  get canUndo() {
+    return this.actionManager.canUndo();
+  }
+
+  get canRedo() {
+    return this.actionManager.canRedo();
+  }
+
 }
