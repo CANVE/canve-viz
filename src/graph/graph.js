@@ -33,26 +33,14 @@ export class Graph {
     this.pubSub.subscribe('search.node', nodeId => {
       this.addNodeAction(nodeId);
     });
-
-    // Just for a quick test, ultimately should have ActionManager that toolbar can invoke, so no need for pubsub
-    // this.pubSub.subscribe('action.undo', () => {
-    //   this.undoManager.undo();
-    // });
   }
 
   addNodeAction(nodeId) {
-    // first creation
     this.fireGraphDisplay(nodeId);
-
-    // make undo-able
     this.actionManager.addAction(this,
       this.unfireGraphDisplay, [nodeId],
       this.fireGraphDisplay, [nodeId]
     );
-    // this.undoManager.add({
-    //   undo: () => this.unfireGraphDisplay(nodeId),
-    //   redo: () => this.fireGraphDisplay(nodeId)
-    // });
   }
 
   initSvg() {

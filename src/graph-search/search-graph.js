@@ -51,9 +51,4 @@ export class SearchGraph {
     });
   }
 
-  // temporarily placed click handler to quickly test undo feature
-  // undo() {
-  //   this.pubSub.publish('action.undo');
-  // }
-
 }
