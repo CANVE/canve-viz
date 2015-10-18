@@ -1,11 +1,15 @@
 import {inject} from 'aurelia-framework';
 import UndoManager from 'npm:undo-manager@1.0.3/undomanager.js';
 
-@inject(UndoManager)
+// Experiment
+import {Router} from 'aurelia-router';
+
+@inject(UndoManager, Router)
 export class ActionManager {
 
-  constructor(undoManager) {
+  constructor(undoManager, router) {
     this.undoManager = undoManager;
+    this.router = router;
   }
 
   addAction(context, undoAction, undoArgs, redoAction, redoArgs) {
@@ -13,6 +17,10 @@ export class ActionManager {
       undo: () => undoAction.apply(context, undoArgs),
       redo: () => redoAction.apply(context, redoArgs)
     });
+
+    // Experiment
+    let url = this.router.generate('start', { action: 'foo' });
+    this.router.navigate(url);
   }
 
   undo() {

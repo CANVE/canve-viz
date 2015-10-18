@@ -27,7 +27,8 @@ export class Start {
       .then(edgesResponse => edgesResponse.text());
   }
 
-  activate() {
+  activate(params) {
+    console.log(`=== ACTIVATE PARAMS: ${JSON.stringify(params)}`);
     return Promise.all([
       this.fetchData('nodes'),
       this.fetchData('edges')
