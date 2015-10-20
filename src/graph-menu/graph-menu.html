@@ -1,6 +1,29 @@
 <template>
+
+  <!-- Eventually this will be a slide down menu and look something like this design: https://github.com/CANVE/designs/blob/master/overlay/inkscape/actions-overlay.svg -->
+
   <div class="graph-menu">
-    <button click.trigger="undo()" disabled.bind="!canUndo">Undo</button>
-    <button click.trigger="redo()" disabled.bind="!canRedo">Redo</button>
+
+    <div class="interaction-manager">
+      <!-- <label for="calls">Calls</label>
+      <input type="radio" name="calls" model.bind="graphInteractionModel.calls" value.bind="ofit" click.trigger="update()">
+      <input type="radio" name="calls" model.bind="graphInteractionModel.calls" value.bind="byit" click.trigger="update()"> -->
+
+
+      <div class="interaction" repeat.for="interaction of graphInteractionModel.interactions">
+        <label>${interaction.label}</label>
+        <input type="radio" name="$parent.label" model.bind="interaction" checked.bind="$parent.val1" click.trigger="$parent.update()"/>
+        <input type="radio" name="$parent.label" model.bind="interaction" checked.bind="$parent.val2" click.trigger="$parent.update()"/>
+      </div>
+
+
+    </div>
+
+    <div class="action-manager">
+      <button click.trigger="undo()" disabled.bind="!canUndo">Undo</button>
+      <button click.trigger="redo()" disabled.bind="!canRedo">Redo</button>
+    </div>
+
   </div>
+
 </template>
