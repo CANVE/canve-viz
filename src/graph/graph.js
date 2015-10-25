@@ -578,8 +578,8 @@ export class Graph {
     }
   }
 
-  // user typed some text into the auto-complete
-  queryChanged(newValue) {
+  // user selected something in the menu
+  interactionChanged(newValue) {
     if (newValue) {
       console.log(`queryChanged: ${newValue}`);
     }

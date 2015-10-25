@@ -4,12 +4,12 @@
   <require from="../graph/graph"></require>
 
   <!-- Menu -->
-  <graph-menu></graph-menu>
-  
+  <graph-menu data.bind="graphInteractionModel"></graph-menu>
+
   <!-- Search -->
   <search-graph data.bind="searchTerms"></search-graph>
 
   <!-- Visualization (TODO better name than foo for the data) -->
-  <div graph="data.bind: foo; query.bind: search"></div>
+  <div graph="data.bind: foo; query.bind: search; interaction.bind: graphInteractionModel"></div>
 
 </template>

@@ -4,13 +4,14 @@ import 'fetch';
 import Papa from 'npm:papaparse@4.1.2/papaparse.js';
 import {DataCleaner} from './data-cleaner';
 import GraphModel from '../graph/graph-model';
+import {GraphInteractionModel} from './graph-interaction-model';
 
-@inject(HttpClient, DataCleaner, GraphModel)
+@inject(HttpClient, DataCleaner, GraphModel, GraphInteractionModel)
 export class Start {
 
   // TODO baseUrl should be configurable
   // serverLocalCORS.py in canve/visualizer must be running
-  constructor(http, dataCleaner, graphModel, pubSub){
+  constructor(http, dataCleaner, graphModel, graphInteractionModel){
     http.configure(config => {
       config
         .withBaseUrl('http://localhost:31338/');
@@ -19,6 +20,7 @@ export class Start {
     this.http = http;
     this.dataCleaner = dataCleaner;
     this.graphModel = graphModel;
+    this.graphInteractionModel = graphInteractionModel;
   }
 
   fetchData(dataType) {

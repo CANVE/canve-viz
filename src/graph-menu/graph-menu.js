@@ -1,17 +1,22 @@
-import {inject, customElement} from 'aurelia-framework';
+import {inject, customElement, bindable} from 'aurelia-framework';
 import {ActionManager} from '../graph/action-manager';
-import {GraphInteractionModel} from './graph-interaction-model';
 
 @customElement('graph-menu')
-@inject(Element, ActionManager, GraphInteractionModel)
+@inject(Element, ActionManager)
 export class SearchGraph {
+  @bindable data;
 
-  constructor(element, actionManager, graphInteractionModel) {
+  constructor(element, actionManager) {
     this.element = element;
     this.actionManager = actionManager;
-    this.graphInteractionModel = graphInteractionModel;
   }
 
+  dataChanged(newVal) {
+    this.graphInteractionModel = newVal;
+    console.log(`=== graph-menu interaction model: ${JSON.stringify(this.graphInteractionModel)}`);
+  }
+
+  // maybe don't need an update method now that graphInteractionModel is bound to graph
   update() {
     console.log(`=== graph-menu interaction model: ${JSON.stringify(this.graphInteractionModel)}`);
   }
