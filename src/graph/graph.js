@@ -1,6 +1,7 @@
 import {inject, customAttribute, bindable, TaskQueue} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
+import {ActionManager} from './action-manager';
 import GraphLibD3 from './graphlib-d3';
 import GraphModel from './graph-model';
 import GraphFinder from './graph-finder';
@@ -9,15 +10,16 @@ import { formattedText, calcBBox } from './graph-text';
 
 /* jshint ignore:start */
 @customAttribute('graph')
-@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, TaskQueue)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, TaskQueue, ActionManager)
 /* jshint ignore:end */
 export class Graph {
   /* jshint ignore:start */
   @bindable data;
   @bindable query;
+  @bindable interaction;
   /* jshint ignore:end */
 
-  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, taskQueue) {
+  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, taskQueue, ActionManager) {
     this.element = element;
     this.pubSub = pubSub;
     this.graphLibD3 = graphLibD3;
@@ -25,11 +27,21 @@ export class Graph {
     this.graphFinder = graphFinder;
     this.graphModifier = graphModifier;
     this.taskQueue = taskQueue;
+    this.actionManager = ActionManager;
+
     this.initSvg();
 
     this.pubSub.subscribe('search.node', nodeId => {
-      this.fireGraphDisplay(nodeId);
+      this.addNodeAction(nodeId);
     });
+  }
+
+  addNodeAction(nodeId) {
+    this.fireGraphDisplay(nodeId);
+    this.actionManager.addAction(this,
+      this.unfireGraphDisplay, [nodeId],
+      this.fireGraphDisplay, [nodeId]
+    );
   }
 
   initSvg() {
@@ -461,6 +473,12 @@ export class Graph {
     }
   }
 
+  // a trivial implementation for now, just to get some traction on undo feature
+  unfireGraphDisplay(nodeId) {
+    this.graphModifier.removeNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+    this.updateForceLayout(this.displayGraph);
+  }
+
   /**
    * Api requires specifying the distance for each edge,
    * without any option to keep some edges unchanged,
@@ -561,10 +579,10 @@ export class Graph {
     }
   }
 
-  // user typed some text into the auto-complete
-  queryChanged(newValue) {
+  // user selected something in the menu
+  interactionChanged(newValue) {
     if (newValue) {
-      console.log(`queryChanged: ${newValue}`);
+      console.log(`=== graph interaction changed: ${JSON.stringify(newValue)}`);
     }
   }
 }

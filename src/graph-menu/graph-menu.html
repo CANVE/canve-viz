@@ -1,0 +1,25 @@
+<template>
+
+  <!-- Eventually this will be a slide down menu and look something like this design: https://github.com/CANVE/designs/blob/master/overlay/inkscape/actions-overlay.svg -->
+
+  <div class="graph-menu">
+
+    <div class="interaction-manager">
+      <div class="interaction" repeat.for="interaction of graphInteractionModel.interactions">
+        <label>${interaction.display}</label>
+        <label repeat.for="opt of interaction.options">
+          <!-- FIXME radio button never looks selected in UI even after click, and model does not update -->
+          <input type="radio" name="$parent.display" model.bind="opt" checked.bind="$parent.selectedVal" click.trigger="$parent.$parent.update()"/>
+            ${opt}
+        </label><!-- //for each interaction option -->
+      </div><!-- //for each interaction -->
+    </div><!-- //interaction-manager -->
+
+    <div class="action-manager">
+      <button click.trigger="undo()" disabled.bind="!canUndo">Undo</button>
+      <button click.trigger="redo()" disabled.bind="!canRedo">Redo</button>
+    </div>
+
+  </div><!-- //graph-menu -->
+
+</template>

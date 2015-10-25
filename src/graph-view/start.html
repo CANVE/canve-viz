@@ -1,11 +1,15 @@
 <template>
-  <require from="../graph/graph"></require>
+  <require from="../graph-menu/graph-menu"></require>
   <require from="../graph-search/search-graph"></require>
+  <require from="../graph/graph"></require>
+
+  <!-- Menu -->
+  <graph-menu data.bind="graphInteractionModel"></graph-menu>
 
   <!-- Search -->
   <search-graph data.bind="searchTerms"></search-graph>
 
   <!-- Visualization (TODO better name than foo for the data) -->
-  <div graph="data.bind: foo; query.bind: search"></div>
+  <div graph="data.bind: foo; query.bind: search; interaction.bind: graphInteractionModel"></div>
 
 </template>

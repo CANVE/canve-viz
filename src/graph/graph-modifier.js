@@ -31,6 +31,14 @@ export default class GraphModifier {
     });
   }
 
+  // TODO Need to consider degree?
+  removeNodeNeighbors(graph, id) {
+    this.graphModel.globalGraphModel.nodeEdges(id).forEach(edge => {
+      graph.removeNode(edge.v);
+      graph.removeNode(edge.w);
+    });
+  }
+
   /**
    * Adds node's links to all other nodes already on the display.
    */
@@ -69,6 +77,13 @@ export default class GraphModifier {
   addNodeEnv(graph, id, degree, svgText) {
     this.addNodeToDisplay(graph, id, svgText);
     this.addNodeNeighbors(graph, id, degree, svgText);
+    return graph;
+  }
+
+  // https://github.com/cpettitt/graphlib/wiki/API-Reference
+  removeNodeEnv(graph, id, degree, svgText) {
+    graph.removeNode(id);
+    this.removeNodeNeighbors(graph, id);
     return graph;
   }
 
