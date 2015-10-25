@@ -3,8 +3,16 @@ export class GraphInteractionModel {
 
   constructor() {
     this.interactions = [
-      { label: 'calls', val1: 'of it', val2: 'by it'},
-      { label: 'foo', val1: 'of it', val2: 'by it'}
+      {
+        display: 'calls',
+        options: [ 'of it', 'by it'],
+        selectedVal: 'of it'
+      },
+      {
+        display: 'foo',
+        options: [ 'of it', 'by it'],
+        selectedVal: 'of it'
+      }
     ];
   }
 }

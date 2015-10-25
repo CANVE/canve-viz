@@ -17,6 +17,7 @@ export class SearchGraph {
   }
 
   // maybe don't need an update method now that graphInteractionModel is bound to graph
+  // but even if user clicks in UI, doesn't seem to be updating model???
   update() {
     console.log(`=== graph-menu interaction model: ${JSON.stringify(this.graphInteractionModel)}`);
   }

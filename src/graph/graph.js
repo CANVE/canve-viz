@@ -16,6 +16,7 @@ export class Graph {
   /* jshint ignore:start */
   @bindable data;
   @bindable query;
+  @bindable interaction;
   /* jshint ignore:end */
 
   constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, taskQueue, ActionManager) {
@@ -581,7 +582,7 @@ export class Graph {
   // user selected something in the menu
   interactionChanged(newValue) {
     if (newValue) {
-      console.log(`queryChanged: ${newValue}`);
+      console.log(`=== graph interaction changed: ${JSON.stringify(newValue)}`);
     }
   }
 }
