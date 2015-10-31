@@ -1,18 +1,10 @@
-// experiment to figure out what the graph interaction model should look like
 export class GraphInteractionModel {
 
   constructor() {
     this.interactions = [
-      {
-        display: 'calls',
-        options: [ 'of it', 'by it'],
-        selectedVal: 'by it'
-      },
-      {
-        display: 'foo',
-        options: [ 'of it', 'by it'],
-        selectedVal: 'of it'
-      }
+      { display: 'Calls', options: [ 'of it', 'by it'], selectedVal: '' },
+      { display: 'Extensions', options: [ 'of it', 'by it'], selectedVal: '' },
+      { display: 'Instantiation', options: [ 'of it', 'by it'], selectedVal: '' }
     ];
   }
 }
