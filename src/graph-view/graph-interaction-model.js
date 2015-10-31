@@ -6,7 +6,7 @@ export class GraphInteractionModel {
       {
         display: 'calls',
         options: [ 'of it', 'by it'],
-        selectedVal: 'of it'
+        selectedVal: 'by it'
       },
       {
         display: 'foo',

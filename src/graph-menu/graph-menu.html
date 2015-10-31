@@ -4,13 +4,38 @@
 
   <div class="graph-menu">
 
+    <!-- experiment debug radio binding -->
+    <!-- <label repeat.for="color of colors">
+      <input type="radio" name="clrs" value.bind="color" checked.bind="$parent.favoriteColor" />
+      ${color}
+    </label> -->
+
+    <!-- <br>
+    <label repeat.for="animal of myModel.animals">
+      <input type="radio" name="anmls" value.bind="animal" checked.bind="$parent.myModel.favoriteAnimal" />
+      ${animal}
+    </label> -->
+
+    <!-- <br>
+    <div repeat.for="myEntry of myModel2">
+      <label>${myEntry.display}</label>
+      <label repeat.for="myOpt of myEntry.options">
+        <input type="radio"
+          value.bind="myOpt"
+          checked.bind="$parent.$parent.myModel2[$parent.$index].selectedVal"/>
+        ${myOpt} ( ${$parent.$parent.myModel2[$parent.$index].selectedVal} ) , ( ${$parent.$index} )
+      </label>
+    </div> -->
+
     <div class="interaction-manager">
-      <div class="interaction" repeat.for="interaction of graphInteractionModel.interactions">
+      <div class="interaction" repeat.for="interaction of interactions">
         <label>${interaction.display}</label>
         <label repeat.for="opt of interaction.options">
           <!-- FIXME radio button never looks selected in UI even after click, and model does not update -->
-          <input type="radio" name="$parent.display" model.bind="opt" checked.bind="$parent.selectedVal" click.trigger="$parent.$parent.update()"/>
-            ${opt}
+          <input type="radio"
+              value.bind="opt"
+              checked.bind="$parent.$parent.interactions[$parent.$index].selectedVal" />
+            ${opt} ( ${$parent.$parent.interactions[$parent.$index].selectedVal} ) , ( ${$parent.$index} )
         </label><!-- //for each interaction option -->
       </div><!-- //for each interaction -->
     </div><!-- //interaction-manager -->
