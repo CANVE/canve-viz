@@ -10,7 +10,7 @@
         <label repeat.for="opt of interaction.options">
           <input type="radio"
               value.bind="opt"
-              checked.bind="$parent.$parent.graphInteractionModel.interactions[$parent.$index].selectedVal" />
+              checked.bind="$parent.selectedVal" />
             ${opt}
         </label><!-- //for each option -->
       </div><!-- //for each interaction -->
