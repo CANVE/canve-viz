@@ -39,8 +39,7 @@ export class Start {
         edges: this.dataCleaner.cleanEdges(rawEdges.data)
       };
       this.graphModel.populateModel(graphData);
-      // TODO need a better name!
-      this.foo = this.graphModel.globalGraphModel;
+      this.graphData = this.graphModel.globalGraphModel;
       this.searchTerms = this.graphModel.globalGraphModel;
     }).catch(err => console.error(err.stack));
   }
