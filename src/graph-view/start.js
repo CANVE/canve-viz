@@ -4,9 +4,8 @@ import 'fetch';
 import Papa from 'npm:papaparse@4.1.2/papaparse.js';
 import {DataCleaner} from './data-cleaner';
 import GraphModel from '../graph/graph-model';
-import {GraphInteractionModel} from './graph-interaction-model';
 
-@inject(HttpClient, DataCleaner, GraphModel, GraphInteractionModel)
+@inject(HttpClient, DataCleaner, GraphModel)
 export class Start {
 
   // TODO baseUrl should be configurable
@@ -20,7 +19,6 @@ export class Start {
     this.http = http;
     this.dataCleaner = dataCleaner;
     this.graphModel = graphModel;
-    this.graphInteractionModel = graphInteractionModel;
   }
 
   fetchData(dataType) {
@@ -41,6 +39,7 @@ export class Start {
         edges: this.dataCleaner.cleanEdges(rawEdges.data)
       };
       this.graphModel.populateModel(graphData);
+      // TODO need a better name!
       this.foo = this.graphModel.globalGraphModel;
       this.searchTerms = this.graphModel.globalGraphModel;
     }).catch(err => console.error(err.stack));

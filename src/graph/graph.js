@@ -15,7 +15,6 @@ import { formattedText, calcBBox } from './graph-text';
 export class Graph {
   /* jshint ignore:start */
   @bindable data;
-  @bindable query;
   @bindable interaction;
   /* jshint ignore:end */
 
@@ -580,7 +579,9 @@ export class Graph {
   }
 
   // user selected something in the menu
+  // FIXME model change in graph-menu never getting here...
   interactionChanged(newValue) {
+    console.log(`=== graph interactionChanged: ${this.interaction}`);
     if (newValue) {
       console.log(`=== graph interaction changed: ${JSON.stringify(newValue)}`);
     }
