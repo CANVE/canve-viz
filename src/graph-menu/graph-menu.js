@@ -1,20 +1,14 @@
 import {inject, customElement, bindable} from 'aurelia-framework';
 import {ActionManager} from '../graph/action-manager';
-import {GraphInteractionModel} from './graph-interaction-model';
 
 @customElement('graph-menu')
-@inject(Element, ActionManager, GraphInteractionModel)
+@inject(Element, ActionManager)
 export class GraphMenu {
+  @bindable graphInteractionModel;
 
-  constructor(element, actionManager, graphInteractionModel) {
+  constructor(element, actionManager) {
     this.element = element;
     this.actionManager = actionManager;
-    this.graphInteractionModel = graphInteractionModel;
-  }
-
-  // maybe don't need an update method now that graphInteractionModel is bound to graph
-  update() {
-    console.log(`=== graph-menu.update: interaction model = ${JSON.stringify(this.graphInteractionModel, null, 2)}`);
   }
 
   undo() {
@@ -31,6 +25,10 @@ export class GraphMenu {
 
   get canRedo() {
     return this.actionManager.canRedo();
+  }
+
+  graphInteractionModelChanged(newValue) {
+    this.graphInteractionModel = newValue;
   }
 
 }

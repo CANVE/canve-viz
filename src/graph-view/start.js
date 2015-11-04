@@ -4,8 +4,9 @@ import 'fetch';
 import Papa from 'npm:papaparse@4.1.2/papaparse.js';
 import {DataCleaner} from './data-cleaner';
 import GraphModel from '../graph/graph-model';
+import {GraphInteractionModel} from '../models/graph-interaction-model';
 
-@inject(HttpClient, DataCleaner, GraphModel)
+@inject(HttpClient, DataCleaner, GraphModel, GraphInteractionModel)
 export class Start {
 
   // TODO baseUrl should be configurable
@@ -19,6 +20,7 @@ export class Start {
     this.http = http;
     this.dataCleaner = dataCleaner;
     this.graphModel = graphModel;
+    this.graphInteractionModel = graphInteractionModel;
   }
 
   fetchData(dataType) {
