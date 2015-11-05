@@ -6,5 +6,9 @@ export class GraphInteractionModel {
       { display: 'Extensions', options: [ 'of it', 'by it'], selectedVal: '' },
       { display: 'Instantiation', options: [ 'of it', 'by it'], selectedVal: '' }
     ];
+
+    this.experiment = 'experiment';
+
   }
+
 }
