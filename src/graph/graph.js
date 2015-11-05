@@ -591,6 +591,14 @@ export class Graph {
         console.log(`=== bindingEngine propertyObserver for callsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
       });
 
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'extensionsSelectedVal').subscribe((newValue, oldValue) => {
+        console.log(`=== bindingEngine propertyObserver for extensionsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+      });
+
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'instantiationSelectedVal').subscribe((newValue, oldValue) => {
+        console.log(`=== bindingEngine propertyObserver for instantiationSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+      });
+
       // TODO dispose in appropriate lifecycle method http://stackoverflow.com/questions/30283569/array-subscription-in-aurelia
     }
   }

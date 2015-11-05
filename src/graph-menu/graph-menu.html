@@ -6,23 +6,35 @@
 
     <div class="interaction-manager">
 
-      <label>Calls</label>
-      <label repeat.for="opt of interactionOptions">
-        <input type="radio"
-            value.bind="opt"
-            checked.bind="$parent.graphInteractionModel.callsSelectedVal" />
-          ${opt}
-      </label>
-
-      <!-- <div class="interaction" repeat.for="interaction of graphInteractionModel.interactions">
-        <label>${interaction.display}</label>
-        <label repeat.for="opt of interaction.options">
+      <div class="interaction">
+        <label>Calls</label>
+        <label repeat.for="opt of graphInteractionModel.options">
           <input type="radio"
               value.bind="opt"
-              checked.bind="graphInteractionModel.callsSelectedVal" />
-            ${opt} - (temp debug: ${graphInteractionModel.callsSelectedVal})
+              checked.bind="$parent.graphInteractionModel.callsSelectedVal" />
+            ${opt}
         </label>
-      </div> -->
+      </div>
+
+      <div class="interaction">
+        <label>Extensions</label>
+        <label repeat.for="opt of graphInteractionModel.options">
+          <input type="radio"
+              value.bind="opt"
+              checked.bind="$parent.graphInteractionModel.extensionsSelectedVal" />
+            ${opt}
+        </label>
+      </div>
+
+      <div class="interaction">
+        <label>Instantiation</label>
+        <label repeat.for="opt of graphInteractionModel.options">
+          <input type="radio"
+              value.bind="opt"
+              checked.bind="$parent.graphInteractionModel.instantiationSelectedVal" />
+            ${opt}
+        </label>
+      </div>
 
     </div><!-- //interaction-manager -->
 
