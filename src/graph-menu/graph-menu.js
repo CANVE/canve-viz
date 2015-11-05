@@ -29,6 +29,7 @@ export class GraphMenu {
 
   graphInteractionModelChanged(newValue) {
     this.graphInteractionModel = newValue;
+    this.interactionOptions = ['of it', 'by it'];
   }
 
 }

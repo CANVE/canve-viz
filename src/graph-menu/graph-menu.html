@@ -5,18 +5,24 @@
   <div class="graph-menu">
 
     <div class="interaction-manager">
-      <div class="interaction" repeat.for="interaction of graphInteractionModel.interactions">
+
+      <label>Calls</label>
+      <label repeat.for="opt of interactionOptions">
+        <input type="radio"
+            value.bind="opt"
+            checked.bind="$parent.graphInteractionModel.callsSelectedVal" />
+          ${opt}
+      </label>
+
+      <!-- <div class="interaction" repeat.for="interaction of graphInteractionModel.interactions">
         <label>${interaction.display}</label>
         <label repeat.for="opt of interaction.options">
           <input type="radio"
               value.bind="opt"
-              checked.bind="$parent.selectedVal" />
-            ${opt}
-        </label><!-- //for each option -->
-      </div><!-- //for each interaction -->
-
-      <!-- temporary experiment to verify bindingEngine.propertyObserver -->
-      <input type="text" value.bind="graphInteractionModel.experiment">
+              checked.bind="graphInteractionModel.callsSelectedVal" />
+            ${opt} - (temp debug: ${graphInteractionModel.callsSelectedVal})
+        </label>
+      </div> -->
 
     </div><!-- //interaction-manager -->
 

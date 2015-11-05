@@ -2,13 +2,14 @@ export class GraphInteractionModel {
 
   constructor() {
     this.interactions = [
-      { display: 'Calls', options: [ 'of it', 'by it'], selectedVal: '' },
-      { display: 'Extensions', options: [ 'of it', 'by it'], selectedVal: '' },
-      { display: 'Instantiation', options: [ 'of it', 'by it'], selectedVal: '' }
+      { display: 'Calls', internal: 'calls', options: [ 'of it', 'by it'], selectedVal: '' },
+      { display: 'Extensions', internal: 'extensions', options: [ 'of it', 'by it'], selectedVal: '' },
+      { display: 'Instantiation', internal: 'instantiation', options: [ 'of it', 'by it'], selectedVal: '' }
     ];
 
-    this.experiment = 'experiment';
-
+    this.callsSelectedVal = '';
+    this.extensionsSelectedVal = '';
+    this.instantiationSelectedVal = '';
   }
 
 }

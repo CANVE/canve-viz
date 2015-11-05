@@ -585,14 +585,12 @@ export class Graph {
   // user requested an interaction with the graph
   graphInteractionModelChanged(newValue) {
     if (newValue) {
-      console.log(`=== graph interaction changed: ${JSON.stringify(newValue)}`);
       this.graphInteractionModel = newValue;
 
-      // TODO figure our correct observer expression or restructure model so it can be observed
-      // https://github.com/aurelia/binding/blob/cb1a189a5482787e63c6d5fedf828cdb606f8d13/src/binding-engine.js#L49
-      bindingEngine.propertyObserver(this.graphInteractionModel, 'experiment').subscribe((newValue, oldValue) => {
-        console.log(`=== bindingEngine propertyObserver: newValue = ${newValue}, oldValue = ${oldValue}`);
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'callsSelectedVal').subscribe((newValue, oldValue) => {
+        console.log(`=== bindingEngine propertyObserver for callsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
       });
+
       // TODO dispose in appropriate lifecycle method http://stackoverflow.com/questions/30283569/array-subscription-in-aurelia
     }
   }
