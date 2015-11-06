@@ -1,26 +1,29 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Aurelia</title>
 
-    <!-- Does bundler min and concat all the stylesheets into one? -->
-    <link rel="stylesheet" href="jspm_packages/npm/font-awesome@4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="jspm_packages/npm/awesomplete@1.0.0/awesomplete.css">
-    <link rel="stylesheet" href="styles/styles.css">
-    <link rel="stylesheet" href="styles/source-listing.css">
+<head>
+  <title>Aurelia</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head>
-  <body aurelia-app="main">
-    <div class="splash">
-      <div class="message">CANVE Visualizer</div>
-      <i class="fa fa-spinner fa-spin"></i>
-    </div>
+  <!-- Does bundler min and concat all the stylesheets into one? -->
+  <link rel="stylesheet" href="styles/reset.css">
+  <link rel="stylesheet" href="jspm_packages/npm/font-awesome@4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="jspm_packages/npm/awesomplete@1.0.0/awesomplete.css">
+  <link rel="stylesheet" href="styles/styles.css">
 
-    <script src="jspm_packages/system.js"></script>
-    <script src="config.js"></script>
-    <script>
-      System.import('aurelia-bootstrapper');
-    </script>
-  </body>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body aurelia-app="main">
+  <div class="splash">
+    <div class="message">CANVE Visualizer</div>
+    <i class="fa fa-spinner fa-spin"></i>
+  </div>
+
+  <script src="jspm_packages/system.js"></script>
+  <script src="config.js"></script>
+  <script>
+    System.import('aurelia-bootstrapper');
+  </script>
+</body>
+
 </html>
