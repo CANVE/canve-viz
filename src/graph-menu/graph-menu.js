@@ -3,23 +3,21 @@ import {ActionManager} from '../graph/action-manager';
 
 @customElement('graph-menu')
 @inject(Element, ActionManager)
-export class SearchGraph {
-  @bindable data;
+export class GraphMenu {
+  @bindable graphInteractionModel;
 
   constructor(element, actionManager) {
     this.element = element;
     this.actionManager = actionManager;
+    this.show = false;
   }
 
-  dataChanged(newVal) {
-    this.graphInteractionModel = newVal;
-    console.log(`=== graph-menu interaction model: ${JSON.stringify(this.graphInteractionModel)}`);
+  showGraph() {
+    this.show = true;
   }
 
-  // maybe don't need an update method now that graphInteractionModel is bound to graph
-  // but even if user clicks in UI, doesn't seem to be updating model???
-  update() {
-    console.log(`=== graph-menu interaction model: ${JSON.stringify(this.graphInteractionModel)}`);
+  hideGraph() {
+    this.show = false;
   }
 
   undo() {
@@ -36,6 +34,11 @@ export class SearchGraph {
 
   get canRedo() {
     return this.actionManager.canRedo();
+  }
+
+  graphInteractionModelChanged(newValue) {
+    this.graphInteractionModel = newValue;
+    this.interactionOptions = ['of it', 'by it'];
   }
 
 }

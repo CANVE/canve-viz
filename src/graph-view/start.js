@@ -4,7 +4,7 @@ import 'fetch';
 import Papa from 'npm:papaparse@4.1.2/papaparse.js';
 import {DataCleaner} from './data-cleaner';
 import GraphModel from '../graph/graph-model';
-import {GraphInteractionModel} from './graph-interaction-model';
+import {GraphInteractionModel} from '../models/graph-interaction-model';
 
 @inject(HttpClient, DataCleaner, GraphModel, GraphInteractionModel)
 export class Start {
@@ -41,7 +41,7 @@ export class Start {
         edges: this.dataCleaner.cleanEdges(rawEdges.data)
       };
       this.graphModel.populateModel(graphData);
-      this.foo = this.graphModel.globalGraphModel;
+      this.graphData = this.graphModel.globalGraphModel;
       this.searchTerms = this.graphModel.globalGraphModel;
     }).catch(err => console.error(err.stack));
   }

@@ -1,4 +1,8 @@
 import {inject, customAttribute, bindable, TaskQueue} from 'aurelia-framework';
+
+// bindingEngine is used statically, in the next Aurelia release it will be BindingEngine and injectable
+import {bindingEngine} from 'aurelia-binding';
+
 import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
 import {ActionManager} from './action-manager';
@@ -15,8 +19,7 @@ import { formattedText, calcBBox } from './graph-text';
 export class Graph {
   /* jshint ignore:start */
   @bindable data;
-  @bindable query;
-  @bindable interaction;
+  @bindable graphInteractionModel;
   /* jshint ignore:end */
 
   constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, taskQueue, ActionManager) {
@@ -579,10 +582,24 @@ export class Graph {
     }
   }
 
-  // user selected something in the menu
-  interactionChanged(newValue) {
+  // user requested an interaction with the graph
+  graphInteractionModelChanged(newValue) {
     if (newValue) {
-      console.log(`=== graph interaction changed: ${JSON.stringify(newValue)}`);
+      this.graphInteractionModel = newValue;
+
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'callsSelectedVal').subscribe((newValue, oldValue) => {
+        console.log(`=== bindingEngine propertyObserver for callsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+      });
+
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'extensionsSelectedVal').subscribe((newValue, oldValue) => {
+        console.log(`=== bindingEngine propertyObserver for extensionsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+      });
+
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'instantiationSelectedVal').subscribe((newValue, oldValue) => {
+        console.log(`=== bindingEngine propertyObserver for instantiationSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+      });
+
+      // TODO dispose in appropriate lifecycle method http://stackoverflow.com/questions/30283569/array-subscription-in-aurelia
     }
   }
 }

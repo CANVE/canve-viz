@@ -1,18 +1,42 @@
 <template>
 
   <!-- Eventually this will be a slide down menu and look something like this design: https://github.com/CANVE/designs/blob/master/overlay/inkscape/actions-overlay.svg -->
+  <link rel="stylesheet" href="styles/graph-menu.css">
 
-  <div class="graph-menu">
+  <div class="graph-menu ${show ? 'show' : 'hide'}">
 
     <div class="interaction-manager">
-      <div class="interaction" repeat.for="interaction of graphInteractionModel.interactions">
-        <label>${interaction.display}</label>
-        <label repeat.for="opt of interaction.options">
-          <!-- FIXME radio button never looks selected in UI even after click, and model does not update -->
-          <input type="radio" name="$parent.display" model.bind="opt" checked.bind="$parent.selectedVal" click.trigger="$parent.$parent.update()"/>
+
+      <div class="interaction">
+        <label>Calls</label>
+        <label repeat.for="opt of graphInteractionModel.options">
+          <input type="radio"
+              value.bind="opt"
+              checked.bind="$parent.graphInteractionModel.callsSelectedVal" />
             ${opt}
-        </label><!-- //for each interaction option -->
-      </div><!-- //for each interaction -->
+        </label>
+      </div>
+
+      <div class="interaction">
+        <label>Extensions</label>
+        <label repeat.for="opt of graphInteractionModel.options">
+          <input type="radio"
+              value.bind="opt"
+              checked.bind="$parent.graphInteractionModel.extensionsSelectedVal" />
+            ${opt}
+        </label>
+      </div>
+
+      <div class="interaction">
+        <label>Instantiation</label>
+        <label repeat.for="opt of graphInteractionModel.options">
+          <input type="radio"
+              value.bind="opt"
+              checked.bind="$parent.graphInteractionModel.instantiationSelectedVal" />
+            ${opt}
+        </label>
+      </div>
+
     </div><!-- //interaction-manager -->
 
     <div class="action-manager">
@@ -21,5 +45,13 @@
     </div>
 
   </div><!-- //graph-menu -->
+
+  <!-- slide menu in and out -->
+  <div class="slide-down ${show ? 'hide' : 'show'}">
+      <i click.trigger="showGraph()" class="fa fa-caret-square-o-down fa-2x clickable-icon"></i>
+  </div>
+  <div class="slide-up ${show ? 'show' : 'hide'}">
+      <i click.trigger="hideGraph()" class="fa fa-caret-square-o-up fa-2x clickable-icon"></i>
+  </div>
 
 </template>

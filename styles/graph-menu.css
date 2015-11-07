@@ -1,0 +1,39 @@
+.graph-menu {
+  position: absolute;
+  left: 10px;
+  transition: top 0.5s cubic-bezier(0.17, 0.04, 0.03, 0.94);
+  z-index: 2;
+}
+
+.graph-menu.hide {
+  top: -77px;
+}
+
+.graph-menu.show {
+  top: 0;
+}
+
+.clickable-icon {
+  cursor: pointer;
+}
+
+.slide-up,
+.slide-down {
+  transition: opacity 0.3s cubic-bezier(0.17, 0.04, 0.03, 0.94);
+}
+
+.slide-up {
+  position: absolute;
+  top: 80px;
+  z-index: 3;
+}
+
+.slide-down.show,
+.slide-up.show {
+  opacity: 1;
+}
+
+.slide-down.hide,
+.slide-up.hide {
+  opacity: 0;
+}
