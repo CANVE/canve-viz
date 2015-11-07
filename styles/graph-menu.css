@@ -16,3 +16,11 @@
 .clickable-icon {
   cursor: pointer;
 }
+
+.slide-down.show {
+  opacity: 1;
+}
+
+.slide-down.hide {
+  opacity: 0;
+}
