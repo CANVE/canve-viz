@@ -8,7 +8,7 @@ import d3 from 'd3';
 import {ActionManager} from './action-manager';
 import GraphLibD3 from './graphlib-d3';
 import GraphModel from './graph-model';
-import GraphFinder from './graph-finder';
+import {GraphFinder} from './graph-finder';
 import GraphModifier from './graph-modifier';
 import { formattedText, calcBBox } from './graph-text';
 

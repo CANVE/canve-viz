@@ -1,4 +1,4 @@
-export default class GraphFinder {
+export class GraphFinder {
 
   getMembers(graph, nodeId) {
     return graph
