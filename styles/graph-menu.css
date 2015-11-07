@@ -10,10 +10,14 @@
 }
 
 .graph-menu.show {
-  top: 0;
+  top: 5px;
 }
 
 .clickable-icon {
+  color: #888;
+}
+
+.clickable-icon:hover {
   cursor: pointer;
 }
 
@@ -24,7 +28,7 @@
 
 .slide-up {
   position: absolute;
-  top: 80px;
+  top: 85px;
   z-index: 3;
 }
 

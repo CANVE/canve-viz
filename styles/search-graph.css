@@ -3,3 +3,19 @@
   top: 150px;
   z-index: 3;
 }
+
+.search-graph input {
+  border: 0;
+  padding: 5px;
+  font-size: 1.3em;
+  font-family: Arial, sans-serif;
+  color: #aaa;
+  border: solid 1px #ccc;
+  border-radius: 3px;
+  width: 200px;
+}
+
+.search-graph input:focus {
+  outline: none;
+  border: solid 2px #EEA34A;
+}
