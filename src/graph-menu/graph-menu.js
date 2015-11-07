@@ -13,8 +13,11 @@ export class GraphMenu {
   }
 
   showGraph() {
-    console.log('show clicked');
     this.show = true;
+  }
+
+  hideGraph() {
+    this.show = false;
   }
 
   undo() {
