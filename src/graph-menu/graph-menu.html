@@ -3,7 +3,7 @@
   <!-- Eventually this will be a slide down menu and look something like this design: https://github.com/CANVE/designs/blob/master/overlay/inkscape/actions-overlay.svg -->
   <link rel="stylesheet" href="styles/graph-menu.css">
 
-  <div class="graph-menu">
+  <div class="graph-menu ${show}">
 
     <div class="interaction-manager">
 
@@ -45,5 +45,10 @@
     </div>
 
   </div><!-- //graph-menu -->
+
+  <!-- slide menu in and out -->
+  <div class="slide-show">
+      <i click.trigger="showGraph()" class="fa fa-caret-square-o-down fa-2x clickable-icon"></i>
+  </div>
 
 </template>

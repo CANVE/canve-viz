@@ -1,0 +1,5 @@
+.search-graph {
+  position: absolute;
+  top: 100px;
+  z-index: 3;
+}

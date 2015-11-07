@@ -9,6 +9,12 @@ export class GraphMenu {
   constructor(element, actionManager) {
     this.element = element;
     this.actionManager = actionManager;
+    this.show = 'hide';
+  }
+
+  showGraph() {
+    console.log('show clicked');
+    this.show = 'show';
   }
 
   undo() {

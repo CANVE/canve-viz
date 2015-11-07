@@ -1,3 +1,18 @@
 .graph-menu {
-  /*color: blue;*/
+  position: absolute;
+  left: 10px;
+  transition: top 0.3s ease;
+  z-index: 2;
+}
+
+.graph-menu.hide {
+  top: -75px;
+}
+
+.graph-menu.show {
+  top: 0;
+}
+
+.clickable-icon {
+  cursor: pointer;
 }
