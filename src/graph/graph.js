@@ -597,23 +597,32 @@ export class Graph {
     }
   }
 
+  addNodesToDisplay(interaction, type) {
+    let selectedNodeIds = this.graphFinder.findSelectedNodeIds(this.displayGraph);
+    let relationship = type === 'of it' ? 'target' : 'source';
+    let nodesByEdgeRelationship = this.graphFinder.findNodesByEdgeRelationship(
+      this.displayGraph, selectedNodeIds, interaction, relationship
+    );
+    
+    // TODO: Support undo for a "batch" of nodes added to display
+    nodesByEdgeRelationship.forEach( nodeId => this.fireGraphDisplay(nodeId) );
+  }
+
   // user requested an interaction with the graph
   graphInteractionModelChanged(newValue) {
     if (newValue) {
       this.graphInteractionModel = newValue;
 
       bindingEngine.propertyObserver(this.graphInteractionModel, 'callsSelectedVal').subscribe((newValue, oldValue) => {
-        console.log(`=== bindingEngine propertyObserver for callsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
-        console.log(`selected nodes:`);
-        console.table(`${this.graphFinder.findSelectedNodes(this.displayGraph)}`);
+        this.addNodesToDisplay('uses', newValue);
       });
 
       bindingEngine.propertyObserver(this.graphInteractionModel, 'extensionsSelectedVal').subscribe((newValue, oldValue) => {
-        console.log(`=== bindingEngine propertyObserver for extensionsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+        this.addNodesToDisplay('extends', newValue);
       });
 
-      bindingEngine.propertyObserver(this.graphInteractionModel, 'instantiationSelectedVal').subscribe((newValue, oldValue) => {
-        console.log(`=== bindingEngine propertyObserver for instantiationSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'ownershipSelectedVal').subscribe((newValue, oldValue) => {
+        this.addNodesToDisplay('declares member', newValue);
       });
 
       // TODO dispose in appropriate lifecycle method http://stackoverflow.com/questions/30283569/array-subscription-in-aurelia

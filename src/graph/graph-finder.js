@@ -83,12 +83,30 @@ export class GraphFinder {
     });
   }
 
-  findSelectedNodes(graph) {
+  findSelectedNodeIds(graph) {
     return graph.nodes().filter( nodeId => graph.node(nodeId).selectStatus === 'selected' );
   }
 
-  findNodes(graph, selectedNode, edgeKind, relationship) {
+  /**
+   * https://github.com/cpettitt/graphlib/wiki/API-Reference#node-and-edge-representation
+   *  v: the id of the source or tail node of an edge
+   *  w: the id of the target or head node of an edge
+   */
+  findNodesByEdgeRelationship(graph, selectedNodeIds, edgeKind, relationship) {
+    let results = [],
+      edgeProperty = relationship === 'target' ? 'w' : 'v';
 
+    selectedNodeIds.forEach( nodeId => {
+      let edges = graph.nodeEdges(nodeId).filter( edge => {
+        let currentEdge = graph.edge(edge);
+        return currentEdge.edgeKind === edgeKind && edge[edgeProperty] === nodeId;
+      });
+      edges.forEach( edge => {
+        results.push(edge[edgeProperty]);
+      });
+    });
+
+    return results;
   }
 
 }

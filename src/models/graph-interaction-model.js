@@ -6,7 +6,7 @@ export class GraphInteractionModel {
 
     this.callsSelectedVal = '';
     this.extensionsSelectedVal = '';
-    this.instantiationSelectedVal = '';
+    this.ownershipSelectedVal = '';
   }
 
 }
