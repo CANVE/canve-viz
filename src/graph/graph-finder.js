@@ -81,6 +81,13 @@ export class GraphFinder {
     return projectTypeNodes.filter(nodeId => {
       return this.typeUsersCount(graph, nodeId) === 0;
     });
+  }
+
+  findSelectedNodes(graph) {
+    return graph.nodes().filter( nodeId => graph.node(nodeId).selectStatus === 'selected' );
+  }
+
+  findNodes(graph, selectedNode, edgeKind, relationship) {
 
   }
 

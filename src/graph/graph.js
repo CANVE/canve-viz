@@ -33,6 +33,7 @@ export class Graph {
     this.actionManager = ActionManager;
 
     this.initSvg();
+    this.registerKeyHandlers();
 
     this.pubSub.subscribe('search.node', nodeId => {
       this.addNodeAction(nodeId);
@@ -74,6 +75,20 @@ export class Graph {
 
     this.initForceLayout();
     this.windowSizeAdapter();
+  }
+
+  registerKeyHandlers(evt) {
+    document.onkeydown = (evt) => {
+      if (evt.keyCode === 17 || evt.keyCode === 91) {
+        this.interactionState.ctrlDown = true;
+      }
+    };
+
+    document.onkeyup = (evt) => {
+      if (evt.keyCode === 17 || evt.keyCode === 91) {
+        this.interactionState.ctrlDown = false;
+      }
+    };
   }
 
   initForceLayout() {
@@ -589,6 +604,8 @@ export class Graph {
 
       bindingEngine.propertyObserver(this.graphInteractionModel, 'callsSelectedVal').subscribe((newValue, oldValue) => {
         console.log(`=== bindingEngine propertyObserver for callsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+        console.log(`selected nodes:`);
+        console.table(`${this.graphFinder.findSelectedNodes(this.displayGraph)}`);
       });
 
       bindingEngine.propertyObserver(this.graphInteractionModel, 'extensionsSelectedVal').subscribe((newValue, oldValue) => {
