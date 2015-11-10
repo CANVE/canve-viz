@@ -61,4 +61,50 @@ describe('GraphFinder', () => {
 
   });
 
+  describe('findNodesByEdgeRelationship', () => {
+
+    it('finds source nodes for selected nodes that are the target of "uses" edge kind', () => {
+      // Given
+      let selectedNodeIds = ['3', '4'];
+      let edgeKind = 'uses';
+      let relationship = 'target';
+      let graph = new Dagre.graphlib.Graph({ multigraph: true});
+      let nodes = [
+        {id: '1', name: 'node1', kind: 'Classs', displayName: 'Node 1'},
+        {id: '2', name: 'node2', kind: 'Classs', displayName: 'Node 2'},
+        {id: '3', name: 'node3', kind: 'Classs', displayName: 'Node 3'},
+        {id: '4', name: 'node4', kind: 'Classs', displayName: 'Node 4'},
+        {id: '5', name: 'node5', kind: 'Classs', displayName: 'Node 5'},
+      ];
+      let edges = [
+        {id1: '1', id2: '3', edgeKind: 'uses'},
+        {id1: '2', id2: '3', edgeKind: 'uses'},
+        {id1: '3', id2: '4', edgeKind: 'uses'},
+        {id1: '3', id2: '5', edgeKind: 'uses'},
+      ];
+      nodes.forEach(node => {
+        graph.setNode(node.id, {
+          name:         node.name,
+          kind:         node.kind,
+          displayName:  node.displayName,
+          selectStatus: node.selectStatus
+        });
+      });
+      edges.forEach(edge => {
+        graph.setEdge(edge.id1, edge.id2, { edgeKind: edge.edgeKind });
+      });
+
+      // When
+      let result = sut.findNodesByEdgeRelationship(graph, selectedNodeIds, edgeKind, relationship);
+
+      // Then
+      expect(result.length).toEqual(3);
+      expect(result.includes('1')).toBe(true);
+      expect(result.includes('2')).toBe(true);
+      expect(result.includes('3')).toBe(true);
+
+    });
+
+  });
+
 });

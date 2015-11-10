@@ -94,15 +94,17 @@ export class GraphFinder {
    */
   findNodesByEdgeRelationship(graph, selectedNodeIds, edgeKind, relationship) {
     let results = [],
-      edgeProperty = relationship === 'target' ? 'w' : 'v';
+      edgeProperty = relationship === 'target' ? 'w' : 'v',
+      returnProperty = relationship === 'target' ? 'v' : 'w';
 
     selectedNodeIds.forEach( nodeId => {
       let edges = graph.nodeEdges(nodeId).filter( edge => {
         let currentEdge = graph.edge(edge);
+        console.log(`nodeId: ${nodeId}, edge: ${JSON.stringify(edge)}, edgeProperty: ${edgeProperty}`);
         return currentEdge.edgeKind === edgeKind && edge[edgeProperty] === nodeId;
       });
       edges.forEach( edge => {
-        results.push(edge[edgeProperty]);
+        results.push(edge[returnProperty]);
       });
     });
 
