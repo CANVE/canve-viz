@@ -601,11 +601,11 @@ export class Graph {
     let selectedNodeIds = this.graphFinder.findSelectedNodeIds(this.displayGraph);
     let relationship = type === 'of it' ? 'target' : 'source';
     let nodesByEdgeRelationship = this.graphFinder.findNodesByEdgeRelationship(
-      this.displayGraph, selectedNodeIds, interaction, relationship
+      this.graphModel.globalGraphModel, selectedNodeIds, interaction, relationship
     );
-    
-    // TODO: Support undo for a "batch" of nodes added to display
-    nodesByEdgeRelationship.forEach( nodeId => this.fireGraphDisplay(nodeId) );
+    // TODO: Before adding to graph, filter out those that are already in display, o.w. undo will be too aggressive
+
+    nodesByEdgeRelationship.forEach( nodeId => this.addNodeAction(nodeId) );
   }
 
   // user requested an interaction with the graph

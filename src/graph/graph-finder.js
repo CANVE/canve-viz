@@ -100,7 +100,6 @@ export class GraphFinder {
     selectedNodeIds.forEach( nodeId => {
       let edges = graph.nodeEdges(nodeId).filter( edge => {
         let currentEdge = graph.edge(edge);
-        console.log(`nodeId: ${nodeId}, edge: ${JSON.stringify(edge)}, edgeProperty: ${edgeProperty}`);
         return currentEdge.edgeKind === edgeKind && edge[edgeProperty] === nodeId;
       });
       edges.forEach( edge => {
