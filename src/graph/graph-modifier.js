@@ -80,10 +80,20 @@ export default class GraphModifier {
     return graph;
   }
 
+  addNodeOnly(graph, id, svgText) {
+    this.addNodeToDisplay(graph, id, svgText);
+    return graph;
+  }
+
   // https://github.com/cpettitt/graphlib/wiki/API-Reference
   removeNodeEnv(graph, id, degree, svgText) {
     graph.removeNode(id);
     this.removeNodeNeighbors(graph, id);
+    return graph;
+  }
+
+  removeNodeOnly(graph, id, svgText) {
+    graph.removeNode(id);
     return graph;
   }
 

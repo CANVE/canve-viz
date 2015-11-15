@@ -107,4 +107,44 @@ describe('GraphFinder', () => {
 
   });
 
+  describe('filterAlreadyInGraph', () => {
+
+    it('filters out nodes that are already in graph', () => {
+      // Given
+      let nodes = ['3', '6', '7'];
+      let graph = new Dagre.graphlib.Graph({ multigraph: true});
+      graph.setNode('1', {name: 'node1', kind: 'Classs', displayName: 'Node 1'});
+      graph.setNode('2', {name: 'node2', kind: 'Classs', displayName: 'Node 2'});
+      graph.setNode('3', {name: 'node3', kind: 'Classs', displayName: 'Node 3'});
+      graph.setNode('4', {name: 'node4', kind: 'Classs', displayName: 'Node 4'});
+      graph.setNode('5', {name: 'node5', kind: 'Classs', displayName: 'Node 5'});
+
+      // When
+      let result = sut.filterAlreadyInGraph(nodes, graph);
+
+      // Then
+      expect(result.length).toEqual(2);
+      expect(result.includes('6')).toBe(true);
+      expect(result.includes('7')).toBe(true);
+    });
+
+    it('returns an empty list if all nodes are already in graph', () => {
+      // Given
+      let nodes = ['3', '2'];
+      let graph = new Dagre.graphlib.Graph({ multigraph: true});
+      graph.setNode('1', {name: 'node1', kind: 'Classs', displayName: 'Node 1'});
+      graph.setNode('2', {name: 'node2', kind: 'Classs', displayName: 'Node 2'});
+      graph.setNode('3', {name: 'node3', kind: 'Classs', displayName: 'Node 3'});
+      graph.setNode('4', {name: 'node4', kind: 'Classs', displayName: 'Node 4'});
+      graph.setNode('5', {name: 'node5', kind: 'Classs', displayName: 'Node 5'});
+
+      // When
+      let result = sut.filterAlreadyInGraph(nodes, graph);
+
+      // Then
+      expect(result.length).toEqual(0);
+    });
+
+  });
+
 });

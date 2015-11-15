@@ -36,15 +36,15 @@ export class Graph {
     this.registerKeyHandlers();
 
     this.pubSub.subscribe('search.node', nodeId => {
-      this.addNodeAction(nodeId);
+      this.addNodeAction(nodeId, true);
     });
   }
 
-  addNodeAction(nodeId) {
-    this.fireGraphDisplay(nodeId);
+  addNodeAction(nodeId, withNeighbours) {
+    this.fireGraphDisplay(nodeId, withNeighbours);
     this.actionManager.addAction(this,
-      this.unfireGraphDisplay, [nodeId],
-      this.fireGraphDisplay, [nodeId]
+      this.unfireGraphDisplay, [nodeId, withNeighbours],
+      this.fireGraphDisplay, [nodeId, withNeighbours]
     );
   }
 
@@ -472,8 +472,12 @@ export class Graph {
       .style('stroke-width', width);
   }
 
-  fireGraphDisplay(nodeId) {
-    this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+  fireGraphDisplay(nodeId, withNeighbours) {
+    if (withNeighbours) {
+      this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+    } else {
+      this.graphModifier.addNodeOnly(this.displayGraph, nodeId, this.svgText);
+    }
     let node = this.displayGraph.node(nodeId);
     let selector = '#node' + nodeId;
     this.presentationSVG.select(selector).select('.circle')
@@ -491,9 +495,12 @@ export class Graph {
     }
   }
 
-  // a trivial implementation for now, just to get some traction on undo feature
-  unfireGraphDisplay(nodeId) {
-    this.graphModifier.removeNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+  unfireGraphDisplay(nodeId, withNeighbours) {
+    if (withNeighbours) {
+      this.graphModifier.removeNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+    } else {
+      this.graphModifier.removeNodeOnly(this.displayGraph, nodeId, this.svgText);
+    }
     this.updateForceLayout(this.displayGraph);
   }
 
@@ -593,7 +600,7 @@ export class Graph {
 
       // init the vis with a small sample of the total data
       let unusedTypes = this.graphFinder.findUnusedTypes(this.graphModel.globalGraphModel);
-      this.fireGraphDisplay(unusedTypes[0]);
+      this.fireGraphDisplay(unusedTypes[0], true);
     }
   }
 
@@ -603,9 +610,15 @@ export class Graph {
     let nodesByEdgeRelationship = this.graphFinder.findNodesByEdgeRelationship(
       this.graphModel.globalGraphModel, selectedNodeIds, interaction, relationship
     );
-    // TODO: Before adding to graph, filter out those that are already in display, o.w. undo will be too aggressive
+    let nodesToAdd = this.graphFinder.filterAlreadyInGraph(nodesByEdgeRelationship, this.displayGraph);
 
-    nodesByEdgeRelationship.forEach( nodeId => this.addNodeAction(nodeId) );
+    // TODO Need a better solution to limit the amount displayed
+    let maxNodesToAdd = 10;
+    if (nodesToAdd.length > maxNodesToAdd) {
+      console.warn(`Only 10 of ${nodesToAdd.length} will be added`);
+    }
+
+    nodesToAdd.slice(0, maxNodesToAdd).forEach( nodeId => this.addNodeAction(nodeId) );
   }
 
   // user requested an interaction with the graph

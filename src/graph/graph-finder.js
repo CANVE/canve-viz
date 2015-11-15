@@ -110,4 +110,19 @@ export class GraphFinder {
     return results;
   }
 
+  /**
+   * Return nodes that are not already in graph
+   */
+  filterAlreadyInGraph(nodes, graph) {
+    let results = [];
+
+    nodes.forEach( nodeId => {
+      if (!graph.hasNode(nodeId)) {
+        results.push(nodeId);
+      }
+    });
+
+    return results;
+  }
+
 }
