@@ -630,22 +630,32 @@ export class Graph {
     }
   }
 
-  addNodesToDisplay(interaction, type) {
-    // Determine which nodes need to be added
-    let selectedNodeIds = this.graphFinder.findSelectedNodeIds(this.displayGraph);
-    let relationship = type === 'of it' ? 'target' : 'source';
-    let nodesByEdgeRelationship = this.graphFinder.findNodesByEdgeRelationship(
+  findNodesToAdd(interaction, type) {
+    let selectedNodeIds,
+      relationship,
+      nodesByEdgeRelationship;
+
+    selectedNodeIds = this.graphFinder.findSelectedNodeIds(this.displayGraph);
+    relationship = type === 'of it' ? 'target' : 'source';
+    nodesByEdgeRelationship = this.graphFinder.findNodesByEdgeRelationship(
       this.graphModel.globalGraphModel, selectedNodeIds, interaction, relationship
     );
-    let nodesToAdd = this.graphFinder.filterAlreadyInGraph(nodesByEdgeRelationship, this.displayGraph);
 
-    // TODO Need a better solution to limit the amount displayed
-    let maxNodesToAdd = 10;
-    if (nodesToAdd.length > maxNodesToAdd) {
-      console.warn(`Only 10 of ${nodesToAdd.length} will be added`);
+    return this.graphFinder.filterAlreadyInGraph(nodesByEdgeRelationship, this.displayGraph);
+  }
+
+  /**
+   * Determine nodes that should be added, and add them as an undo-able action.
+   */
+  addNodesToDisplay(interaction, type) {
+    let nodesToAdd = this.findNodesToAdd(interaction, type);
+
+    if (nodesToAdd.length > 0) {
+      this.addNodeAction(nodesToAdd);
+    } else {
+      // TODO notify https://github.com/CANVE/canve-viz/issues/32
+      console.warn('No interaction results');
     }
-
-    this.addNodeAction(nodesToAdd.slice(0, maxNodesToAdd));
   }
 
   // user requested an interaction with the graph
