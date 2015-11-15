@@ -28,11 +28,11 @@
       </div>
 
       <div class="interaction">
-        <label>Instantiation</label>
+        <label>Ownership</label>
         <label repeat.for="opt of graphInteractionModel.options">
           <input type="radio"
               value.bind="opt"
-              checked.bind="$parent.graphInteractionModel.instantiationSelectedVal" />
+              checked.bind="$parent.graphInteractionModel.ownershipSelectedVal" />
             ${opt}
         </label>
       </div>

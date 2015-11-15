@@ -8,7 +8,7 @@ import d3 from 'd3';
 import {ActionManager} from './action-manager';
 import GraphLibD3 from './graphlib-d3';
 import GraphModel from './graph-model';
-import GraphFinder from './graph-finder';
+import {GraphFinder} from './graph-finder';
 import GraphModifier from './graph-modifier';
 import { formattedText, calcBBox } from './graph-text';
 
@@ -33,18 +33,33 @@ export class Graph {
     this.actionManager = ActionManager;
 
     this.initSvg();
+    this.registerKeyHandlers();
 
     this.pubSub.subscribe('search.node', nodeId => {
-      this.addNodeAction(nodeId);
+      this.addNodeAction([nodeId], true);
     });
   }
 
-  addNodeAction(nodeId) {
-    this.fireGraphDisplay(nodeId);
+  /**
+   * Perform the add action, and register
+   * undo and redo handlers.
+   */
+  addNodeAction(nodeIds, withNeighbours) {
+    this.addAndDisplay(nodeIds, withNeighbours);
     this.actionManager.addAction(this,
-      this.unfireGraphDisplay, [nodeId],
-      this.fireGraphDisplay, [nodeId]
+      this.removeAndDisplay, [nodeIds, withNeighbours],
+      this.addAndDisplay, [nodeIds, withNeighbours]
     );
+  }
+
+  addAndDisplay(nodeIds, withNeighbours) {
+    this.addToDisplayGraphModel(nodeIds, withNeighbours);
+    this.fireGraphDisplay(nodeIds);
+  }
+
+  removeAndDisplay(nodeIds, withNeighbours) {
+    this.removeFromDisplayGraphModel(nodeIds, withNeighbours);
+    this.unfireGraphDisplay();
   }
 
   initSvg() {
@@ -74,6 +89,20 @@ export class Graph {
 
     this.initForceLayout();
     this.windowSizeAdapter();
+  }
+
+  registerKeyHandlers(evt) {
+    document.onkeydown = (evt) => {
+      if (evt.keyCode === 17 || evt.keyCode === 91) {
+        this.interactionState.ctrlDown = true;
+      }
+    };
+
+    document.onkeyup = (evt) => {
+      if (evt.keyCode === 17 || evt.keyCode === 91) {
+        this.interactionState.ctrlDown = false;
+      }
+    };
   }
 
   initForceLayout() {
@@ -193,7 +222,6 @@ export class Graph {
 
     this.presentationSVGWidth = width -1;
     this.presentationSVGHeight = height - 1;
-    console.log(`=== windowSizeAdapter: ${this.presentationSVGWidth} x ${this.presentationSVGHeight}`);
     this.presentationSVG
       .attr('width', this.presentationSVGWidth)
       .attr('height', this.presentationSVGHeight);
@@ -319,7 +347,6 @@ export class Graph {
 
       // after the (re)join, fire away the animation of the force layout
       this.forceLayout.start();
-      console.log('forceLayout started');
     }, forceResumeDelay);
 
   }
@@ -350,7 +377,6 @@ export class Graph {
           }
       })
       .on('dblclick', node => {
-        console.log(node.id);
       })
       //
       // mouse over and mouse out events use a named transition (see https://gist.github.com/mbostock/24bdd02df2a72866b0ec)
@@ -457,29 +483,62 @@ export class Graph {
       .style('stroke-width', width);
   }
 
-  fireGraphDisplay(nodeId) {
-    this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
-    let node = this.displayGraph.node(nodeId);
-    let selector = '#node' + nodeId;
-    this.presentationSVG.select(selector).select('.circle')
-      .transition('nodeHighlighting').duration(500).style('stroke', 'orange').style('stroke-width', 6)
-      .each('end', () => this.adjustedNodeRimVisualization(node, 2000) );
-
-    this.updateForceLayout(this.displayGraph);
-
-    if (node.expandStatus === 'collapsed') {
-      // Delay the bounding box calculation to the end when DOM is rendered
-      // https://github.com/CANVE/canve-viz/issues/18
-      this.taskQueue.queueMicroTask(() => {
-        this.expandNode(node);
-      });
-    }
+  /**
+   * Modify the graph display model to include the given node id's.
+   * If withNeihbours is true, then also include each node's neighbours.
+   */
+  addToDisplayGraphModel(nodeIds, withNeighbours) {
+    nodeIds.forEach( nodeId => {
+      if (withNeighbours) {
+        this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+      } else {
+        this.graphModifier.addNodeOnly(this.displayGraph, nodeId, this.svgText);
+      }
+    });
   }
 
-  // a trivial implementation for now, just to get some traction on undo feature
-  unfireGraphDisplay(nodeId) {
-    this.graphModifier.removeNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
-    this.updateForceLayout(this.displayGraph);
+  /**
+   * Modify the graph display model to remove the given node id's.
+   * If withNeihbours is true, then also remove each node's neighbours.
+   */
+  removeFromDisplayGraphModel(nodeIds, withNeighbours) {
+    nodeIds.forEach( nodeId => {
+      if (withNeighbours) {
+        this.graphModifier.removeNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+      } else {
+        this.graphModifier.removeNodeOnly(this.displayGraph, nodeId, this.svgText);
+      }
+    });
+  }
+
+  /**
+   * Render the graph, with a transition animation on the newly added nodes.
+   */
+  fireGraphDisplay(nodeIds) {
+    nodeIds.forEach( nodeId => {
+      let node = this.displayGraph.node(nodeId);
+      let selector = '#node' + nodeId;
+      this.presentationSVG.select(selector).select('.circle')
+        .transition('nodeHighlighting').duration(500).style('stroke', 'orange').style('stroke-width', 6)
+        .each('end', () => this.adjustedNodeRimVisualization(node, 2000) );
+
+      this.updateForceLayout(this.displayGraph);
+
+      if (node.expandStatus === 'collapsed') {
+        // Delay the bounding box calculation to the end when DOM is rendered
+        // https://github.com/CANVE/canve-viz/issues/18
+        this.taskQueue.queueMicroTask(() => {
+          this.expandNode(node);
+        });
+      }
+    });
+  }
+
+  /**
+   * Render the graph.
+   */
+  unfireGraphDisplay() {
+    this.updateForceLayout(this.displayGraph, true);
   }
 
   /**
@@ -568,7 +627,10 @@ export class Graph {
     this.rewarmForceLayout();
   }
 
-  // A brand new graph
+  /**
+   * Invoked by Aurelia when the 'data' binding changes.
+   * This indicates a new global graph model is available.
+   */
   dataChanged(newValue) {
     if (newValue) {
       // TODO: port from visualizer: applyGraphFilters, debugListSpecialNodes
@@ -578,25 +640,63 @@ export class Graph {
 
       // init the vis with a small sample of the total data
       let unusedTypes = this.graphFinder.findUnusedTypes(this.graphModel.globalGraphModel);
-      this.fireGraphDisplay(unusedTypes[0]);
+      this.addNodeAction([unusedTypes[0]], true);
     }
   }
 
-  // user requested an interaction with the graph
+  /**
+   * Based on the currently selected nodes, use 'interaction' and 'type'
+   * to find nodes from globalGraph that should be added, but only if
+   * they're not already in the display graph.
+   */
+  findNodesToAdd(interaction, type) {
+    let selectedNodeIds,
+      relationship,
+      nodesByEdgeRelationship;
+
+    selectedNodeIds = this.graphFinder.findSelectedNodeIds(this.displayGraph);
+    relationship = type === 'of it' ? 'target' : 'source';
+    nodesByEdgeRelationship = this.graphFinder.findNodesByEdgeRelationship(
+      this.graphModel.globalGraphModel, selectedNodeIds, interaction, relationship
+    );
+
+    return this.graphFinder.filterAlreadyInGraph(nodesByEdgeRelationship, this.displayGraph);
+  }
+
+  /**
+   * Determine nodes that should be added, and add them as an undo-able action.
+   */
+  addNodesToDisplay(interaction, type) {
+    let nodesToAdd = this.findNodesToAdd(interaction, type);
+
+    if (nodesToAdd.length > 0) {
+      this.addNodeAction(nodesToAdd);
+    } else {
+      // TODO notify https://github.com/CANVE/canve-viz/issues/32
+      console.warn('No interaction results');
+    }
+  }
+
+  /**
+   * Invoked by Aurelia when 'graphInteractionModel' binding value has changed.
+   * In practice this object it set once in the parent view. After that,
+   * register property observers to fire when specific properties of the interaction model change,
+   * indicating that the graph should respond to the change by adding more nodes.
+   */
   graphInteractionModelChanged(newValue) {
     if (newValue) {
       this.graphInteractionModel = newValue;
 
       bindingEngine.propertyObserver(this.graphInteractionModel, 'callsSelectedVal').subscribe((newValue, oldValue) => {
-        console.log(`=== bindingEngine propertyObserver for callsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+        this.addNodesToDisplay('uses', newValue);
       });
 
       bindingEngine.propertyObserver(this.graphInteractionModel, 'extensionsSelectedVal').subscribe((newValue, oldValue) => {
-        console.log(`=== bindingEngine propertyObserver for extensionsSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+        this.addNodesToDisplay('extends', newValue);
       });
 
-      bindingEngine.propertyObserver(this.graphInteractionModel, 'instantiationSelectedVal').subscribe((newValue, oldValue) => {
-        console.log(`=== bindingEngine propertyObserver for instantiationSelectedVal: newValue = ${newValue}, oldValue = ${oldValue}`);
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'ownershipSelectedVal').subscribe((newValue, oldValue) => {
+        this.addNodesToDisplay('declares member', newValue);
       });
 
       // TODO dispose in appropriate lifecycle method http://stackoverflow.com/questions/30283569/array-subscription-in-aurelia

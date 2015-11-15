@@ -1,4 +1,4 @@
-export default class GraphFinder {
+export class GraphFinder {
 
   getMembers(graph, nodeId) {
     return graph
@@ -81,7 +81,48 @@ export default class GraphFinder {
     return projectTypeNodes.filter(nodeId => {
       return this.typeUsersCount(graph, nodeId) === 0;
     });
+  }
 
+  findSelectedNodeIds(graph) {
+    return graph.nodes().filter( nodeId => graph.node(nodeId).selectStatus === 'selected' );
+  }
+
+  /**
+   * https://github.com/cpettitt/graphlib/wiki/API-Reference#node-and-edge-representation
+   *  v: the id of the source or tail node of an edge
+   *  w: the id of the target or head node of an edge
+   */
+  findNodesByEdgeRelationship(graph, selectedNodeIds, edgeKind, relationship) {
+    let results = [],
+      edgeProperty = relationship === 'target' ? 'w' : 'v',
+      returnProperty = relationship === 'target' ? 'v' : 'w';
+
+    selectedNodeIds.forEach( nodeId => {
+      let edges = graph.nodeEdges(nodeId).filter( edge => {
+        let currentEdge = graph.edge(edge);
+        return currentEdge.edgeKind === edgeKind && edge[edgeProperty] === nodeId;
+      });
+      edges.forEach( edge => {
+        results.push(edge[returnProperty]);
+      });
+    });
+
+    return results;
+  }
+
+  /**
+   * Return nodes that are not already in graph
+   */
+  filterAlreadyInGraph(nodes, graph) {
+    let results = [];
+
+    nodes.forEach( nodeId => {
+      if (!graph.hasNode(nodeId)) {
+        results.push(nodeId);
+      }
+    });
+
+    return results;
   }
 
 }
