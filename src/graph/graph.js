@@ -36,16 +36,26 @@ export class Graph {
     this.registerKeyHandlers();
 
     this.pubSub.subscribe('search.node', nodeId => {
-      this.addNodeAction(nodeId, true);
+      this.addNodeAction([nodeId], true);
     });
   }
 
-  addNodeAction(nodeId, withNeighbours) {
-    this.fireGraphDisplay(nodeId, withNeighbours);
+  addNodeAction(nodeIds, withNeighbours) {
+    this.addAndDisplay(nodeIds, withNeighbours);
     this.actionManager.addAction(this,
-      this.unfireGraphDisplay, [nodeId, withNeighbours],
-      this.fireGraphDisplay, [nodeId, withNeighbours]
+      this.removeAndDisplay, [nodeIds, withNeighbours],
+      this.addAndDisplay, [nodeIds, withNeighbours]
     );
+  }
+
+  addAndDisplay(nodeIds, withNeighbours) {
+    this.addToDisplayGraphModel(nodeIds, withNeighbours);
+    this.fireGraphDisplay(nodeIds);
+  }
+
+  removeAndDisplay(nodeIds, withNeighbours) {
+    this.removeFromDisplayGraphModel(nodeIds, withNeighbours);
+    this.unfireGraphDisplay();
   }
 
   initSvg() {
@@ -472,36 +482,52 @@ export class Graph {
       .style('stroke-width', width);
   }
 
-  fireGraphDisplay(nodeId, withNeighbours) {
-    if (withNeighbours) {
-      this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
-    } else {
-      this.graphModifier.addNodeOnly(this.displayGraph, nodeId, this.svgText);
-    }
-    let node = this.displayGraph.node(nodeId);
-    let selector = '#node' + nodeId;
-    this.presentationSVG.select(selector).select('.circle')
-      .transition('nodeHighlighting').duration(500).style('stroke', 'orange').style('stroke-width', 6)
-      .each('end', () => this.adjustedNodeRimVisualization(node, 2000) );
-
-    this.updateForceLayout(this.displayGraph);
-
-    if (node.expandStatus === 'collapsed') {
-      // Delay the bounding box calculation to the end when DOM is rendered
-      // https://github.com/CANVE/canve-viz/issues/18
-      this.taskQueue.queueMicroTask(() => {
-        this.expandNode(node);
-      });
-    }
+  addToDisplayGraphModel(nodeIds, withNeighbours) {
+    console.log(`addToDisplayGraphModel: ${JSON.stringify(nodeIds)}`);
+    nodeIds.forEach( nodeId => {
+      if (withNeighbours) {
+        this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+      } else {
+        this.graphModifier.addNodeOnly(this.displayGraph, nodeId, this.svgText);
+      }
+    });
   }
 
-  unfireGraphDisplay(nodeId, withNeighbours) {
-    if (withNeighbours) {
-      this.graphModifier.removeNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
-    } else {
-      this.graphModifier.removeNodeOnly(this.displayGraph, nodeId, this.svgText);
-    }
-    this.updateForceLayout(this.displayGraph);
+  removeFromDisplayGraphModel(nodeIds, withNeighbours) {
+    console.log(`removeFromDisplayGraphModel: ${JSON.stringify(nodeIds)}`);
+    nodeIds.forEach( nodeId => {
+      if (withNeighbours) {
+        this.graphModifier.removeNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
+      } else {
+        this.graphModifier.removeNodeOnly(this.displayGraph, nodeId, this.svgText);
+      }
+    });
+  }
+
+  fireGraphDisplay(nodeIds) {
+    console.log(`fireGraphDisplay: ${JSON.stringify(nodeIds)}`);
+    nodeIds.forEach( nodeId => {
+      let node = this.displayGraph.node(nodeId);
+      let selector = '#node' + nodeId;
+      this.presentationSVG.select(selector).select('.circle')
+        .transition('nodeHighlighting').duration(500).style('stroke', 'orange').style('stroke-width', 6)
+        .each('end', () => this.adjustedNodeRimVisualization(node, 2000) );
+
+      this.updateForceLayout(this.displayGraph);
+
+      if (node.expandStatus === 'collapsed') {
+        // Delay the bounding box calculation to the end when DOM is rendered
+        // https://github.com/CANVE/canve-viz/issues/18
+        this.taskQueue.queueMicroTask(() => {
+          this.expandNode(node);
+        });
+      }
+    });
+  }
+
+  unfireGraphDisplay() {
+    console.log('unfireGraphDisplay');
+    this.updateForceLayout(this.displayGraph, true);
   }
 
   /**
@@ -600,11 +626,12 @@ export class Graph {
 
       // init the vis with a small sample of the total data
       let unusedTypes = this.graphFinder.findUnusedTypes(this.graphModel.globalGraphModel);
-      this.fireGraphDisplay(unusedTypes[0], true);
+      this.addNodeAction([unusedTypes[0]], true);
     }
   }
 
   addNodesToDisplay(interaction, type) {
+    // Determine which nodes need to be added
     let selectedNodeIds = this.graphFinder.findSelectedNodeIds(this.displayGraph);
     let relationship = type === 'of it' ? 'target' : 'source';
     let nodesByEdgeRelationship = this.graphFinder.findNodesByEdgeRelationship(
@@ -618,7 +645,7 @@ export class Graph {
       console.warn(`Only 10 of ${nodesToAdd.length} will be added`);
     }
 
-    nodesToAdd.slice(0, maxNodesToAdd).forEach( nodeId => this.addNodeAction(nodeId) );
+    this.addNodeAction(nodesToAdd.slice(0, maxNodesToAdd));
   }
 
   // user requested an interaction with the graph
