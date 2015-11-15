@@ -40,6 +40,10 @@ export class Graph {
     });
   }
 
+  /**
+   * Perform the add action, and register
+   * undo and redo handlers.
+   */
   addNodeAction(nodeIds, withNeighbours) {
     this.addAndDisplay(nodeIds, withNeighbours);
     this.actionManager.addAction(this,
@@ -218,7 +222,6 @@ export class Graph {
 
     this.presentationSVGWidth = width -1;
     this.presentationSVGHeight = height - 1;
-    console.log(`=== windowSizeAdapter: ${this.presentationSVGWidth} x ${this.presentationSVGHeight}`);
     this.presentationSVG
       .attr('width', this.presentationSVGWidth)
       .attr('height', this.presentationSVGHeight);
@@ -344,7 +347,6 @@ export class Graph {
 
       // after the (re)join, fire away the animation of the force layout
       this.forceLayout.start();
-      console.log('forceLayout started');
     }, forceResumeDelay);
 
   }
@@ -375,7 +377,6 @@ export class Graph {
           }
       })
       .on('dblclick', node => {
-        console.log(node.id);
       })
       //
       // mouse over and mouse out events use a named transition (see https://gist.github.com/mbostock/24bdd02df2a72866b0ec)
@@ -482,8 +483,11 @@ export class Graph {
       .style('stroke-width', width);
   }
 
+  /**
+   * Modify the graph display model to include the given node id's.
+   * If withNeihbours is true, then also include each node's neighbours.
+   */
   addToDisplayGraphModel(nodeIds, withNeighbours) {
-    console.log(`addToDisplayGraphModel: ${JSON.stringify(nodeIds)}`);
     nodeIds.forEach( nodeId => {
       if (withNeighbours) {
         this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
@@ -493,8 +497,11 @@ export class Graph {
     });
   }
 
+  /**
+   * Modify the graph display model to remove the given node id's.
+   * If withNeihbours is true, then also remove each node's neighbours.
+   */
   removeFromDisplayGraphModel(nodeIds, withNeighbours) {
-    console.log(`removeFromDisplayGraphModel: ${JSON.stringify(nodeIds)}`);
     nodeIds.forEach( nodeId => {
       if (withNeighbours) {
         this.graphModifier.removeNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
@@ -504,8 +511,10 @@ export class Graph {
     });
   }
 
+  /**
+   * Render the graph, with a transition animation on the newly added nodes.
+   */
   fireGraphDisplay(nodeIds) {
-    console.log(`fireGraphDisplay: ${JSON.stringify(nodeIds)}`);
     nodeIds.forEach( nodeId => {
       let node = this.displayGraph.node(nodeId);
       let selector = '#node' + nodeId;
@@ -525,8 +534,10 @@ export class Graph {
     });
   }
 
+  /**
+   * Render the graph.
+   */
   unfireGraphDisplay() {
-    console.log('unfireGraphDisplay');
     this.updateForceLayout(this.displayGraph, true);
   }
 
@@ -616,7 +627,10 @@ export class Graph {
     this.rewarmForceLayout();
   }
 
-  // A brand new graph
+  /**
+   * Invoked by Aurelia when the 'data' binding changes.
+   * This indicates a new global graph model is available.
+   */
   dataChanged(newValue) {
     if (newValue) {
       // TODO: port from visualizer: applyGraphFilters, debugListSpecialNodes
@@ -630,6 +644,11 @@ export class Graph {
     }
   }
 
+  /**
+   * Based on the currently selected nodes, use 'interaction' and 'type'
+   * to find nodes from globalGraph that should be added, but only if
+   * they're not already in the display graph.
+   */
   findNodesToAdd(interaction, type) {
     let selectedNodeIds,
       relationship,
@@ -658,7 +677,12 @@ export class Graph {
     }
   }
 
-  // user requested an interaction with the graph
+  /**
+   * Invoked by Aurelia when 'graphInteractionModel' binding value has changed.
+   * In practice this object it set once in the parent view. After that,
+   * register property observers to fire when specific properties of the interaction model change,
+   * indicating that the graph should respond to the change by adding more nodes.
+   */
   graphInteractionModelChanged(newValue) {
     if (newValue) {
       this.graphInteractionModel = newValue;
