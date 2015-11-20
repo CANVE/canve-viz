@@ -1,3 +1,4 @@
+// Deprecated
 import {inject, customAttribute, bindable, TaskQueue} from 'aurelia-framework';
 
 // bindingEngine is used statically, in the next Aurelia release it will be BindingEngine and injectable
@@ -13,7 +14,7 @@ import GraphModifier from './graph-modifier';
 import { formattedText, calcBBox } from './graph-text';
 
 /* jshint ignore:start */
-@customAttribute('graph')
+@customAttribute('graph-old')
 @inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, TaskQueue, ActionManager)
 /* jshint ignore:end */
 export class Graph {
