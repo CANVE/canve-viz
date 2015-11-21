@@ -2,6 +2,7 @@
   <require from="../graph-menu/graph-menu"></require>
   <require from="../graph-search/search-graph"></require>
   <require from="../graph/graph-old"></require>
+  <require from="../graph/graph"></require>
 
   <!-- Menu -->
   <graph-menu graph-interaction-model.two-way="graphInteractionModel"></graph-menu>
@@ -10,6 +11,9 @@
   <search-graph data.bind="searchTerms"></search-graph>
 
   <!-- D3 rendered viz (deprecated) -->
-  <div graph-old="data.bind: graphData; graph-interaction-model.two-way: graphInteractionModel"></div>
+  <!-- <div graph-old="data.bind: graphData; graph-interaction-model.two-way: graphInteractionModel"></div> -->
+
+  <!-- Visualization (wip) -->
+  <graph data.bind="graphData"></graph>
 
 </template>

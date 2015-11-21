@@ -59,9 +59,10 @@ export default class GraphModifier {
       node.selectStatus    = 'unselected';
       node.highlightStatus = 'unhighlighted';
 
+      // FIXME For new custom rendering, figure out where this logic belongs
       // Bbox calcs to 0 here because not really in the DOM yet,
       // However, force layout gets stuck if this code doesn't run
-      node.textBbox = calcBBox(svgText, node);
+      // node.textBbox = calcBBox(svgText, node);
 
       graph.setNode(id, node);
 
