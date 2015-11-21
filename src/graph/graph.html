@@ -1,5 +1,16 @@
 <template>
+  <require from="../node/node"></require>
+
+  <link rel="stylesheet" href="styles/graph.css">
+
+  <!-- temp debug -->
+  <!-- <table>
+    <tr repeat.for="displayNode of displayNodes">
+      <td>${displayNode.x}</td>
+    </tr>
+  </table> -->
+
   <svg width="${presentationSVG.width}" height="${presentationSVG.height}">
-    <!-- TODO: For eachnode... <node> element  -->
+    <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
   </svg>
 </template>

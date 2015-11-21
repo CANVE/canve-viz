@@ -1,7 +1,8 @@
 import {inject} from 'aurelia-framework';
-import {customElement, bindable} from 'aurelia-framework';
+import {customElement, bindable, containerless} from 'aurelia-framework';
 
 @customElement('node')
+@containerless
 @inject(Element)
 export class Node {
   @bindable data;
@@ -11,6 +12,11 @@ export class Node {
   }
 
   dataChanged(newVal) {
+    if (newVal) {
+      this.displayNode = newVal;
+      console.dir(this.displayNode);
+      // TODO Delegate to node display helper to determine fill color
+    }
   }
 
 }

@@ -104,13 +104,20 @@ export class Graph {
    */
   updateForceLayout() {
     let d3Data = this.graphLibD3.mapToD3(this.displayGraph);
-    var force = d3.layout.force()
+
+    d3.layout.force()
        .nodes(d3Data.nodes)
        .links(d3Data.links)
        .size([this.presentationSVG.width, this.presentationSVG.height])
        .linkDistance([50])
        .charge([-100])
        .start();
+
+    this.displayNodes = d3Data.nodes;
   }
+
+  // get displayNodes() {
+  //   return this.displayGraph.nodes();
+  // }
 
 }
