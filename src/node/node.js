@@ -16,6 +16,10 @@ export class Node {
       this.displayNode = newVal;
       console.dir(this.displayNode);
       // TODO Delegate to node display helper to determine fill color
+      this.styleObject = {
+        top: this.displayNode.y + 'px',
+        left: this.displayNode.x + 'px'
+      };
     }
   }
 

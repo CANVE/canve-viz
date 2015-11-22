@@ -1,0 +1,10 @@
+.node {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  padding: 30px;
+  color: #3B3D53;
+  border: 1px solid #393D3F;
+  border-radius: 50%;
+  background-color: #51E5FF;
+}

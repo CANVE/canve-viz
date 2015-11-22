@@ -109,9 +109,13 @@ export class Graph {
        .nodes(d3Data.nodes)
        .links(d3Data.links)
        .size([this.presentationSVG.width, this.presentationSVG.height])
-       .linkDistance([50])
-       .charge([-100])
-       .start();
+       .gravity(0.4)
+       .linkDistance(20)
+       .charge(-150)
+       .start()
+       .tick();
+
+    // TODO: port collision detection from legacy
 
     this.displayNodes = d3Data.nodes;
   }

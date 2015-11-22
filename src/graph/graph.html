@@ -10,7 +10,10 @@
     </tr>
   </table> -->
 
-  <svg width="${presentationSVG.width}" height="${presentationSVG.height}">
+  <div class="graph-container" width="${presentationSVG.width}" height="${presentationSVG.height}">
     <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
-  </svg>
+  </div>
+  <!-- <svg width="${presentationSVG.width}" height="${presentationSVG.height}">
+    <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
+  </svg> -->
 </template>
