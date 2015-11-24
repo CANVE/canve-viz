@@ -3,17 +3,8 @@
 
   <link rel="stylesheet" href="styles/graph.css">
 
-  <!-- temp debug -->
-  <!-- <table>
-    <tr repeat.for="displayNode of displayNodes">
-      <td>${displayNode.x}</td>
-    </tr>
-  </table> -->
-
-  <div class="graph-container" width="${presentationSVG.width}" height="${presentationSVG.height}">
+  <svg width="${presentationSVG.width}" height="${presentationSVG.height}">
     <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
-  </div>
-  <!-- <svg width="${presentationSVG.width}" height="${presentationSVG.height}">
-    <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
-  </svg> -->
+  </svg>
+  
 </template>

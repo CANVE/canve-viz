@@ -1,4 +1,8 @@
-.node {
+g {
+  transform-origin: 0px 0px 0px;
+}
+
+/*.node {
   position: absolute;
   width: 100px;
   height: 100px;
@@ -7,4 +11,4 @@
   border: 1px solid #393D3F;
   border-radius: 50%;
   background-color: #51E5FF;
-}
+}*/
