@@ -29,8 +29,8 @@ export class Graph {
    */
   windowSizeAdapter() {
     this.presentationSVG = {
-      width: window.innerWidth -1,
-      height: window.innerHeight -1
+      width: window.innerWidth - 100,
+      height: window.innerHeight - 200
     };
   }
 
@@ -103,25 +103,26 @@ export class Graph {
    * Use D3 force layout to calculate node positions.
    */
   updateForceLayout() {
-    let d3Data = this.graphLibD3.mapToD3(this.displayGraph);
+    let d3Data = this.graphLibD3.mapToD3(this.displayGraph),
+      numNodes = d3Data.nodes.length,
+      currentNode;
 
-    d3.layout.force()
+    let force = d3.layout.force()
        .nodes(d3Data.nodes)
        .links(d3Data.links)
        .size([this.presentationSVG.width, this.presentationSVG.height])
        .gravity(0.4)
        .linkDistance(20)
-       .charge(-150)
-       .start()
-       .tick();
+       .charge(-150);
+
+    // Run the force layout simulation one step to compute a static layout
+    force.start();
+    for (var j = 0; j < numNodes; ++j) force.tick();
+    force.stop();
 
     // TODO: port collision detection from legacy
 
     this.displayNodes = d3Data.nodes;
   }
-
-  // get displayNodes() {
-  //   return this.displayGraph.nodes();
-  // }
 
 }
