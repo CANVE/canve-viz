@@ -12,6 +12,8 @@
     "describe": false,
     "beforeEach": false,
     "it": false,
-    "expect": false
+    "expect": false,
+    "TweenLite": false,
+    "Linear": false
   }
 }

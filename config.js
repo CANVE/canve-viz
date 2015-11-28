@@ -47,6 +47,7 @@ System.config({
     "fetch": "github:github/fetch@0.9.0",
     "font-awesome": "npm:font-awesome@4.4.0",
     "graphlib": "npm:graphlib@1.0.7",
+    "gsap": "npm:gsap@1.18.0",
     "jquery": "github:components/jquery@2.1.4",
     "papaparse": "npm:papaparse@4.1.2",
     "undo-manager": "npm:undo-manager@1.0.3",
@@ -214,6 +215,9 @@ System.config({
     },
     "npm:graphlib@1.0.7": {
       "lodash": "npm:lodash@3.10.1",
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:gsap@1.18.0": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:inherits@2.0.1": {
