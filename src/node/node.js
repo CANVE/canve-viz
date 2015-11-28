@@ -21,13 +21,13 @@ export class Node {
   }
 
   attached() {
-    let nodeId = `#node-${this.displayNode.id}`;
+    // Selector
     let $node = $(`#node-${this.displayNode.id}`);
-    console.dir($node[0]);
 
-    TweenLite.fromTo($node[0], 3,
+    // Animate into position
+    TweenLite.fromTo($node[0], 1,
       {attr: {cx:0, cy:0}},
-      {attr: {cx:this.displayNode.x, cy:this.displayNode.y}}
+      {attr: {cx:this.displayNode.x, cy:this.displayNode.y}, ease:Power1.easeIn}
     );
   }
 
