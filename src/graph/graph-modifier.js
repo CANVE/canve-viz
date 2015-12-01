@@ -1,9 +1,10 @@
+import Dagre from 'npm:dagre@0.7.4/index.js';
 import {inject} from 'aurelia-framework';
 import GraphModel from './graph-model';
 import { calcBBox } from './graph-text';
 
 @inject(GraphModel)
-export default class GraphModifier {
+export class GraphModifier {
 
   constructor(graphModel) {
     this.graphModel = graphModel;
@@ -96,6 +97,19 @@ export default class GraphModifier {
   removeNodeOnly(graph, id, svgText) {
     graph.removeNode(id);
     return graph;
+  }
+
+  makeCopy(graph) {
+    let jsonGraph = Dagre.graphlib.json.write(graph);
+    return Dagre.graphlib.json.read(JSON.parse(JSON.stringify(jsonGraph)));
+  }
+
+  /**
+   * Return a graph containing nodes and edges that are in
+   * graph2 but not graph1.
+   */
+  makeDiff(graph1, graph2) {
+
   }
 
 }

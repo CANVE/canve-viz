@@ -4,7 +4,7 @@ import d3 from 'd3';
 import GraphModel from './graph-model';
 import GraphLibD3 from './graphlib-d3';
 import {GraphFinder} from './graph-finder';
-import GraphModifier from './graph-modifier';
+import {GraphModifier} from './graph-modifier';
 import {ActionManager} from './action-manager';
 
 @customElement('graph')
@@ -76,6 +76,9 @@ export class Graph {
    * If withNeihbours is true, then also include each node's neighbours.
    */
   addToDisplayGraphModel(nodeIds, withNeighbours) {
+    // TODO make copy (via json serialization) of this.displayGraph,
+    // then after modifying it, calculate diff graph
+    // Then return diff
     nodeIds.forEach( nodeId => {
       if (withNeighbours) {
         this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
