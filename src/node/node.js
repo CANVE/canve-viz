@@ -16,7 +16,6 @@ export class Node {
   dataChanged(newVal) {
     if (newVal) {
       this.displayNode = newVal;
-      console.dir(this.displayNode);
     }
   }
 
@@ -26,8 +25,8 @@ export class Node {
 
     // Animate into position
     TweenLite.fromTo($node[0], 1,
-      {attr: {cx:0, cy:0}},
-      {attr: {cx:this.displayNode.x, cy:this.displayNode.y}, ease:Power1.easeIn}
+      {attr: {cx: this.displayNode.px, cy: this.displayNode.py}},
+      {attr: {cx: this.displayNode.x, cy: this.displayNode.y}, ease: Power1.easeIn}
     );
   }
 

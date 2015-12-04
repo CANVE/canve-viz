@@ -1,5 +1,5 @@
-import {inject} from 'aurelia-framework';
-import {customElement, bindable} from 'aurelia-framework';
+import {inject, customElement, bindable} from 'aurelia-framework';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
 import GraphModel from './graph-model';
 import GraphLibD3 from './graphlib-d3';
@@ -8,12 +8,13 @@ import {GraphModifier} from './graph-modifier';
 import {ActionManager} from './action-manager';
 
 @customElement('graph')
-@inject(Element, GraphLibD3, GraphModel, GraphFinder, GraphModifier, ActionManager)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, ActionManager)
 export class Graph {
   @bindable data;
 
-  constructor(element, graphLibD3, graphModel, graphFinder, graphModifier, actionManager) {
+  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, actionManager) {
     this.element = element;
+    this.pubSub = pubSub;
     this.graphLibD3 = graphLibD3;
     this.graphModel = graphModel;
     this.graphFinder = graphFinder;
@@ -21,6 +22,10 @@ export class Graph {
     this.actionManager = actionManager;
 
     this.windowSizeAdapter();
+
+    this.pubSub.subscribe('search.node', nodeId => {
+      this.addNodeAction([nodeId], true);
+    });
   }
 
   /**
