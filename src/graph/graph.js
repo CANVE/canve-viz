@@ -23,6 +23,9 @@ export class Graph {
 
     this.windowSizeAdapter();
 
+    this.displayNodes = [];
+    this.displayEdges = [];
+
     this.pubSub.subscribe('search.node', nodeId => {
       this.addNodeAction([nodeId], true);
     });
@@ -130,7 +133,29 @@ export class Graph {
 
     // TODO: port collision detection from legacy
 
-    this.displayNodes = d3Data.nodes;
+    this.updateDisplayData(d3Data);
+  }
+
+  containsNode(nodes, node) {
+    let result = null;
+
+    result = nodes.find( displayNode => {
+      return node.id === displayNode.id;
+    });
+
+    return result;
+  }
+
+  /**
+   * Update list of display nodes from d3 data, only for nodes that are not
+   * already in display.
+   */
+  updateDisplayData(d3Data) {
+    d3Data.nodes.forEach( node => {
+      if (!this.containsNode(this.displayNodes, node)) {
+        this.displayNodes.push(node);
+      }
+    });
   }
 
 }

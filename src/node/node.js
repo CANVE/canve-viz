@@ -16,7 +16,7 @@ export class Node {
   dataChanged(newVal) {
     if (newVal) {
       this.displayNode = newVal;
-      console.dir(this.displayNode);
+      // console.dir(this.displayNode);
     }
   }
 
