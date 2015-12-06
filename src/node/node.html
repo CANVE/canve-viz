@@ -3,7 +3,10 @@
   <link rel="stylesheet" href="styles/node.css">
 
   <svg>
-    <g class="node" id="node-${displayNode.id}" transform="translate(${displayNode.x},${displayNode.y})">
+    <g class="node"
+        id="node-${displayNode.id}"
+        click.trigger="toggleSelected()"
+        transform="translate(${displayNode.x},${displayNode.y})">
       <circle class="circle" r="45" fill="blue">
           <title class="tooltip">${toolTip()}</title>
       </circle>

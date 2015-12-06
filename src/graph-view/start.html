@@ -10,10 +10,7 @@
   <!-- Search -->
   <search-graph data.bind="searchTerms"></search-graph>
 
-  <!-- D3 rendered viz (deprecated) -->
-  <!-- <div graph-old="data.bind: graphData; graph-interaction-model.two-way: graphInteractionModel"></div> -->
-
-  <!-- Visualization (wip) -->
-  <graph data.bind="graphData"></graph>
+  <!-- Visualization -->
+  <graph data.bind="graphData" graph-interaction-model.two-way="graphInteractionModel"></graph>
 
 </template>

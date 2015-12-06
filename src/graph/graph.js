@@ -7,10 +7,14 @@ import {GraphFinder} from './graph-finder';
 import {GraphModifier} from './graph-modifier';
 import {ActionManager} from './action-manager';
 
+// bindingEngine is used statically, in the next Aurelia release it will be BindingEngine and injectable
+import {bindingEngine} from 'aurelia-binding';
+
 @customElement('graph')
 @inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, ActionManager)
 export class Graph {
   @bindable data;
+  @bindable graphInteractionModel;
 
   constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, actionManager) {
     this.element = element;
@@ -154,6 +158,65 @@ export class Graph {
     d3Data.links.forEach( link => {
       this.displayEdges.push(link);
     });
+  }
+
+  /**
+   * Based on the currently selected nodes, use 'interaction' and 'type'
+   * to find nodes from globalGraph that should be added, but only if
+   * they're not already in the display graph.
+   */
+  findNodesToAdd(interaction, type) {
+    let selectedNodeIds,
+      relationship,
+      nodesByEdgeRelationship;
+
+    selectedNodeIds = this.graphFinder.findSelectedNodeIds(this.displayGraph);
+    relationship = type === 'of it' ? 'target' : 'source';
+    nodesByEdgeRelationship = this.graphFinder.findNodesByEdgeRelationship(
+      this.graphModel.globalGraphModel, selectedNodeIds, interaction, relationship
+    );
+
+    return this.graphFinder.filterAlreadyInGraph(nodesByEdgeRelationship, this.displayGraph);
+  }
+
+  /**
+   * Determine nodes that should be added, and add them as an undo-able action.
+   */
+  addNodesToDisplay(interaction, type) {
+    let nodesToAdd = this.findNodesToAdd(interaction, type);
+
+    if (nodesToAdd.length > 0) {
+      this.addNodeAction(nodesToAdd);
+    } else {
+      // TODO notify https://github.com/CANVE/canve-viz/issues/32
+      console.warn('No interaction results');
+    }
+  }
+
+  /**
+   * Invoked by Aurelia when 'graphInteractionModel' binding value has changed.
+   * In practice this object it set once in the parent view. After that,
+   * register property observers to fire when specific properties of the interaction model change,
+   * indicating that the graph should respond to the change by adding more nodes.
+   */
+  graphInteractionModelChanged(newValue) {
+    if (newValue) {
+      this.graphInteractionModel = newValue;
+
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'callsSelectedVal').subscribe((newValue, oldValue) => {
+        this.addNodesToDisplay('uses', newValue);
+      });
+
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'extensionsSelectedVal').subscribe((newValue, oldValue) => {
+        this.addNodesToDisplay('extends', newValue);
+      });
+
+      bindingEngine.propertyObserver(this.graphInteractionModel, 'ownershipSelectedVal').subscribe((newValue, oldValue) => {
+        this.addNodesToDisplay('declares member', newValue);
+      });
+
+      // TODO dispose in appropriate lifecycle method http://stackoverflow.com/questions/30283569/array-subscription-in-aurelia
+    }
   }
 
 }

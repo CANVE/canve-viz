@@ -35,8 +35,9 @@ export class Node {
   }
 
   attached() {
-    // Selector
+    // Selectors
     this.$node = $(`#node-${this.displayNode.id}`);
+    let $circle = this.$node.find('circle');
 
     // Animate into position
     TweenLite.fromTo(this.$node[0], 1,
@@ -45,7 +46,6 @@ export class Node {
     );
 
     // Fade in fill color and grow in radius
-    let $circle = this.$node.find('circle');
     TweenLite.fromTo($circle, 1,
       {attr: {fill: `rgba(0, 0, 255, 0)`, r: 0}},
       {attr: {fill: `rgba(0, 0, 255, 1)`, r: 45}, ease: Power1.easeIn}
@@ -64,6 +64,15 @@ export class Node {
       {attr: {transform: `translate(${this.displayNode.x}, ${fromPos})`}},
       {attr: {transform: `translate(${this.displayNode.x}, ${toPos})`}, ease: Power1.easeIn}
     );
+  }
+
+  toggleSelected() {
+    if (this.displayNode.selectStatus === 'unselected') {
+      this.displayNode.selectStatus = 'selected';
+    } else {
+      this.displayNode.selectStatus = 'unselected';
+    }
+    console.log(`node: ${this.displayNode.id} is ${this.displayNode.selectStatus}`);
   }
 
 }
