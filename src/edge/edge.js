@@ -33,31 +33,40 @@ export class Edge {
     );
   }
 
-  // TODO animate line positions based on source/target x/y changes
   sourcexChanged(newVal, oldVal) {
     if (newVal && oldVal) {
-      console.log(`=== edge sourcexChanged: newVal = ${newVal}, oldVal = ${oldVal}`);
+      TweenLite.fromTo(this.$edge[0], 1,
+        {attr: {x1: oldVal}},
+        {attr: {x1: newVal}, ease: Power1.easeIn}
+      );
     }
   }
 
   sourceyChanged(newVal, oldVal) {
     if (newVal && oldVal) {
-      console.log(`=== edge sourceyChanged: newVal = ${newVal}, oldVal = ${oldVal}`);
+      TweenLite.fromTo(this.$edge[0], 1,
+        {attr: {y1: oldVal}},
+        {attr: {y1: newVal}, ease: Power1.easeIn}
+      );
     }
   }
 
-  // TODO: Implement for line x1/x2 and y1/y2
-  // animateX(selector, fromPos, toPos) {
-  //   TweenLite.fromTo(selector[0], 1,
-  //     {attr: {transform: `translate(${fromPos}, ${this.displayNode.y})`}},
-  //     {attr: {transform: `translate(${toPos}, ${this.displayNode.y})`}, ease: Power1.easeIn}
-  //   );
-  // }
-  //
-  // animateY(selector, fromPos, toPos) {
-  //   TweenLite.fromTo(selector[0], 1,
-  //     {attr: {transform: `translate(${this.displayNode.x}, ${fromPos})`}},
-  //     {attr: {transform: `translate(${this.displayNode.x}, ${toPos})`}, ease: Power1.easeIn}
-  //   );
-  // }
+  targetxChanged(newVal, oldVal) {
+    if (newVal && oldVal) {
+      TweenLite.fromTo(this.$edge[0], 1,
+        {attr: {x2: oldVal}},
+        {attr: {x2: newVal}, ease: Power1.easeIn}
+      );
+    }
+  }
+
+  targetyChanged(newVal, oldVal) {
+    if (newVal && oldVal) {
+      TweenLite.fromTo(this.$edge[0], 1,
+        {attr: {y2: oldVal}},
+        {attr: {y2: newVal}, ease: Power1.easeIn}
+      );
+    }
+  }
+
 }
