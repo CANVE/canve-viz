@@ -1,4 +1,4 @@
-export default class GraphLibD3 {
+export class GraphLibD3 {
 
   /**
    * Map from graphlib graph representation to d3 graph representation:
@@ -37,6 +37,16 @@ export default class GraphLibD3 {
     });
 
     return { nodes, links };
+  }
+
+  /**
+   * Check if the given node is contained in the nodes list, by matching id.
+   * If it is, then return it, otherwise return null.
+   */
+  containsNode(nodes, node) {
+    return nodes.find( displayNode => {
+      return node.id === displayNode.id;
+    });
   }
 
 

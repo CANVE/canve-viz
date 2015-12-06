@@ -2,7 +2,7 @@ import {inject, customElement, bindable} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import d3 from 'd3';
 import GraphModel from './graph-model';
-import GraphLibD3 from './graphlib-d3';
+import {GraphLibD3} from './graphlib-d3';
 import {GraphFinder} from './graph-finder';
 import {GraphModifier} from './graph-modifier';
 import {ActionManager} from './action-manager';
@@ -123,38 +123,36 @@ export class Graph {
        .links(d3Data.links)
        .size([this.presentationSVG.width, this.presentationSVG.height])
        .gravity(0.4)
-       .linkDistance(20)
+       .linkDistance(50)
        .charge(-150);
 
-    // Run the force layout simulation one step to compute a static layout
-    force.start();
-    for (var j = 0; j < numNodes; ++j) force.tick();
-    force.stop();
+    this.computeLayout(force, numNodes);
 
-    // TODO: port collision detection from legacy
+    // TODO: port collision detection or line adjustment from legacy
 
     this.updateDisplayData(d3Data);
   }
 
-  containsNode(nodes, node) {
-    let result = null;
-
-    result = nodes.find( displayNode => {
-      return node.id === displayNode.id;
-    });
-
-    return result;
+  computeLayout(force, numIterations) {
+    force.start();
+    for (var j = 0; j < numIterations; ++j) force.tick();
+    force.stop();
   }
 
   /**
-   * Update list of display nodes from d3 data, only for nodes that are not
-   * already in display.
+   * Update list of display nodes and edges from d3 data,
+   * only for nodes that are not already in display.
    */
   updateDisplayData(d3Data) {
     d3Data.nodes.forEach( node => {
-      if (!this.containsNode(this.displayNodes, node)) {
+      if (!this.graphLibD3.containsNode(this.displayNodes, node)) {
         this.displayNodes.push(node);
       }
+    });
+
+    // for now, just dump all the edges each time, figure out deltas later
+    d3Data.links.forEach( link => {
+      this.displayEdges.push(link);
     });
   }
 

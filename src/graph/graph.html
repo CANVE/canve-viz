@@ -1,10 +1,12 @@
 <template>
   <require from="../node/node"></require>
+  <require from="../edge/edge"></require>
 
   <link rel="stylesheet" href="styles/graph.css">
 
   <svg width="${presentationSVG.width}" height="${presentationSVG.height}">
     <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
+    <edge repeat.for="displayEdge of displayEdges" data.bind="displayEdge"></edge>
   </svg>
-  
+
 </template>
