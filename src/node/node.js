@@ -5,6 +5,7 @@ import {bindingEngine} from 'aurelia-binding';
 
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
+import d3 from 'd3';
 
 @customElement('node')
 @containerless
@@ -48,7 +49,7 @@ export class Node {
     // Fade in fill color and grow in radius
     TweenLite.fromTo($circle, 1,
       {attr: {fill: `rgba(0, 0, 255, 0)`, r: 0}},
-      {attr: {fill: `rgba(0, 0, 255, 1)`, r: 45}, ease: Power1.easeIn}
+      {attr: {fill: this.nodeColor(), r: 45}, ease: Power1.easeIn}
     );
   }
 
@@ -73,6 +74,23 @@ export class Node {
     } else {
       this.displayNode.selectStatus = 'unselected';
     }
+  }
+
+  /**
+   * Determine node fill color based on kind.
+   * Color values ported from legacy, but doesn't have to be d3.
+   */
+  nodeColor() {
+    if (this.displayNode.kind === 'trait')           return d3.rgb('blue').darker(2);
+    if (this.displayNode.kind === 'class')           return d3.rgb('blue').brighter(1);
+    if (this.displayNode.kind === 'object')          return d3.rgb('blue').brighter(1.6);
+    if (this.displayNode.kind === 'anonymous class') return d3.rgb('gray').brighter(0.9);
+    if (this.displayNode.kind === 'method')
+      if (this.displayNode.name.indexOf('$') > 0)   return d3.rgb('gray').brighter(0.9);
+      else                              return d3.rgb('green');
+    if (this.displayNode.kind === 'constructor')     return 'url(#MyRadialGradientDef)';
+    if (this.displayNode.kind === 'value')           return d3.rgb('green').brighter(1.3);
+    if (this.displayNode.kind === 'package')         return d3.rgb('white').darker(2);
   }
 
 }
