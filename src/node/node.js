@@ -47,10 +47,18 @@ export class Node {
     );
 
     // Fade in fill color and grow in radius
-    TweenLite.fromTo($circle, 1,
-      {attr: {fill: `rgba(0, 0, 255, 0)`, r: 0}},
-      {attr: {fill: this.nodeColor(), r: 45}, ease: Power1.easeIn}
-    );
+    // HACK tweenlite messing up gradient fill
+    if (this.displayNode.kind !== 'constructor') {
+      TweenLite.fromTo($circle, 1,
+        {attr: {fill: `rgba(255, 255, 255, 0)`, r: 0}},
+        {attr: {fill: `${this.nodeColor()}`, r: 45}, ease: Power1.easeIn}
+      );
+    } else {
+      TweenLite.fromTo($circle, 1,
+        {attr: {r: 0}},
+        {attr: {r: 45}, ease: Power1.easeIn}
+      );
+    }
   }
 
   animateX(selector, fromPos, toPos) {
@@ -88,7 +96,9 @@ export class Node {
     if (this.displayNode.kind === 'method')
       if (this.displayNode.name.indexOf('$') > 0)   return d3.rgb('gray').brighter(0.9);
       else                              return d3.rgb('green');
-    if (this.displayNode.kind === 'constructor')     return 'url(#MyRadialGradientDef)';
+    if (this.displayNode.kind === 'constructor') {
+      return 'url(#MyRadialGradientDef)';
+    }
     if (this.displayNode.kind === 'value')           return d3.rgb('green').brighter(1.3);
     if (this.displayNode.kind === 'package')         return d3.rgb('white').darker(2);
   }

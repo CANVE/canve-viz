@@ -10,7 +10,14 @@
   <!-- container -->
   <svg width="${presentationSVG.width}" height="${presentationSVG.height}">
 
-    <!-- edges -->
+    <defs>
+      <radialGradient id="MyRadialGradientDef">
+        <stop offset="30%" stop-color="green"></stop>
+        <stop offset="90%" stop-color="#0000ff"></stop>
+      </radialGradient>
+    </defs>
+
+    <!-- edges (after nodes so they get drawn underneath)-->
     <edge repeat.for="displayEdge of displayEdges"
       data.bind="displayEdge"
       sourcex.bind="displayEdge.source.x"
@@ -21,7 +28,7 @@
 
     <!-- nodes -->
     <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
-    
+
   </svg>
 
 </template>
