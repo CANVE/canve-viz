@@ -30,7 +30,7 @@ export class Node {
     }
   }
 
-  get toolTip() {
+  toolTip() {
     return `${this.displayNode.kind} ${this.displayNode.name} (debug id ${this.displayNode.id})`;
   }
 
@@ -44,7 +44,12 @@ export class Node {
       {attr: {transform: `translate(${this.displayNode.x}, ${this.displayNode.y})`}, ease: Power1.easeIn}
     );
 
-    // TODO: Determine color and animate fill such that it appears to fade in
+    // Fade in fill color and grow in radius
+    let $circle = this.$node.find('circle');
+    TweenLite.fromTo($circle, 1,
+      {attr: {fill: `rgba(0, 0, 255, 0)`, r: 0}},
+      {attr: {fill: `rgba(0, 0, 255, 1)`, r: 45}, ease: Power1.easeIn}
+    );
   }
 
   animateX(selector, fromPos, toPos) {
