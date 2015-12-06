@@ -29,7 +29,10 @@ export class Edge {
     // Animate into position
     TweenLite.fromTo(this.$edge[0], 1,
       {attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y}},
-      {attr: {x2: this.displayEdge.target.x, y2: this.displayEdge.target.y}, ease: Power1.easeIn}
+      {attr: {x2: this.displayEdge.target.x, y2: this.displayEdge.target.y},
+        ease: Power1.easeIn,
+        delay: 0.5
+      }
     );
   }
 

@@ -1,12 +1,14 @@
 <template>
 
+  <link rel="stylesheet" href="styles/edge.css">
+
   <svg>
-    <line id="edge-${displayEdge.source.id}-${displayEdge.target.id}"
+    <line class="edge" id="edge-${displayEdge.source.id}-${displayEdge.target.id}"
       x1="${displayEdge.source.x}"
       y1="${displayEdge.source.y}"
       x2="${displayEdge.target.x}"
       y2="${displayEdge.target.y}"
-      style="stroke:rgb(43, 43, 45);stroke-width:2">
+      style="stroke:rgb(124, 124, 124);stroke-width:1">
     </line>
   </svg>
 

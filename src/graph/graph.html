@@ -1,11 +1,16 @@
 <template>
+
+  <!-- components -->
   <require from="../node/node"></require>
   <require from="../edge/edge"></require>
 
+  <!-- styles -->
   <link rel="stylesheet" href="styles/graph.css">
 
+  <!-- container -->
   <svg width="${presentationSVG.width}" height="${presentationSVG.height}">
-    <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
+
+    <!-- edges -->
     <edge repeat.for="displayEdge of displayEdges"
       data.bind="displayEdge"
       sourcex.bind="displayEdge.source.x"
@@ -13,6 +18,10 @@
       targetx.bind="displayEdge.target.x"
       targety.bind="displayEdge.target.y">
     </edge>
+
+    <!-- nodes -->
+    <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
+    
   </svg>
 
 </template>

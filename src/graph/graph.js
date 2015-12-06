@@ -154,7 +154,9 @@ export class Graph {
       }
     });
 
-    // for now, just dump all the edges each time, figure out deltas later
+    // TODO: handle removals
+
+    // TODO: for now, just dump all the edges each time, figure out deltas later
     d3Data.links.forEach( link => {
       this.displayEdges.push(link);
     });

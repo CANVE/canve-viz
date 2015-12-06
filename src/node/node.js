@@ -66,13 +66,13 @@ export class Node {
     );
   }
 
+  // TODO: Maybe also need control/cmd key modifier to select?
   toggleSelected() {
     if (this.displayNode.selectStatus === 'unselected') {
       this.displayNode.selectStatus = 'selected';
     } else {
       this.displayNode.selectStatus = 'unselected';
     }
-    console.log(`node: ${this.displayNode.id} is ${this.displayNode.selectStatus}`);
   }
 
 }
