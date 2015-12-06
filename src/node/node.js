@@ -43,6 +43,8 @@ export class Node {
       {attr: {transform: `translate(${this.displayNode.px}, ${this.displayNode.py})`}},
       {attr: {transform: `translate(${this.displayNode.x}, ${this.displayNode.y})`}, ease: Power1.easeIn}
     );
+
+    // TODO: Determine color and animate fill such that it appears to fade in
   }
 
   animateX(selector, fromPos, toPos) {

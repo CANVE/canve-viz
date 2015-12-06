@@ -6,7 +6,13 @@
 
   <svg width="${presentationSVG.width}" height="${presentationSVG.height}">
     <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
-    <edge repeat.for="displayEdge of displayEdges" data.bind="displayEdge"></edge>
+    <edge repeat.for="displayEdge of displayEdges"
+      data.bind="displayEdge"
+      sourcex.bind="displayEdge.source.x"
+      sourcey.bind="displayEdge.source.y"
+      targetx.bind="displayEdge.target.x"
+      targety.bind="displayEdge.target.y">
+    </edge>
   </svg>
 
 </template>
