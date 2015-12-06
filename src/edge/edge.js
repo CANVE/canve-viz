@@ -1,6 +1,7 @@
 import {inject, customElement, bindable, containerless} from 'aurelia-framework';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
+import {strokeColor, strokeDash} from './edgeStyle.js';
 
 @customElement('edge')
 @containerless
@@ -70,6 +71,15 @@ export class Edge {
         {attr: {y2: newVal}, ease: Power1.easeIn}
       );
     }
+  }
+
+  edgeStrokeDashArray() {
+    console.log(`=== edgeStrokeDashArray: ${strokeDash(this.displayEdge.kind)}`);
+    return strokeDash(this.displayEdge.edgeKind);
+  }
+
+  edgeStyle() {
+    // stroke-dasharray="none" style="stroke-width: 1px; stroke: rgb(124, 124, 124);"
   }
 
 }
