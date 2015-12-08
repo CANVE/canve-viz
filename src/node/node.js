@@ -51,7 +51,7 @@ export class Node {
     if (this.displayNode.kind !== 'constructor') {
       TweenLite.fromTo($circle, 1,
         {attr: {fill: `rgba(255, 255, 255, 0)`, r: 0}},
-        {attr: {fill: `${this.nodeColor()}`, r: 45}, ease: Power1.easeIn}
+        {attr: {fill: `${this.nodeColor()}`, r: 45}, ease: Elastic.easeOut}
       );
     } else {
       TweenLite.fromTo($circle, 1,
