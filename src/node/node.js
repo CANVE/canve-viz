@@ -76,12 +76,18 @@ export class Node {
     );
   }
 
-  // TODO: Maybe also need control/cmd key modifier to select?
-  toggleSelected() {
-    if (this.displayNode.selectStatus === 'unselected') {
-      this.displayNode.selectStatus = 'selected';
-    } else {
-      this.displayNode.selectStatus = 'unselected';
+  /**
+   * Toggle node selected status on Ctrl + click
+   */
+  toggleSelected(event) {
+    if (event.ctrlKey) {
+      if (this.displayNode.selectStatus === 'unselected') {
+        this.displayNode.selectStatus = 'selected';
+        console.log(`${this.displayNode.id} is selected`);
+      } else {
+        this.displayNode.selectStatus = 'unselected';
+        console.log(`${this.displayNode.id} is unselected`);
+      }
     }
   }
 
