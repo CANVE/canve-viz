@@ -88,9 +88,6 @@ export class Graph {
    * If withNeihbours is true, then also include each node's neighbours.
    */
   addToDisplayGraphModel(nodeIds, withNeighbours) {
-    // TODO make copy (via json serialization) of this.displayGraph,
-    // then after modifying it, calculate diff graph
-    // Then return diff
     nodeIds.forEach( nodeId => {
       if (withNeighbours) {
         this.graphModifier.addNodeEnv(this.displayGraph, nodeId, 1, this.svgText);
@@ -148,18 +145,22 @@ export class Graph {
    * only for nodes that are not already in display.
    */
   updateDisplayData(d3Data) {
+
+    // add nodes that are not already in display
     d3Data.nodes.forEach( node => {
       if (!this.graphLibD3.containsNode(this.displayNodes, node)) {
         this.displayNodes.push(node);
       }
     });
 
-    // TODO: handle removals
-
-    // TODO: for now, just dump all the edges each time, figure out deltas later
+    // add links that are not already in display
     d3Data.links.forEach( link => {
-      this.displayEdges.push(link);
+      if (!this.graphLibD3.containsEdge(this.displayEdges, link)) {
+        this.displayEdges.push(link);
+      }
     });
+
+    // TODO: handle removals
   }
 
   /**

@@ -45,4 +45,42 @@ describe('GraphLibD3', () => {
 
   });
 
+  describe('containsEdge', () => {
+
+    it('Returns the edge if its contained in the list of edges', () => {
+      // Given
+      let edges = [
+        {edgeKind: 'declares member', source: { id: 1}, target: { id: 2}},
+        {edgeKind: 'uses', source: { id: 2}, target: { id: 3}},
+        {edgeKind: 'extends', source: { id: 3}, target: { id: 4}}
+      ];
+      let edge = {edgeKind: 'extends', source: { id: 3}, target: { id: 4}};
+
+      // When
+      let result = sut.containsEdge(edges, edge);
+
+      // Then
+      expect(result.edgeKind).toEqual('extends');
+      expect(result.source.id).toEqual(3);
+      expect(result.target.id).toEqual(4);
+    });
+
+    it('Returns undefined if the edge is not contained in the list of edges', () => {
+      // Given
+      let edges = [
+        {edgeKind: 'declares member', source: { id: 1}, target: { id: 2}},
+        {edgeKind: 'uses', source: { id: 2}, target: { id: 3}},
+        {edgeKind: 'extends', source: { id: 3}, target: { id: 4}}
+      ];
+      let edge = {edgeKind: 'declares member', source: { id: 1}, target: { id: 3}};
+
+      // When
+      let result = sut.containsEdge(edges, edge);
+
+      // Then
+      expect(result).toBe(undefined);
+    });
+
+  });
+
 });
