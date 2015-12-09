@@ -166,7 +166,13 @@ export class Graph {
       }
     }
 
-    // TODO remove edges that are in display, but not in d3Data
+    // remove edges that are in display, but not in d3Data (iterate in reverse because splice re-indexes the array)
+    let numDisplayEdges = this.displayEdges.length;
+    for (let j=numDisplayEdges-1; j >=0; j--) {
+      if (!this.graphLibD3.containsEdge(d3Data.links, this.displayEdges[j])) {
+        this.displayEdges.splice(j, 1);
+      }
+    }
 
   }
 

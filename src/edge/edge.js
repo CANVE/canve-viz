@@ -37,6 +37,11 @@ export class Edge {
     );
   }
 
+  // TODO Animate the removed edge out of display, fade, shrink, etc.
+  detached() {
+    console.log(`${this.displayEdge.edgeKind} is detached`);
+  }
+
   sourcexChanged(newVal, oldVal) {
     if (newVal && oldVal) {
       TweenLite.fromTo(this.$edge[0], 1,
