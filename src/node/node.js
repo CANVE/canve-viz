@@ -50,12 +50,12 @@ export class Node {
     // Fade in fill color and grow in radius
     // HACK tweenlite messing up gradient fill
     if (this.displayNode.kind !== 'constructor') {
-      TweenLite.fromTo($circle, 1,
+      TweenLite.fromTo($circle[0], 1.5,
         {attr: {fill: `rgba(255, 255, 255, 0)`, r: 0}},
         {attr: {fill: `${this.nodeColor()}`, r: 45}, ease: Elastic.easeOut}
       );
     } else {
-      TweenLite.fromTo($circle, 1,
+      TweenLite.fromTo($circle[0], 1.5,
         {attr: {r: 0}},
         {attr: {r: 45}, ease: Power1.easeIn}
       );
