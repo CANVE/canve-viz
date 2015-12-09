@@ -62,6 +62,11 @@ export class Node {
     }
   }
 
+  // TODO Animate the removed node out of display, fade, shrink, etc.
+  detached() {
+    console.log(`${this.displayNode.id} is detached`);
+  }
+
   animateX(selector, fromPos, toPos) {
     TweenLite.fromTo(selector[0], 1,
       {attr: {transform: `translate(${fromPos}, ${this.displayNode.y})`}},

@@ -141,26 +141,33 @@ export class Graph {
   }
 
   /**
-   * Update list of display nodes and edges from d3 data,
-   * only for nodes that are not already in display.
+   * Update list of display nodes and edges from d3 data.
    */
   updateDisplayData(d3Data) {
-
-    // add nodes that are not already in display
+    // add nodes that are in d3Data, but not in display
     d3Data.nodes.forEach( node => {
       if (!this.graphLibD3.containsNode(this.displayNodes, node)) {
         this.displayNodes.push(node);
       }
     });
 
-    // add links that are not already in display
+    // add links that are in d3Data, but not in display
     d3Data.links.forEach( link => {
       if (!this.graphLibD3.containsEdge(this.displayEdges, link)) {
         this.displayEdges.push(link);
       }
     });
 
-    // TODO: handle removals
+    // remove nodes that are in display, but not in d3Data (iterate in reverse because splice re-indexes the array)
+    let numDisplayNodes = this.displayNodes.length;
+    for (let i=numDisplayNodes-1; i >= 0; i--) {
+      if (!this.graphLibD3.containsNode(d3Data.nodes, this.displayNodes[i])) {
+        this.displayNodes.splice(i, 1);
+      }
+    }
+
+    // TODO remove edges that are in display, but not in d3Data
+
   }
 
   /**
