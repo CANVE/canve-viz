@@ -7,7 +7,7 @@
         id="node-${displayNode.id}"
         click.trigger="toggleSelected($event)"
         transform="translate(${displayNode.x},${displayNode.y})">
-      <circle class="circle" r="45" fill="${nodeColor()}">
+      <circle class="circle" r="45" fill="${nodeColor()}" stroke="${strokeColor}" stroke-width="${strokeWidth}">
           <title class="tooltip">${toolTip()}</title>
       </circle>
       <text text-anchor="middle" alignment-baseline="middle" y="-10.69921875" pointer-events="none" style="font-size: 12px; fill: rgb(255, 255, 255); stroke-width: 0px; cursor: pointer;">

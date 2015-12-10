@@ -80,22 +80,34 @@ export class Node {
   }
 
   /**
-   * Toggle node selected status on Ctrl + click
+   * Toggle node selected status
    */
   toggleSelected(event) {
-    if (event.ctrlKey) {
-      if (this.displayNode.selectStatus === 'unselected') {
-        this.displayNode.selectStatus = 'selected';
-        console.log(`${this.displayNode.id} is selected`);
-      } else {
-        this.displayNode.selectStatus = 'unselected';
-        console.log(`${this.displayNode.id} is unselected`);
-      }
+    if (this.displayNode.selectStatus === 'unselected') {
+      this.displayNode.selectStatus = 'selected';
+    } else {
+      this.displayNode.selectStatus = 'unselected';
     }
   }
 
   nodeColor() {
     return fillColor(this.displayNode);
+  }
+
+  get strokeColor() {
+    let result = this.nodeColor();
+    if (this.displayNode.selectStatus === 'selected') {
+      result = 'rgb(222, 18, 30)';
+    }
+    return result;
+  }
+
+  get strokeWidth() {
+    let result = 0;
+    if (this.displayNode.selectStatus === 'selected') {
+      result = 3;
+    }
+    return result;
   }
 
 }
