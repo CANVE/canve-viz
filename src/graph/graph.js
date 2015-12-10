@@ -1,5 +1,6 @@
 import {inject, customElement, bindable} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
+import {BindingEngine} from 'aurelia-binding';
 import d3 from 'd3';
 import GraphModel from './graph-model';
 import {GraphLibD3} from './graphlib-d3';
@@ -7,16 +8,13 @@ import {GraphFinder} from './graph-finder';
 import {GraphModifier} from './graph-modifier';
 import {ActionManager} from './action-manager';
 
-// bindingEngine is used statically, in the next Aurelia release it will be BindingEngine and injectable
-import {bindingEngine} from 'aurelia-binding';
-
 @customElement('graph')
-@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, ActionManager)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, ActionManager, BindingEngine)
 export class Graph {
   @bindable data;
   @bindable graphInteractionModel;
 
-  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, actionManager) {
+  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, actionManager, bindingEngine) {
     this.element = element;
     this.pubSub = pubSub;
     this.graphLibD3 = graphLibD3;
@@ -24,6 +22,7 @@ export class Graph {
     this.graphFinder = graphFinder;
     this.graphModifier = graphModifier;
     this.actionManager = actionManager;
+    this.bindingEngine = bindingEngine;
 
     this.windowSizeAdapter();
 
@@ -219,15 +218,15 @@ export class Graph {
     if (newValue) {
       this.graphInteractionModel = newValue;
 
-      bindingEngine.propertyObserver(this.graphInteractionModel, 'callsSelectedVal').subscribe((newValue, oldValue) => {
+      this.bindingEngine.propertyObserver(this.graphInteractionModel, 'callsSelectedVal').subscribe((newValue, oldValue) => {
         this.addNodesToDisplay('uses', newValue);
       });
 
-      bindingEngine.propertyObserver(this.graphInteractionModel, 'extensionsSelectedVal').subscribe((newValue, oldValue) => {
+      this.bindingEngine.propertyObserver(this.graphInteractionModel, 'extensionsSelectedVal').subscribe((newValue, oldValue) => {
         this.addNodesToDisplay('extends', newValue);
       });
 
-      bindingEngine.propertyObserver(this.graphInteractionModel, 'ownershipSelectedVal').subscribe((newValue, oldValue) => {
+      this.bindingEngine.propertyObserver(this.graphInteractionModel, 'ownershipSelectedVal').subscribe((newValue, oldValue) => {
         this.addNodesToDisplay('declares member', newValue);
       });
 
