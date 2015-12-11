@@ -1,0 +1,6 @@
+svg,
+.graph-container {
+  position: absolute;
+  top: 250px;
+  z-index: 5;
+}

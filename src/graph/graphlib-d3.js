@@ -1,4 +1,4 @@
-export default class GraphLibD3 {
+export class GraphLibD3 {
 
   /**
    * Map from graphlib graph representation to d3 graph representation:
@@ -37,6 +37,28 @@ export default class GraphLibD3 {
     });
 
     return { nodes, links };
+  }
+
+  /**
+   * Check if the given node is contained in the nodes list, by matching id.
+   * If it is, then return it, otherwise return undefined.
+   */
+  containsNode(nodes, node) {
+    return nodes.find( displayNode => {
+      return node.id === displayNode.id;
+    });
+  }
+
+  /**
+   * Check if the given edge is contained in the edges list, by matching edgeKind
+   * and source and target node ids. If it is, then return it, otherwise return displayEdge.
+   */
+  containsEdge(edges, edge) {
+    return edges.find( displayEdge => {
+      return edge.edgeKind === displayEdge.edgeKind &&
+        edge.source.id === displayEdge.source.id &&
+        edge.target.id === displayEdge.target.id;
+    });
   }
 
 
