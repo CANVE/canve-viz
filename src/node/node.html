@@ -3,7 +3,7 @@
   <svg>
     <g class="node"
         id="node-${displayNode.id}"
-        click.trigger="toggleSelected($event)"
+        click.delegate="toggleSelected($event)"
         transform="translate(${displayNode.x},${displayNode.y})">
       <circle class="circle" r="45" fill="${nodeColor()}" stroke="${strokeColor}" stroke-width="${strokeWidth}">
           <title class="tooltip">${toolTip()}</title>
