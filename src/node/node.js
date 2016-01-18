@@ -85,29 +85,41 @@ export class Node {
   toggleSelected(event) {
     if (this.displayNode.selectStatus === 'unselected') {
       this.displayNode.selectStatus = 'selected';
+      this.selectNode();
     } else {
       this.displayNode.selectStatus = 'unselected';
     }
+  }
+
+  selectNode() {
+    // TODO make property of class, also used in attached
+    let $circle = this.$node.find('circle');
+    TweenLite.to($circle[0], 1, {
+      attr: {
+        stroke : 'rgb(222, 18, 30)',
+        'stroke-width' : 3
+      }
+    });
   }
 
   nodeColor() {
     return fillColor(this.displayNode);
   }
 
-  get strokeColor() {
-    let result = this.nodeColor();
-    if (this.displayNode.selectStatus === 'selected') {
-      result = 'rgb(222, 18, 30)';
-    }
-    return result;
-  }
-
-  get strokeWidth() {
-    let result = 0;
-    if (this.displayNode.selectStatus === 'selected') {
-      result = 3;
-    }
-    return result;
-  }
+  // get strokeColor() {
+  //   let result = this.nodeColor();
+  //   if (this.displayNode.selectStatus === 'selected') {
+  //     result = 'rgb(222, 18, 30)';
+  //   }
+  //   return result;
+  // }
+  //
+  // get strokeWidth() {
+  //   let result = 0;
+  //   if (this.displayNode.selectStatus === 'selected') {
+  //     result = 3;
+  //   }
+  //   return result;
+  // }
 
 }
