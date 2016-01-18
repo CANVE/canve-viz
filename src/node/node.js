@@ -93,14 +93,16 @@ export class Node {
   }
 
   selectNode() {
-    TweenLite.to(this.$circle[0], 1, {
-      attr: { stroke : 'rgb(222, 18, 30)', 'stroke-width' : 3 }
+    TweenLite.to(this.$circle[0], 0.5, {
+      attr: { stroke : 'rgb(222, 18, 30)', 'stroke-width' : 3 },
+      ease: Power3.easeInOut
     });
   }
 
   unselectNode() {
-    TweenLite.to(this.$circle[0], 1, {
-      attr: { stroke : this.nodeColor(), 'stroke-width' : 0 }
+    TweenLite.to(this.$circle[0], 0.5, {
+      attr: { stroke : this.nodeColor(), 'stroke-width' : 0 },
+      ease: Power3.easeInOut
     });
   }
 

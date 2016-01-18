@@ -16,6 +16,7 @@
     "TweenLite": false,
     "Linear": false,
     "Elastic": false,
-    "Power1": false
+    "Power1": false,
+    "Power3": false
   }
 }
