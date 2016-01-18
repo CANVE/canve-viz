@@ -88,6 +88,7 @@ export class Node {
       this.selectNode();
     } else {
       this.displayNode.selectStatus = 'unselected';
+      this.unselectNode();
     }
   }
 
@@ -95,10 +96,15 @@ export class Node {
     // TODO make property of class, also used in attached
     let $circle = this.$node.find('circle');
     TweenLite.to($circle[0], 1, {
-      attr: {
-        stroke : 'rgb(222, 18, 30)',
-        'stroke-width' : 3
-      }
+      attr: { stroke : 'rgb(222, 18, 30)', 'stroke-width' : 3 }
+    });
+  }
+
+  unselectNode() {
+    // TODO make property of class, also used in attached
+    let $circle = this.$node.find('circle');
+    TweenLite.to($circle[0], 1, {
+      attr: { stroke : this.nodeColor(), 'stroke-width' : 0 }
     });
   }
 
