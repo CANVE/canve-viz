@@ -1,5 +1,6 @@
 import {inject} from 'aurelia-framework';
-import UndoManager from 'npm:undo-manager@1.0.4/undomanager.js';
+// import UndoManager from 'npm:undo-manager@1.0.4/undomanager.js';
+import UndoManager from 'undo-manager/undomanager';
 
 @inject(UndoManager)
 export class ActionManager {
