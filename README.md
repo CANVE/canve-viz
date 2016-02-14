@@ -110,6 +110,12 @@ Integration tests are performed with [Protractor](http://angular.github.io/protr
   gulp e2e
   ```
 
+## Upgrade Aurelia
+
+```shell
+jspm install aurelia-animator-css aurelia-bootstrapper aurelia-fetch-client aurelia-framework aurelia-history-browser aurelia-loader-default aurelia-logging-console aurelia-router aurelia-templating-binding aurelia-templating-resources aurelia-templating-router fetch
+```
+
 ## TODO's
 
 - [ ] sometimes nodes are rendered outside the graph container bounds, therefore partially hidden

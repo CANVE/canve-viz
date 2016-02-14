@@ -37,7 +37,7 @@ export class Node {
   attached() {
     // Selectors
     this.$node = $(`#node-${this.displayNode.id}`);
-    let $circle = this.$node.find('circle');
+    this.$circle = this.$node.find('circle');
 
     // Animate into position
     TweenLite.fromTo(this.$node[0], 1,
@@ -48,12 +48,12 @@ export class Node {
     // Fade in fill color and grow in radius
     // HACK tweenlite messing up gradient fill
     if (this.displayNode.kind !== 'constructor') {
-      TweenLite.fromTo($circle[0], 1.5,
+      TweenLite.fromTo(this.$circle[0], 1.5,
         {attr: {fill: `rgba(255, 255, 255, 0)`, r: 0}},
         {attr: {fill: `${this.nodeColor()}`, r: 45}, ease: Elastic.easeOut}
       );
     } else {
-      TweenLite.fromTo($circle[0], 1.5,
+      TweenLite.fromTo(this.$circle[0], 1.5,
         {attr: {r: 0}},
         {attr: {r: 45}, ease: Power1.easeIn}
       );
@@ -85,29 +85,29 @@ export class Node {
   toggleSelected(event) {
     if (this.displayNode.selectStatus === 'unselected') {
       this.displayNode.selectStatus = 'selected';
+      this.selectNode();
     } else {
       this.displayNode.selectStatus = 'unselected';
+      this.unselectNode();
     }
+  }
+
+  selectNode() {
+    TweenLite.to(this.$circle[0], 0.5, {
+      attr: { stroke : 'rgb(222, 18, 30)', 'stroke-width' : 3 },
+      ease: Power3.easeInOut
+    });
+  }
+
+  unselectNode() {
+    TweenLite.to(this.$circle[0], 0.5, {
+      attr: { stroke : this.nodeColor(), 'stroke-width' : 0 },
+      ease: Power3.easeInOut
+    });
   }
 
   nodeColor() {
     return fillColor(this.displayNode);
-  }
-
-  get strokeColor() {
-    let result = this.nodeColor();
-    if (this.displayNode.selectStatus === 'selected') {
-      result = 'rgb(222, 18, 30)';
-    }
-    return result;
-  }
-
-  get strokeWidth() {
-    let result = 0;
-    if (this.displayNode.selectStatus === 'selected') {
-      result = 3;
-    }
-    return result;
   }
 
 }
