@@ -1,7 +1,7 @@
 export class GraphTextService {
 
   constructor() {
-
+    this.verticalOffset = '1.2em';
   }
 
   isUpperCase(char) {
@@ -26,12 +26,11 @@ export class GraphTextService {
     let text = [],
       splitName = this.splitByLengthAndCamelOrWord(node.displayName);
 
-    splitName.forEach(function(line, index) {
+    splitName.forEach( (line, index) => {
      text.push({
        line: line,
        x: 0,
-      //  dy: `${index * 1.2}em`
-       dy: index === 0 ? '0' : '1.2em'
+       dy: index === 0 ? '0' : this.verticalOffset
      });
     });
 
