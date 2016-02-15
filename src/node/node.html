@@ -16,7 +16,7 @@
           alignment-baseline="middle"
           y="${centerTextAtY}"
           pointer-events="none"
-          style="font-size: 12px; fill: rgb(255, 255, 255); stroke-width: 0px; cursor: pointer;">
+          style="font-size: ${nodeFontSize}px; fill: rgb(255, 255, 255); stroke-width: 0px; cursor: pointer;">
         <tspan repeat.for="line of displayNodeTextLines"
           x.bind="line.x"
           dy.bind="line.dy">

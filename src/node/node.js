@@ -17,6 +17,7 @@ export class Node {
     this.bindingEngine = bindingEngine;
     this.graphTextService = graphTextService;
     this.taskQueue = taskQueue;
+    this.nodeFontSize = 12;
   }
 
   dataChanged(newVal) {
@@ -38,9 +39,8 @@ export class Node {
   // Use micro task queue to delay bounding box calculation until AFTER svg is appended to body
   expandNode() {
     this.taskQueue.queueMicroTask(() => {
-      let sphereFontSize = 12; // FIXME where should this be defined?
       let svgRect = this.$node[0].getBBox();
-      this.displayNode.expandedRadius = Math.max(svgRect.width, svgRect.height)/2 + sphereFontSize;
+      this.displayNode.expandedRadius = Math.max(svgRect.width, svgRect.height)/2 + this.nodeFontSize;
       this.displayNode.centerTextAtY = -(svgRect.height/4);
     });
   }
