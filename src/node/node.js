@@ -4,19 +4,21 @@ import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import d3 from 'd3';
 import {GraphTextService} from '../graph/graph-text-service';
+import {NodeCalculator} from './node-calculator';
 import {fillColor} from './node-style';
 
 @customElement('node')
 @containerless
-@inject(Element, BindingEngine, GraphTextService, TaskQueue)
+@inject(Element, BindingEngine, GraphTextService, TaskQueue, NodeCalculator)
 export class Node {
   @bindable data;
 
-  constructor(element, bindingEngine, graphTextService, taskQueue) {
+  constructor(element, bindingEngine, graphTextService, taskQueue, nodeCalculator) {
     this.element = element;
     this.bindingEngine = bindingEngine;
     this.graphTextService = graphTextService;
     this.taskQueue = taskQueue;
+    this.nodeCalculator = nodeCalculator;
     this.nodeFontSize = 12;
   }
 
@@ -36,12 +38,12 @@ export class Node {
     }
   }
 
-  // Use micro task queue to delay bounding box calculation until AFTER svg is appended to body
+  // Use micro task queue to delay calculations until AFTER svg is appended to body
   expandNode() {
     this.taskQueue.queueMicroTask(() => {
       let svgRect = this.$node[0].getBBox();
-      this.displayNode.expandedRadius = Math.max(svgRect.width, svgRect.height)/2 + this.nodeFontSize;
-      this.displayNode.centerTextAtY = -(svgRect.height/4);
+      this.displayNode.expandedRadius = this.nodeCalculator.radius(svgRect, this.nodeFontSize);
+      this.displayNode.centerTextAtY = this.nodeCalculator.centerVertically(svgRect);
     });
   }
 
