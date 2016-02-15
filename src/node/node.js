@@ -3,22 +3,25 @@ import {BindingEngine} from 'aurelia-binding';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import d3 from 'd3';
+import {GraphTextService} from '../graph/graph-text-service';
 import {fillColor} from './node-style';
 
 @customElement('node')
 @containerless
-@inject(Element, BindingEngine)
+@inject(Element, BindingEngine, GraphTextService)
 export class Node {
   @bindable data;
 
-  constructor(element, bindingEngine) {
+  constructor(element, bindingEngine, graphTextService) {
     this.element = element;
     this.bindingEngine = bindingEngine;
+    this.graphTextService = graphTextService;
   }
 
   dataChanged(newVal) {
     if (newVal) {
       this.displayNode = newVal;
+      this.displayNodeTextLines = this.graphTextService.formattedText(this.displayNode);
 
       this.bindingEngine.propertyObserver(this.displayNode, 'x').subscribe((newValue, oldValue) => {
         this.animateX(this.$node, oldValue, newValue);

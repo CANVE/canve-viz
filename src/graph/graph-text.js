@@ -1,5 +1,6 @@
 /**
  * Utilities for handling graph text
+ * Deprecated, use graph-text-service
  */
 
 function isUpperCase(char) {

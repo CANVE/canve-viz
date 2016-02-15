@@ -8,9 +8,16 @@
       <circle class="circle" r="45" fill="${nodeColor()}" stroke="${nodeColor()}" stroke-width="0">
           <title class="tooltip">${toolTip()}</title>
       </circle>
-      <text text-anchor="middle" alignment-baseline="middle" y="-10.69921875" pointer-events="none" style="font-size: 12px; fill: rgb(255, 255, 255); stroke-width: 0px; cursor: pointer;">
-        <tspan x="0" dy="0">${displayNode.kind}</tspan>
-        <tspan x="0" dy="1.2em">${displayNode.name}</tspan>
+      <text text-anchor="middle"
+          alignment-baseline="middle"
+          y="-10.69921875"
+          pointer-events="none"
+          style="font-size: 12px; fill: rgb(255, 255, 255); stroke-width: 0px; cursor: pointer;">
+        <tspan repeat.for="line of displayNodeTextLines"
+          x.bind="line.x"
+          dy.bind="line.dy">
+            ${line.line}
+        </tspan>
       </text>
     </g>
   </svg>
