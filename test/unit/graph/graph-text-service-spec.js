@@ -9,7 +9,7 @@ describe('GraphTextService', () => {
       graphTextService = new GraphTextService();
     });
 
-    it('splits into lines by camel case and increments vertical offset', () => {
+    it('splits into lines by camel case', () => {
       // Given
       let node = { displayName: 'class SingletonIo' };
 
@@ -20,7 +20,7 @@ describe('GraphTextService', () => {
       expect(result.length).toEqual(3);
       expect(result[0].line).toEqual('class ');
       expect(result[0].x).toEqual(0);
-      expect(result[0].dy).toEqual('0em');
+      expect(result[0].dy).toEqual('0');
 
       expect(result[1].line).toEqual('Singleton');
       expect(result[1].x).toEqual(0);
@@ -28,7 +28,7 @@ describe('GraphTextService', () => {
 
       expect(result[2].line).toEqual('Io');
       expect(result[2].x).toEqual(0);
-      expect(result[2].dy).toEqual('2.4em');
+      expect(result[2].dy).toEqual('1.2em');
     });
 
   });

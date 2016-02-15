@@ -35,17 +35,22 @@ export class Node {
     }
   }
 
-  // Delay the bounding box calculation to the end when svg is actually appended to body
+  // Use micro task queue to delay bounding box calculation until AFTER svg is appended to body
   expandNode() {
     this.taskQueue.queueMicroTask(() => {
       let sphereFontSize = 12; // FIXME where should this be defined?
       let svgRect = this.$node[0].getBBox();
       this.displayNode.expandedRadius = Math.max(svgRect.width, svgRect.height)/2 + sphereFontSize;
+      this.displayNode.centerTextAtY = -(svgRect.height/4);
     });
   }
 
+  // These attributes use dirty checking because they can only be calculated after svg is appended to body
   get expandedRadius() {
-    return this.displayNode.expandedRadius || 5;
+    return this.displayNode.expandedRadius;
+  }
+  get centerTextAtY() {
+    return this.displayNode.centerTextAtY;
   }
 
   toolTip() {

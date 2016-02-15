@@ -30,7 +30,8 @@ export class GraphTextService {
      text.push({
        line: line,
        x: 0,
-       dy: `${index * 1.2}em`
+      //  dy: `${index * 1.2}em`
+       dy: index === 0 ? '0' : '1.2em'
      });
     });
 
