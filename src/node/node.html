@@ -5,7 +5,11 @@
         id="node-${displayNode.id}"
         click.delegate="toggleSelected($event)"
         transform="translate(${displayNode.x},${displayNode.y})">
-      <circle class="circle" r="45" fill="${nodeColor()}" stroke="${nodeColor()}" stroke-width="0">
+      <circle class="circle"
+        r="${expandedRadius}"
+        fill="${nodeColor()}"
+        stroke="${nodeColor()}"
+        stroke-width="0">
           <title class="tooltip">${toolTip()}</title>
       </circle>
       <text text-anchor="middle"

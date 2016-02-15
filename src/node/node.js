@@ -1,4 +1,4 @@
-import {inject, customElement, bindable, containerless} from 'aurelia-framework';
+import {inject, customElement, bindable, containerless, TaskQueue} from 'aurelia-framework';
 import {BindingEngine} from 'aurelia-binding';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
@@ -8,20 +8,22 @@ import {fillColor} from './node-style';
 
 @customElement('node')
 @containerless
-@inject(Element, BindingEngine, GraphTextService)
+@inject(Element, BindingEngine, GraphTextService, TaskQueue)
 export class Node {
   @bindable data;
 
-  constructor(element, bindingEngine, graphTextService) {
+  constructor(element, bindingEngine, graphTextService, taskQueue) {
     this.element = element;
     this.bindingEngine = bindingEngine;
     this.graphTextService = graphTextService;
+    this.taskQueue = taskQueue;
   }
 
   dataChanged(newVal) {
     if (newVal) {
       this.displayNode = newVal;
       this.displayNodeTextLines = this.graphTextService.formattedText(this.displayNode);
+      this.expandNode();
 
       this.bindingEngine.propertyObserver(this.displayNode, 'x').subscribe((newValue, oldValue) => {
         this.animateX(this.$node, oldValue, newValue);
@@ -31,6 +33,19 @@ export class Node {
         this.animateY(this.$node, oldValue, newValue);
       });
     }
+  }
+
+  // Delay the bounding box calculation to the end when svg is actually appended to body
+  expandNode() {
+    this.taskQueue.queueMicroTask(() => {
+      let sphereFontSize = 12; // FIXME where should this be defined?
+      let svgRect = this.$node[0].getBBox();
+      this.displayNode.expandedRadius = Math.max(svgRect.width, svgRect.height)/2 + sphereFontSize;
+    });
+  }
+
+  get expandedRadius() {
+    return this.displayNode.expandedRadius || 5;
   }
 
   toolTip() {
@@ -52,8 +67,8 @@ export class Node {
     // HACK tweenlite messing up gradient fill
     if (this.displayNode.kind !== 'constructor') {
       TweenLite.fromTo(this.$circle[0], 1.5,
-        {attr: {fill: `rgba(255, 255, 255, 0)`, r: 0}},
-        {attr: {fill: `${this.nodeColor()}`, r: 45}, ease: Elastic.easeOut}
+        {attr: {fill: `rgba(255, 255, 255, 0)`}},
+        {attr: {fill: `${this.nodeColor()}`}, ease: Elastic.easeOut}
       );
     } else {
       TweenLite.fromTo(this.$circle[0], 1.5,
@@ -61,11 +76,6 @@ export class Node {
         {attr: {r: 45}, ease: Power1.easeIn}
       );
     }
-  }
-
-  // TODO Animate the removed node out of display, fade, shrink, etc.
-  detached() {
-    console.log(`${this.displayNode.id} is detached`);
   }
 
   animateX(selector, fromPos, toPos) {
