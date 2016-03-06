@@ -112,6 +112,9 @@ export class Graph {
 
   /**
    * Use D3 force layout to calculate node positions.
+   * A high negative charge value avoids node overlap.
+   * Setting link distance as function of width creates
+   * a visually pleasing, uncluttered effect.
    */
   updateForceLayout() {
     let d3Data = this.graphLibD3.mapToD3(this.displayGraph),
@@ -123,20 +126,34 @@ export class Graph {
        .links(d3Data.links)
        .size([this.presentationSVG.width, this.presentationSVG.height])
        .gravity(0.4)
-       .linkDistance(100)
-       .charge(-150);
+       .linkDistance(this.presentationSVG.width/4)
+       .charge(-3000);
 
     this.computeLayout(force, numNodes);
-
-    // TODO: port collision detection or line adjustment from legacy
-
     this.updateDisplayData(d3Data);
   }
 
+  /**
+   * Technique to minimize D3 chaotic bouncing in force layout.
+   * http://stackoverflow.com/questions/13463053/calm-down-initial-tick-of-a-force-layout
+   */
   computeLayout(force, numIterations) {
+    let safety = 0;
+
     force.start();
-    for (var j = 0; j < numIterations; ++j) force.tick();
+
+    while(force.alpha() > 0.05) {
+      force.tick();
+      if(safety++ > 500) {
+        break;
+      }
+    }
+
     force.stop();
+
+    if(safety >= 500) {
+      console.warn('Unable to stabilize force layout.');
+    }
   }
 
   /**
