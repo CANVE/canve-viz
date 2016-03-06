@@ -50,4 +50,32 @@ describe('NodeCalculator', () => {
 
   });
 
+  describe('adjustPositionToFit', () => {
+
+    it('sets y position to radius if difference is less than zero', () => {
+      // Given
+      let radius = 10,
+        currentY = 5;
+
+      // When
+      let result = nodeCalculator.adjustPositionToFit(radius, currentY);
+
+      // Then
+      expect(result).toEqual(10);
+    });
+
+    it('returns original y position if difference is greater than zero', () => {
+      // Given
+      let radius = 10,
+        currentY = 20;
+
+      // When
+      let result = nodeCalculator.adjustPositionToFit(radius, currentY);
+
+      // Then
+      expect(result).toEqual(20);
+    });
+
+  });
+
 });
