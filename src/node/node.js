@@ -34,8 +34,9 @@ export class Node {
 
       this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
         newValue = this.nodeCalculator.adjustPositionToFit(this.displayNode.expandedRadius, newValue);
-        // FIXME If position changed, need to tell associated edge to redraw
         this.animateY(this.$node, oldValue, newValue);
+        // Must update this y position so that changed methods in associated edges will fire
+        this.displayNode.y = newValue;
       });
     }
   }
@@ -46,7 +47,6 @@ export class Node {
       let svgRect = this.$node[0].getBBox();
       this.displayNode.expandedRadius = this.nodeCalculator.radius(svgRect, this.nodeFontSize);
       this.displayNode.centerTextAtY = this.nodeCalculator.centerVertically(svgRect);
-      // FIXME If position changed, need to tell associated edge to redraw
       this.displayNode.y = this.nodeCalculator.adjustPositionToFit(this.displayNode.expandedRadius, this.displayNode.y);
     });
   }
