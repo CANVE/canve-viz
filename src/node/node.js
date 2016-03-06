@@ -33,6 +33,11 @@ export class Node {
       });
 
       this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
+        // TODO: Move to nodeCalculator (nudge down)
+        if (newValue - this.displayNode.expandedRadius < 0) {
+          console.dir(this.displayNode);
+          newValue = this.displayNode.expandedRadius;
+        }
         this.animateY(this.$node, oldValue, newValue);
       });
     }
