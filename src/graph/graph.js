@@ -36,12 +36,11 @@ export class Graph {
 
   /**
    * TODO Need to respond to window resize so that svg can resize.
-   * TODO This is too big, need to subtract size of menu and search box
    */
   windowSizeAdapter() {
     this.presentationSVG = {
       width: window.innerWidth - 100,
-      height: window.innerHeight - 200
+      height: window.innerHeight - 112
     };
   }
 

@@ -43,6 +43,7 @@ html {
 }
 
 .page-host {
+  height: 100%;
   position: relative;
   padding: 0 15px;
 }
