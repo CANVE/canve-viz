@@ -44,6 +44,12 @@ export class Node {
       let svgRect = this.$node[0].getBBox();
       this.displayNode.expandedRadius = this.nodeCalculator.radius(svgRect, this.nodeFontSize);
       this.displayNode.centerTextAtY = this.nodeCalculator.centerVertically(svgRect);
+      // TODO: Move this to nodeCalculator
+      // Nudge nodes down that would otherwise get cut off at top
+      if (this.displayNode.y - this.displayNode.expandedRadius < 0) {
+        console.dir(this.displayNode);
+        this.displayNode.y = this.displayNode.expandedRadius;
+      }
     });
   }
 
