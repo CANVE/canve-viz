@@ -22,6 +22,7 @@ export class Node {
     this.nodeFontSize = 12;
   }
 
+  // TODO consider changing all animations to TweenLite.from because data binding has already set correct "to" position
   dataChanged(newVal) {
     if (newVal) {
       this.displayNode = newVal;
