@@ -4,6 +4,7 @@ import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import {strokeColor, strokeDash} from './edgeStyle.js';
 
 const EDGE_ANIMATE_DURATION = 0.5;
+const EDGE_ANIMATE_EASE = Power1.easeIn;
 
 @customElement('edge')
 @containerless
@@ -29,11 +30,12 @@ export class Edge {
     // Selector
     this.$edge = $(`#edge-${this.displayEdge.source.id}-${this.displayEdge.target.id}`);
 
+    // Leaving this one out, still noticing intermittent edges to nowhere
     // Animate edge target from source point
-    TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-      attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
-      ease: Power1.easeIn
-    });
+    // TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
+    //   attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
+    //   ease: EDGE_ANIMATE_EASE
+    // });
 
   }
 
@@ -41,7 +43,7 @@ export class Edge {
     if (newVal && oldVal) {
       TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
         attr: {x1: oldVal},
-        ease: Power1.easeIn,
+        ease: EDGE_ANIMATE_EASE,
       });
     }
   }
@@ -50,7 +52,7 @@ export class Edge {
     if (newVal && oldVal) {
       TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
         attr: {y1: oldVal},
-        ease: Power1.easeIn,
+        ease: EDGE_ANIMATE_EASE,
       });
     }
   }
@@ -59,7 +61,7 @@ export class Edge {
     if (newVal && oldVal) {
       TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
         attr: {x2: oldVal},
-        ease: Power1.easeIn
+        ease: EDGE_ANIMATE_EASE
       });
     }
   }
@@ -72,7 +74,7 @@ export class Edge {
     if (newVal && oldVal) {
       TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
         attr: {y2: oldVal},
-        ease: Power1.easeIn
+        ease: EDGE_ANIMATE_EASE
       });
     }
   }
