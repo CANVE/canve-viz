@@ -125,8 +125,8 @@ export class Graph {
        .links(d3Data.links)
        .size([this.presentationSVG.width, this.presentationSVG.height])
        .gravity(0.4)
-       .linkDistance(this.presentationSVG.width/4)
-       .charge(-3000);
+       .linkDistance(this.presentationSVG.width/6)
+       .charge(-4000);
 
     this.computeLayout(force, numNodes);
     this.updateDisplayData(d3Data);
