@@ -7,14 +7,18 @@ import {GraphLibD3} from './graphlib-d3';
 import {GraphFinder} from './graph-finder';
 import {GraphModifier} from './graph-modifier';
 import {ActionManager} from './action-manager';
+import {GraphPresentationService} from './graph-presentation-service';
+import {GraphPresentationModel} from '../models/graph-presentation-model';
 
 @customElement('graph')
-@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, ActionManager, BindingEngine)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, ActionManager, BindingEngine,
+  GraphPresentationService, GraphPresentationModel)
 export class Graph {
   @bindable data;
   @bindable graphInteractionModel;
 
-  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, actionManager, bindingEngine) {
+  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, actionManager, bindingEngine,
+      graphPresentationService, graphPresentationModel) {
     this.element = element;
     this.pubSub = pubSub;
     this.graphLibD3 = graphLibD3;
@@ -23,6 +27,8 @@ export class Graph {
     this.graphModifier = graphModifier;
     this.actionManager = actionManager;
     this.bindingEngine = bindingEngine;
+    this.graphPresentationService = graphPresentationService;
+    this.graphPresentationModel = graphPresentationModel;
 
     this.windowSizeAdapter();
 
@@ -35,13 +41,15 @@ export class Graph {
   }
 
   /**
-   * TODO Need to respond to window resize so that svg can resize.
+   * Update graph dimensions. Since this is shared model data also needed
+   * by node calculator, use a service to update the model.
    */
   windowSizeAdapter() {
-    this.presentationSVG = {
-      width: window.innerWidth - 100,
-      height: window.innerHeight - 112
-    };
+    // TODO Also need to respond to window resize so that svg can resize.
+    this.graphPresentationService.updateDimensions(
+      window.innerWidth - 100,
+      window.innerHeight - 112
+    );
   }
 
   /**
@@ -123,7 +131,7 @@ export class Graph {
     let force = d3.layout.force()
        .nodes(d3Data.nodes)
        .links(d3Data.links)
-       .size([this.presentationSVG.width, this.presentationSVG.height])
+       .size([this.graphPresentationModel.width, this.graphPresentationModel.height])
        .gravity(0.4)
        .linkDistance(200)
        .charge(-3000);

@@ -1,10 +1,12 @@
 import {NodeCalculator} from '../../../src/node/node-calculator';
 
 describe('NodeCalculator', () => {
-  let nodeCalculator;
+  let nodeCalculator,
+    mockGraphPresentationModel;
 
   beforeEach( () => {
-    nodeCalculator = new NodeCalculator();
+    mockGraphPresentationModel = { width: 800, height: 600 };
+    nodeCalculator = new NodeCalculator(mockGraphPresentationModel);
   });
 
   describe('radius', () => {
@@ -52,10 +54,9 @@ describe('NodeCalculator', () => {
 
   describe('adjustPositionToFit', () => {
 
-    it('sets y position to radius if difference is less than zero', () => {
+    it('sets y position to radius if top is cut off', () => {
       // Given
-      let radius = 10,
-        currentY = 5;
+      let radius = 10, currentY = 5;
 
       // When
       let result = nodeCalculator.adjustPositionToFit(radius, currentY);
@@ -64,16 +65,37 @@ describe('NodeCalculator', () => {
       expect(result).toEqual(10);
     });
 
-    it('returns original y position if difference is greater than zero', () => {
+    it('returns original y position if top is not cut off', () => {
       // Given
-      let radius = 10,
-        currentY = 20;
+      let radius = 10, currentY = 20;
 
       // When
       let result = nodeCalculator.adjustPositionToFit(radius, currentY);
 
       // Then
       expect(result).toEqual(20);
+    });
+
+    it('sets y position to height minus radius if bottom is cut off', () => {
+      // Given
+      let radius = 10, currentY = 595;
+
+      // When
+      let result = nodeCalculator.adjustPositionToFit(radius, currentY);
+
+      // Then
+      expect(result).toEqual(590);
+    });
+
+    it('returns original y position if bottom is not cut off', () => {
+      // Given
+      let radius = 10, currentY = 589;
+
+      // When
+      let result = nodeCalculator.adjustPositionToFit(radius, currentY);
+
+      // Then
+      expect(result).toEqual(589);
     });
 
   });
