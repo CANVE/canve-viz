@@ -141,34 +141,31 @@ export class Graph {
   }
 
   /**
-   * Make nodes fit within bounding box represented by this.graphPresentationModel.
    * A heuristic is used where radius is estimated to be 45, it works well enough.
    * A complete solution would know each node's actual radius, but this is very
    * difficult from timing perspective because its not known until after its
    * in the DOM, and caluclated by NodeCustomElement in micro task queue.
-   * http://mbostock.github.io/d3/talk/20110921/bounding.html
    */
   tick() {
-    // collision detection
+    const heuristicRadius = 45;
+    this.applyCollisionDetection(heuristicRadius);
+    this.applyBoundingBox(heuristicRadius);
+  }
+
+  /**
+   * Collision detection algorithm from
+   * https://bl.ocks.org/mbostock/3231298
+   */
+  applyCollisionDetection(heuristicRadius) {
     let q = d3.geom.quadtree(this.d3Data.nodes),
       i = 0,
       n = this.d3Data.nodes.length;
 
-    while (++i < n) q.visit(this.collide(this.d3Data.nodes[i]));
-
-    // bounding box
-    let heuristicRadius = 45;
-    this.d3Data.nodes.forEach( node => {
-      let curX = node.x;
-      node.x = Math.max(heuristicRadius, Math.min(this.graphPresentationModel.width - heuristicRadius, curX));
-      let curY = node.y;
-      node.y = Math.max(heuristicRadius, Math.min(this.graphPresentationModel.height - heuristicRadius, node.y));
-    });
+    while (++i < n) q.visit(this.collide(this.d3Data.nodes[i], heuristicRadius));
   }
 
-  collide(node) {
-    let r = 45,
-      nx1 = node.x - r,
+  collide(node, r) {
+    let nx1 = node.x - r,
       nx2 = node.x + r,
       ny1 = node.y - r,
       ny2 = node.y + r;
@@ -188,6 +185,19 @@ export class Graph {
       }
       return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
     };
+  }
+
+  /**
+  * Make nodes fit within bounding box represented by this.graphPresentationModel.
+  * http://mbostock.github.io/d3/talk/20110921/bounding.html
+  */
+  applyBoundingBox(r) {
+    this.d3Data.nodes.forEach( node => {
+      let curX = node.x;
+      node.x = Math.max(r, Math.min(this.graphPresentationModel.width - r, curX));
+      let curY = node.y;
+      node.y = Math.max(r, Math.min(this.graphPresentationModel.height - r, node.y));
+    });
   }
 
   /**
