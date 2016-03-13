@@ -120,7 +120,6 @@ export class Graph {
   /**
    * Use D3 force layout to calculate node positions.
    * A high negative charge value avoids node overlap.
-   * Setting link distance as function of width creates
    * a visually pleasing, uncluttered effect.
    */
   updateForceLayout() {
@@ -134,7 +133,7 @@ export class Graph {
        .size([this.graphPresentationModel.width, this.graphPresentationModel.height])
        .gravity(0.4)
        .linkDistance(200)
-       .charge(-3000)
+       .charge(-4000)
        .on('tick', this.tick.bind(this));
 
     this.computeLayout(force, numNodes);
@@ -150,6 +149,14 @@ export class Graph {
    * http://mbostock.github.io/d3/talk/20110921/bounding.html
    */
   tick() {
+    // collision detection
+    let q = d3.geom.quadtree(this.d3Data.nodes),
+      i = 0,
+      n = this.d3Data.nodes.length;
+
+    while (++i < n) q.visit(this.collide(this.d3Data.nodes[i]));
+
+    // bounding box
     let heuristicRadius = 45;
     this.d3Data.nodes.forEach( node => {
       let curX = node.x;
@@ -157,6 +164,30 @@ export class Graph {
       let curY = node.y;
       node.y = Math.max(heuristicRadius, Math.min(this.graphPresentationModel.height - heuristicRadius, node.y));
     });
+  }
+
+  collide(node) {
+    let r = 45,
+      nx1 = node.x - r,
+      nx2 = node.x + r,
+      ny1 = node.y - r,
+      ny2 = node.y + r;
+    return function(quad, x1, y1, x2, y2) {
+      if (quad.point && (quad.point !== node)) {
+        let x = node.x - quad.point.x,
+          y = node.y - quad.point.y,
+          l = Math.sqrt(x * x + y * y),
+          r = node.radius + quad.point.radius;
+        if (l < r) {
+          l = (l - r) / l * 0.5;
+          node.x -= x *= l;
+          node.y -= y *= l;
+          quad.point.x += x;
+          quad.point.y += y;
+        }
+      }
+      return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+    };
   }
 
   /**
