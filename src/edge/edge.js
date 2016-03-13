@@ -1,14 +1,14 @@
 import {inject, customElement, bindable, containerless} from 'aurelia-framework';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
-import {strokeColor, strokeDash} from './edgeStyle.js';
+import {EdgeStyle} from './edge-style';
 
 const EDGE_ANIMATE_DURATION = 0.5;
 const EDGE_ANIMATE_EASE = Power1.easeIn;
 
 @customElement('edge')
 @containerless
-@inject(Element)
+@inject(Element, EdgeStyle)
 export class Edge {
   @bindable data;
   @bindable sourcex;
@@ -16,8 +16,9 @@ export class Edge {
   @bindable targetx;
   @bindable targety;
 
-  constructor(element) {
+  constructor(element, edgeStyle) {
     this.element = element;
+    this.edgeStyle = edgeStyle;
   }
 
   dataChanged(newVal) {
@@ -78,14 +79,17 @@ export class Edge {
     }
   }
 
-  // TODO edge styling based on edgeKind is still a wip...
   edgeStrokeDashArray() {
-    return strokeDash(this.displayEdge.edgeKind);
+    return this.edgeStyle.strokeDash(this.displayEdge.edgeKind);
   }
 
-  // TODO edge styling based on edgeKind is still a wip...
-  edgeStyle() {
-    // stroke-dasharray="none" style="stroke-width: 1px; stroke: rgb(124, 124, 124);"
+  edgeColor() {
+    return this.edgeStyle.strokeColor(this.displayEdge.edgeKind);
+  }
+
+  // This may vary with highlight status?
+  edgeWidth() {
+    return 1;
   }
 
 }
