@@ -30,7 +30,6 @@ export class Edge {
     // Selector
     this.$edge = $(`#edge-${this.displayEdge.source.id}-${this.displayEdge.target.id}`);
 
-    // Leaving this one out, still noticing intermittent edges to nowhere
     // Animate edge target from source point
     TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
       attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
