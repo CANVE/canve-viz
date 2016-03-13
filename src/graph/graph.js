@@ -120,7 +120,6 @@ export class Graph {
   /**
    * Use D3 force layout to calculate node positions.
    * A high negative charge value avoids node overlap.
-   * a visually pleasing, uncluttered effect.
    */
   updateForceLayout() {
     this.d3Data = this.graphLibD3.mapToD3(this.displayGraph);
