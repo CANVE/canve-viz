@@ -22,6 +22,7 @@ export class Node {
     this.nodeFontSize = 12;
   }
 
+  // TODO consider changing all animations to TweenLite.from because data binding has already set correct "to" position
   dataChanged(newVal) {
     if (newVal) {
       this.displayNode = newVal;
@@ -43,6 +44,13 @@ export class Node {
     this.taskQueue.queueMicroTask(() => {
       let svgRect = this.$node[0].getBBox();
       this.displayNode.expandedRadius = this.nodeCalculator.radius(svgRect, this.nodeFontSize);
+
+      // Animate in radius to make newly added nodes stand out
+      TweenLite.fromTo(this.$circle[0], 1.5,
+        {attr: {r: 0}},
+        {attr: {r: this.displayNode.expandedRadius}, ease: Power1.easeIn}
+      );
+
       this.displayNode.centerTextAtY = this.nodeCalculator.centerVertically(svgRect);
     });
   }
@@ -69,20 +77,6 @@ export class Node {
       {attr: {transform: `translate(${this.displayNode.px}, ${this.displayNode.py})`}},
       {attr: {transform: `translate(${this.displayNode.x}, ${this.displayNode.y})`}, ease: Power1.easeIn}
     );
-
-    // Fade in fill color and grow in radius
-    // HACK tweenlite messing up gradient fill
-    if (this.displayNode.kind !== 'constructor') {
-      TweenLite.fromTo(this.$circle[0], 1.5,
-        {attr: {fill: `rgba(255, 255, 255, 0)`}},
-        {attr: {fill: `${this.nodeColor()}`}, ease: Elastic.easeOut}
-      );
-    } else {
-      TweenLite.fromTo(this.$circle[0], 1.5,
-        {attr: {r: 0}},
-        {attr: {r: 45}, ease: Power1.easeIn}
-      );
-    }
   }
 
   animateX(selector, fromPos, toPos) {

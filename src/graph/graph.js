@@ -7,14 +7,18 @@ import {GraphLibD3} from './graphlib-d3';
 import {GraphFinder} from './graph-finder';
 import {GraphModifier} from './graph-modifier';
 import {ActionManager} from './action-manager';
+import {GraphPresentationService} from './graph-presentation-service';
+import {GraphPresentationModel} from '../models/graph-presentation-model';
 
 @customElement('graph')
-@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, ActionManager, BindingEngine)
+@inject(Element, EventAggregator, GraphLibD3, GraphModel, GraphFinder, GraphModifier, ActionManager, BindingEngine,
+  GraphPresentationService, GraphPresentationModel)
 export class Graph {
   @bindable data;
   @bindable graphInteractionModel;
 
-  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, actionManager, bindingEngine) {
+  constructor(element, pubSub, graphLibD3, graphModel, graphFinder, graphModifier, actionManager, bindingEngine,
+      graphPresentationService, graphPresentationModel) {
     this.element = element;
     this.pubSub = pubSub;
     this.graphLibD3 = graphLibD3;
@@ -23,6 +27,8 @@ export class Graph {
     this.graphModifier = graphModifier;
     this.actionManager = actionManager;
     this.bindingEngine = bindingEngine;
+    this.graphPresentationService = graphPresentationService;
+    this.graphPresentationModel = graphPresentationModel;
 
     this.windowSizeAdapter();
 
@@ -35,14 +41,15 @@ export class Graph {
   }
 
   /**
-   * TODO Need to respond to window resize so that svg can resize.
-   * TODO This is too big, need to subtract size of menu and search box
+   * Update graph dimensions. Introduce the concept of using a service to update
+   * the model (but lots of other places in app where viewModes update models directly)
    */
   windowSizeAdapter() {
-    this.presentationSVG = {
-      width: window.innerWidth - 100,
-      height: window.innerHeight - 200
-    };
+    // TODO Also need to respond to window resize so that svg can resize.
+    this.graphPresentationService.updateDimensions(
+      window.innerWidth - 100,
+      window.innerHeight - 112
+    );
   }
 
   /**
@@ -112,31 +119,109 @@ export class Graph {
 
   /**
    * Use D3 force layout to calculate node positions.
+   * A high negative charge value avoids node overlap.
    */
   updateForceLayout() {
-    let d3Data = this.graphLibD3.mapToD3(this.displayGraph),
-      numNodes = d3Data.nodes.length,
-      currentNode;
+    this.d3Data = this.graphLibD3.mapToD3(this.displayGraph);
+    let currentNode;
+    let numNodes = this.d3Data.nodes.length;
 
     let force = d3.layout.force()
-       .nodes(d3Data.nodes)
-       .links(d3Data.links)
-       .size([this.presentationSVG.width, this.presentationSVG.height])
+       .nodes(this.d3Data.nodes)
+       .links(this.d3Data.links)
+       .size([this.graphPresentationModel.width, this.graphPresentationModel.height])
        .gravity(0.4)
-       .linkDistance(100)
-       .charge(-150);
+       .linkDistance(200)
+       .charge(-4000)
+       .on('tick', this.tick.bind(this));
 
     this.computeLayout(force, numNodes);
-
-    // TODO: port collision detection or line adjustment from legacy
-
-    this.updateDisplayData(d3Data);
+    this.updateDisplayData(this.d3Data);
   }
 
+  /**
+   * On each tick of D3's force layout calculation, adjust node positions by applying
+   * collision detection and bounding box constraints. Both of these algorithms
+   * need to know the node's radius. A heuristic is to estimate radius = 45.
+   * A complete solution would know each node's actual radius, but this is very
+   * difficult from timing perspective because its not known until after its
+   * in the DOM, and calculated by NodeCustomElement in micro task queue.
+   */
+  tick() {
+    const heuristicRadius = 45;
+    this.applyCollisionDetection(heuristicRadius);
+    this.applyBoundingBox(heuristicRadius);
+  }
+
+  /**
+   * Collision detection algorithm from
+   * https://bl.ocks.org/mbostock/3231298
+   */
+  applyCollisionDetection(heuristicRadius) {
+    let q = d3.geom.quadtree(this.d3Data.nodes),
+      i = 0,
+      n = this.d3Data.nodes.length;
+
+    while (++i < n) q.visit(this.collide(this.d3Data.nodes[i], heuristicRadius));
+  }
+
+  collide(node, r) {
+    let nx1 = node.x - r,
+      nx2 = node.x + r,
+      ny1 = node.y - r,
+      ny2 = node.y + r;
+    return function(quad, x1, y1, x2, y2) {
+      if (quad.point && (quad.point !== node)) {
+        let x = node.x - quad.point.x,
+          y = node.y - quad.point.y,
+          l = Math.sqrt(x * x + y * y),
+          r = node.radius + quad.point.radius;
+        if (l < r) {
+          l = (l - r) / l * 0.5;
+          node.x -= x *= l;
+          node.y -= y *= l;
+          quad.point.x += x;
+          quad.point.y += y;
+        }
+      }
+      return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+    };
+  }
+
+  /**
+  * Make nodes fit within bounding box represented by this.graphPresentationModel.
+  * http://mbostock.github.io/d3/talk/20110921/bounding.html
+  */
+  applyBoundingBox(r) {
+    this.d3Data.nodes.forEach( node => {
+      let curX = node.x;
+      node.x = Math.max(r, Math.min(this.graphPresentationModel.width - r, curX));
+      let curY = node.y;
+      node.y = Math.max(r, Math.min(this.graphPresentationModel.height - r, node.y));
+    });
+  }
+
+  /**
+   * Technique to minimize D3 chaotic bouncing in force layout.
+   * http://stackoverflow.com/questions/13463053/calm-down-initial-tick-of-a-force-layout
+   */
   computeLayout(force, numIterations) {
+    let safety = 0;
+
     force.start();
-    for (var j = 0; j < numIterations; ++j) force.tick();
+
+    while(force.alpha() > 0.05) {
+      force.tick();
+      if(safety++ > 500) {
+        break;
+      }
+    }
+
     force.stop();
+
+    if(safety >= 500) {
+      console.warn('Unable to stabilize force layout.');
+    }
   }
 
   /**

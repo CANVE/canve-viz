@@ -3,6 +3,9 @@ import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import {strokeColor, strokeDash} from './edgeStyle.js';
 
+const EDGE_ANIMATE_DURATION = 0.5;
+const EDGE_ANIMATE_EASE = Power1.easeIn;
+
 @customElement('edge')
 @containerless
 @inject(Element)
@@ -27,62 +30,60 @@ export class Edge {
     // Selector
     this.$edge = $(`#edge-${this.displayEdge.source.id}-${this.displayEdge.target.id}`);
 
-    // Animate into position
-    TweenLite.fromTo(this.$edge[0], 1,
-      {attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y}},
-      {attr: {x2: this.displayEdge.target.x, y2: this.displayEdge.target.y},
-        ease: Power1.easeIn,
-        delay: 0.5
-      }
-    );
-  }
+    // Animate edge target from source point
+    TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
+      attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
+      ease: EDGE_ANIMATE_EASE
+    });
 
-  // TODO Animate the removed edge out of display, fade, shrink, etc.
-  detached() {
-    console.log(`${this.displayEdge.edgeKind} is detached`);
   }
 
   sourcexChanged(newVal, oldVal) {
     if (newVal && oldVal) {
-      TweenLite.fromTo(this.$edge[0], 1,
-        {attr: {x1: oldVal}},
-        {attr: {x1: newVal}, ease: Power1.easeIn}
-      );
+      TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
+        attr: {x1: oldVal},
+        ease: EDGE_ANIMATE_EASE,
+      });
     }
   }
 
   sourceyChanged(newVal, oldVal) {
     if (newVal && oldVal) {
-      TweenLite.fromTo(this.$edge[0], 1,
-        {attr: {y1: oldVal}},
-        {attr: {y1: newVal}, ease: Power1.easeIn}
-      );
+      TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
+        attr: {y1: oldVal},
+        ease: EDGE_ANIMATE_EASE,
+      });
     }
   }
 
   targetxChanged(newVal, oldVal) {
     if (newVal && oldVal) {
-      TweenLite.fromTo(this.$edge[0], 1,
-        {attr: {x2: oldVal}},
-        {attr: {x2: newVal}, ease: Power1.easeIn}
-      );
+      TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
+        attr: {x2: oldVal},
+        ease: EDGE_ANIMATE_EASE
+      });
     }
   }
 
+  /**
+   * Edge y2 is already bound to newVal,
+   * therefore animate FROM oldVal.
+   */
   targetyChanged(newVal, oldVal) {
     if (newVal && oldVal) {
-      TweenLite.fromTo(this.$edge[0], 1,
-        {attr: {y2: oldVal}},
-        {attr: {y2: newVal}, ease: Power1.easeIn}
-      );
+      TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
+        attr: {y2: oldVal},
+        ease: EDGE_ANIMATE_EASE
+      });
     }
   }
 
+  // TODO edge styling based on edgeKind is still a wip...
   edgeStrokeDashArray() {
-    console.log(`=== edgeStrokeDashArray: ${strokeDash(this.displayEdge.kind)}`);
     return strokeDash(this.displayEdge.edgeKind);
   }
 
+  // TODO edge styling based on edgeKind is still a wip...
   edgeStyle() {
     // stroke-dasharray="none" style="stroke-width: 1px; stroke: rgb(124, 124, 124);"
   }

@@ -1,12 +1,15 @@
 export class NodeCalculator {
 
-   constructor() { }
+  constructor() {
+    
+  }
 
-   radius(boundingBox, fontSize) {
-    return Math.max(boundingBox.width, boundingBox.height)/2 + fontSize;
-   }
+  radius(boundingBox, fontSize) {
+    return Math.max(boundingBox.width, boundingBox.height) / 2 + fontSize;
+  }
 
-   centerVertically(boundingBox) {
-     return -(boundingBox.height/4);
-   }
+  centerVertically(boundingBox) {
+    return -(boundingBox.height / 4);
+  }
+
 }
