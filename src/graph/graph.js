@@ -141,10 +141,12 @@ export class Graph {
   }
 
   /**
-   * A heuristic is used where radius is estimated to be 45, it works well enough.
-   * A complete solution would know each node's actual radius, but this is very
+   * On each tick of D3's force layout calculation, adjust node positions by applying
+   * collision detection and bounding box constraints. Both of these algorithms
+   * need to know the node's radius. A heuristic is to estimate radius = 45.
+   * A complete solution would know each node * actual radius, but this is very
    * difficult from timing perspective because its not known until after its
-   * in the DOM, and caluclated by NodeCustomElement in micro task queue.
+   * in the DOM, and calculated by NodeCustomElement in micro task queue.
    */
   tick() {
     const heuristicRadius = 45;
