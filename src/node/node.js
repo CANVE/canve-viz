@@ -22,42 +22,45 @@ export class Node {
     this.nodeFontSize = 12;
   }
 
-  // TODO consider changing all animations to TweenLite.from because data binding has already set correct "to" position
   dataChanged(newVal) {
     if (newVal) {
       this.displayNode = newVal;
       this.displayNodeTextLines = this.graphTextService.formattedText(this.displayNode);
-
-      // this.bindingEngine.propertyObserver(this.displayNode, 'x').subscribe((newValue, oldValue) => {
-      //   this.animateX(this.$node, oldValue, newValue);
-      // });
-      //
-      // this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
-      //   this.animateY(this.$node, oldValue, newValue);
-      // });
     }
   }
 
-  // Use micro task queue to delay calculations until AFTER svg is appended to body
-  expandNode() {
-    this.taskQueue.queueMicroTask(() => {
-      let svgRect = this.$node[0].getBBox();
-      this.displayNode.expandedRadius = this.nodeCalculator.radius(svgRect, this.nodeFontSize);
+  attached() {
+    // Selectors
+    this.$node = $(`#node-${this.displayNode.id}`);
+    this.$circle = this.$node.find('circle');
 
-      // Animate in radius to make newly added nodes stand out
-      TweenLite.fromTo(this.$circle[0], 1.5,
-        {attr: {r: 0}},
-        {attr: {r: this.displayNode.expandedRadius}, ease: Power1.easeIn}
-      );
-
-      this.displayNode.centerTextAtY = this.nodeCalculator.centerVertically(svgRect);
-    });
+    this.expandNode();
+    this.registerEvents();
   }
 
-  // These attributes use dirty checking because they can only be calculated after svg is appended to body
+  /**
+   * Calculate how big node radius needs to be to accomodate all the lines of text.
+   * Svg element must have already been physically appended to DOM for this to work,
+   * (required by getBBox).
+   */
+  expandNode() {
+    let svgRect = this.$node[0].getBBox();
+    this.displayNode.expandedRadius = this.nodeCalculator.radius(svgRect, this.nodeFontSize);
+    this.displayNode.centerTextAtY = this.nodeCalculator.centerVertically(svgRect);
+    this.animateRadius();
+  }
+
+  animateRadius() {
+    TweenLite.fromTo(this.$circle[0], 1.5,
+      {attr: {r: 0}},
+      {attr: {r: this.displayNode.expandedRadius}, ease: Power1.easeIn}
+    );
+  }
+
   get expandedRadius() {
     return this.displayNode.expandedRadius;
   }
+
   get centerTextAtY() {
     return this.displayNode.centerTextAtY;
   }
@@ -66,25 +69,16 @@ export class Node {
     return `${this.displayNode.kind} ${this.displayNode.name} (debug id ${this.displayNode.id})`;
   }
 
-  // dataChanged runs before attached
-  attached() {
-    // Selectors
-    this.$node = $(`#node-${this.displayNode.id}`);
-    this.$circle = this.$node.find('circle');
+  nodeColor() {
+    return fillColor(this.displayNode);
+  }
 
-    this.expandNode();
-
-    // Animate into position
-    TweenLite.fromTo(this.$node[0], 1,
-      {attr: {transform: `translate(${this.displayNode.px}, ${this.displayNode.py})`}},
-      {attr: {transform: `translate(${this.displayNode.x}, ${this.displayNode.y})`}, ease: Power1.easeIn}
-    );
-
-    this.bindingEngine.propertyObserver(this.displayNode, 'x').subscribe((newValue, oldValue) => {
+  registerEvents() {
+    this.xChangeSub = this.bindingEngine.propertyObserver(this.displayNode, 'x').subscribe((newValue, oldValue) => {
       this.animateX(this.$node, oldValue, newValue);
     });
 
-    this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
+    this.yChangeSub = this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
       this.animateY(this.$node, oldValue, newValue);
     });
   }
@@ -130,8 +124,13 @@ export class Node {
     });
   }
 
-  nodeColor() {
-    return fillColor(this.displayNode);
+  detached() {
+    this.unregisterEvents();
+  }
+
+  unregisterEvents() {
+    this.xChangeSub.dispose();
+    this.yChangeSub.dispose();
   }
 
 }
