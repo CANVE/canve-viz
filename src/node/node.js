@@ -8,7 +8,7 @@ import {NodeCalculator} from './node-calculator';
 import {fillColor} from './node-style';
 
 @customElement('node')
-@containerless
+@containerless()
 @inject(Element, BindingEngine, GraphTextService, TaskQueue, NodeCalculator)
 export class Node {
   @bindable data;
@@ -27,15 +27,14 @@ export class Node {
     if (newVal) {
       this.displayNode = newVal;
       this.displayNodeTextLines = this.graphTextService.formattedText(this.displayNode);
-      this.expandNode();
 
-      this.bindingEngine.propertyObserver(this.displayNode, 'x').subscribe((newValue, oldValue) => {
-        this.animateX(this.$node, oldValue, newValue);
-      });
-
-      this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
-        this.animateY(this.$node, oldValue, newValue);
-      });
+      // this.bindingEngine.propertyObserver(this.displayNode, 'x').subscribe((newValue, oldValue) => {
+      //   this.animateX(this.$node, oldValue, newValue);
+      // });
+      //
+      // this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
+      //   this.animateY(this.$node, oldValue, newValue);
+      // });
     }
   }
 
@@ -67,16 +66,27 @@ export class Node {
     return `${this.displayNode.kind} ${this.displayNode.name} (debug id ${this.displayNode.id})`;
   }
 
+  // dataChanged runs before attached
   attached() {
     // Selectors
     this.$node = $(`#node-${this.displayNode.id}`);
     this.$circle = this.$node.find('circle');
+
+    this.expandNode();
 
     // Animate into position
     TweenLite.fromTo(this.$node[0], 1,
       {attr: {transform: `translate(${this.displayNode.px}, ${this.displayNode.py})`}},
       {attr: {transform: `translate(${this.displayNode.x}, ${this.displayNode.y})`}, ease: Power1.easeIn}
     );
+
+    this.bindingEngine.propertyObserver(this.displayNode, 'x').subscribe((newValue, oldValue) => {
+      this.animateX(this.$node, oldValue, newValue);
+    });
+
+    this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
+      this.animateY(this.$node, oldValue, newValue);
+    });
   }
 
   animateX(selector, fromPos, toPos) {

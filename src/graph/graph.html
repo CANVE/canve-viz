@@ -17,7 +17,6 @@
       </radialGradient>
     </defs>
 
-    <!-- edges (after nodes so they get drawn underneath)-->
     <edge repeat.for="displayEdge of displayEdges"
       data.bind="displayEdge"
       sourcex.bind="displayEdge.source.x"
@@ -26,7 +25,6 @@
       targety.bind="displayEdge.target.y">
     </edge>
 
-    <!-- nodes -->
     <node repeat.for="displayNode of displayNodes" data.bind="displayNode"></node>
 
   </svg>
