@@ -32,10 +32,10 @@ export class Edge {
 
     // Leaving this one out, still noticing intermittent edges to nowhere
     // Animate edge target from source point
-    // TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-    //   attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
-    //   ease: EDGE_ANIMATE_EASE
-    // });
+    TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
+      attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
+      ease: EDGE_ANIMATE_EASE
+    });
 
   }
 
