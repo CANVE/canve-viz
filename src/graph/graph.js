@@ -124,20 +124,39 @@ export class Graph {
    * a visually pleasing, uncluttered effect.
    */
   updateForceLayout() {
-    let d3Data = this.graphLibD3.mapToD3(this.displayGraph),
-      numNodes = d3Data.nodes.length,
-      currentNode;
+    this.d3Data = this.graphLibD3.mapToD3(this.displayGraph);
+    let currentNode;
+    let numNodes = this.d3Data.nodes.length;
 
     let force = d3.layout.force()
-       .nodes(d3Data.nodes)
-       .links(d3Data.links)
+       .nodes(this.d3Data.nodes)
+       .links(this.d3Data.links)
        .size([this.graphPresentationModel.width, this.graphPresentationModel.height])
        .gravity(0.4)
        .linkDistance(200)
-       .charge(-3000);
+       .charge(-3000)
+       .on('tick', this.tick.bind(this));
 
     this.computeLayout(force, numNodes);
-    this.updateDisplayData(d3Data);
+    this.updateDisplayData(this.d3Data);
+  }
+
+  /**
+   * Make nodes fit within bounding box represented by this.graphPresentationModel.
+   * A heuristic is used where radius is estimated to be 45, it works well enough.
+   * A complete solution would know each node's actual radius, but this is very
+   * difficult from timing perspective because its not known until after its
+   * in the DOM, and caluclated by NodeCustomElement in micro task queue.
+   * http://mbostock.github.io/d3/talk/20110921/bounding.html
+   */
+  tick() {
+    let heuristicRadius = 45;
+    this.d3Data.nodes.forEach( node => {
+      let curX = node.x;
+      node.x = Math.max(heuristicRadius, Math.min(this.graphPresentationModel.width - heuristicRadius, curX));
+      let curY = node.y;
+      node.y = Math.max(heuristicRadius, Math.min(this.graphPresentationModel.height - heuristicRadius, node.y));
+    });
   }
 
   /**

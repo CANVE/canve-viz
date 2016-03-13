@@ -34,10 +34,7 @@ export class Node {
       });
 
       this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
-        newValue = this.nodeCalculator.adjustPositionToFit(this.displayNode.expandedRadius, newValue);
         this.animateY(this.$node, oldValue, newValue);
-        // Must update this y position so that changed methods in associated edges will fire
-        this.displayNode.y = newValue;
       });
     }
   }
@@ -55,7 +52,6 @@ export class Node {
       );
 
       this.displayNode.centerTextAtY = this.nodeCalculator.centerVertically(svgRect);
-      this.displayNode.y = this.nodeCalculator.adjustPositionToFit(this.displayNode.expandedRadius, this.displayNode.y);
     });
   }
 
