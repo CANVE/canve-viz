@@ -1,12 +1,10 @@
 import {NodeCalculator} from '../../../src/node/node-calculator';
 
 describe('NodeCalculator', () => {
-  let nodeCalculator,
-    mockGraphPresentationModel;
+  let nodeCalculator;
 
   beforeEach( () => {
-    mockGraphPresentationModel = { width: 800, height: 600 };
-    nodeCalculator = new NodeCalculator(mockGraphPresentationModel);
+    nodeCalculator = new NodeCalculator();
   });
 
   describe('radius', () => {
