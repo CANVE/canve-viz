@@ -41,8 +41,8 @@ export class Graph {
   }
 
   /**
-   * Update graph dimensions. Since this is shared model data also needed
-   * by node calculator, use a service to update the model.
+   * Update graph dimensions. Introduce the concept of using a service to update
+   * the model (but lots of other places in app where viewModes update models directly)
    */
   windowSizeAdapter() {
     // TODO Also need to respond to window resize so that svg can resize.
