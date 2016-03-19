@@ -86,13 +86,17 @@ export class Edge {
     return this.edgeStyle.strokeDash(this.displayEdge.edgeKind);
   }
 
-  edgeColor() {
-    return this.edgeStyle.strokeColor(this.displayEdge.edgeKind);
+  get edgeColor() {
+    if (this.displayEdge.highlight) {
+        return 'orange';
+    } else {
+      return this.edgeStyle.strokeColor(this.displayEdge.edgeKind);
+    }
   }
 
   get edgeWidth() {
     if (this.displayEdge.highlight) {
-      return 10;
+      return 5;
     } else {
       return 1;
     }
