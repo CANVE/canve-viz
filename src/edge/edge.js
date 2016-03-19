@@ -7,6 +7,10 @@ import {EdgeStyle} from './edge-style';
 const EDGE_ANIMATE_DURATION = 0.5;
 const EDGE_ANIMATE_EASE = Power1.easeIn;
 
+const HIGHLIGHT_COLOR_SOURCE = 'orange';
+const HIGHLIGHT_COLOR_TARGET = 'yellow';
+const HIGHLIGHT_WIDTH = 5;
+
 @customElement('edge')
 @containerless
 @inject(Element, EventAggregator, EdgeStyle)
@@ -87,16 +91,18 @@ export class Edge {
   }
 
   get edgeColor() {
-    if (this.displayEdge.highlight) {
-        return 'orange';
+    if (this.displayEdge.highlightSource) {
+        return HIGHLIGHT_COLOR_SOURCE;
+    } else if (this.displayEdge.highlightTarget) {
+      return HIGHLIGHT_COLOR_TARGET;
     } else {
       return this.edgeStyle.strokeColor(this.displayEdge.edgeKind);
     }
   }
 
   get edgeWidth() {
-    if (this.displayEdge.highlight) {
-      return 5;
+    if (this.displayEdge.highlightSource || this.displayEdge.highlightTarget) {
+      return HIGHLIGHT_WIDTH;
     } else {
       return 1;
     }
@@ -108,16 +114,20 @@ export class Edge {
   }
 
   highlightEdges(node) {
-    if (this.displayEdge.source.id === node.id || this.displayEdge.target.id === node.id) {
-      console.log(`=== SHOULD HIGHLIGHT ${node.id}`);
-      this.displayEdge.highlight = true;
+    if (this.displayEdge.source.id === node.id) {
+      this.displayEdge.highlightSource = true;
+    }
+    if (this.displayEdge.target.id === node.id) {
+      this.displayEdge.highlightTarget = true;
     }
   }
 
   unHighlightEdges(node) {
-    if (this.displayEdge.source.id === node.id || this.displayEdge.target.id === node.id) {
-      console.log(`=== SHOULD UNHIGHLIGHT ${node.id}`);
-      this.displayEdge.highlight = false;
+    if (this.displayEdge.source.id === node.id) {
+      this.displayEdge.highlightSource = false;
+    }
+    if (this.displayEdge.target.id === node.id) {
+      this.displayEdge.highlightTarget = false;
     }
   }
 
@@ -126,7 +136,8 @@ export class Edge {
   }
 
   deregisterEvents() {
-
+    this.nodeHoverInSub.dispose();
+    this.nodeHoverOutSub.dispose();
   }
 
 }
