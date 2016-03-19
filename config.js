@@ -39,7 +39,7 @@ System.config({
     "aurelia-templating-binding": "npm:aurelia-templating-binding@1.0.0-beta.1.1.2",
     "aurelia-templating-resources": "npm:aurelia-templating-resources@1.0.0-beta.1.1.3",
     "aurelia-templating-router": "npm:aurelia-templating-router@1.0.0-beta.1.1.2",
-    "awesomplete": "npm:awesomplete@1.0.0",
+    "awesomplete": "npm:awesomplete@1.1.0",
     "babel": "npm:babel-core@5.8.35",
     "babel-runtime": "npm:babel-runtime@5.8.35",
     "bootstrap": "github:twbs/bootstrap@3.3.6",
@@ -210,6 +210,9 @@ System.config({
       "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.1.1",
       "aurelia-path": "npm:aurelia-path@1.0.0-beta.1.1.1",
       "aurelia-task-queue": "npm:aurelia-task-queue@1.0.0-beta.1.1.1"
+    },
+    "npm:awesomplete@1.1.0": {
+      "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:babel-runtime@5.8.35": {
       "process": "github:jspm/nodelibs-process@0.1.2"

@@ -2,7 +2,7 @@ import {inject} from 'aurelia-framework';
 import {customElement, bindable} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import $ from 'jquery';
-import 'npm:awesomplete@1.0.0/awesomplete.js';
+import 'awesomplete/awesomplete.js';
 
 @customElement('search-graph')
 @inject(Element, EventAggregator)
@@ -29,23 +29,29 @@ export class SearchGraph {
       minChars: 1,
       maxItems: 100,
       list: nodes,
-      item: (node, input) => {
-        let suggestedElem = document.createElement('li');
+      item: (suggestion, input) => {
+        let node = suggestion.value,
+          suggestedElem = document.createElement('li');
         suggestedElem.appendChild(document.createTextNode(node.data.displayName + ' (' + node.id + ')'));
         return suggestedElem;
       },
-      filter: (node, input) => {
+      filter: (suggestion, input) => {
+        let node = suggestion.value;
         return node.data.name.toLowerCase().indexOf(input.toLowerCase()) > -1 ||
           node.id === input;
       },
-      sort: function compare(a, b) {
-        if (a.data.name < b.data.name) return -1;
-        if (a.data.name > b.data.name) return 1;
+      sort: function compare(suggestionA, suggestionB) {
+        let nodeA = suggestionA.value,
+          nodeB = suggestionB.value;
+
+        if (nodeA.data.name < nodeB.data.name) return -1;
+        if (nodeA.data.name > nodeB.data.name) return 1;
         return 0;
       },
-      replace: (text) => {
-        var id = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
-        var node = newVal.node(id);
+      replace: (suggestion) => {
+        let id = suggestion.value.id,
+          node = newVal.node(id);
+        domInputElement.value = node.displayName + ' (' + node.id + ')';
         this.pubSub.publish('search.node', id);
       }
     });
