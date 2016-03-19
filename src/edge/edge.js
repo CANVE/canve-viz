@@ -1,4 +1,5 @@
 import {inject, customElement, bindable, containerless} from 'aurelia-framework';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import {EdgeStyle} from './edge-style';
@@ -8,7 +9,7 @@ const EDGE_ANIMATE_EASE = Power1.easeIn;
 
 @customElement('edge')
 @containerless
-@inject(Element, EdgeStyle)
+@inject(Element, EventAggregator, EdgeStyle)
 export class Edge {
   @bindable data;
   @bindable sourcex;
@@ -16,8 +17,9 @@ export class Edge {
   @bindable targetx;
   @bindable targety;
 
-  constructor(element, edgeStyle) {
+  constructor(element, eventAggregator, edgeStyle) {
     this.element = element;
+    this.eventAggregator = eventAggregator;
     this.edgeStyle = edgeStyle;
   }
 
@@ -37,6 +39,7 @@ export class Edge {
       ease: EDGE_ANIMATE_EASE
     });
 
+    this.registerEvents();
   }
 
   sourcexChanged(newVal, oldVal) {
@@ -90,6 +93,28 @@ export class Edge {
   // This may vary with highlight status?
   edgeWidth() {
     return 1;
+  }
+
+  registerEvents() {
+    this.nodeHoverInSub = this.eventAggregator.subscribe('node.hover.in', this.highlightEdges);
+    this.nodeHoverOutSub = this.eventAggregator.subscribe('node.hover.out', this.unHighlightEdges);
+  }
+
+  highlightEdges(node) {
+    console.log(`=== HIGHLIGHT EDGES FOR NODE: ${node.displayName}`);
+  }
+
+  unHighlightEdges(node) {
+    console.log(`=== UN HIGHLIGHT EDGES FOR NODE: ${node.displayName}`);
+
+  }
+
+  detached() {
+    this.deregisterEvents();
+  }
+
+  deregisterEvents() {
+
   }
 
 }

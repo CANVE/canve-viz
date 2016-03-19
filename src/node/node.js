@@ -1,5 +1,6 @@
 import {inject, customElement, bindable, containerless, TaskQueue} from 'aurelia-framework';
 import {BindingEngine} from 'aurelia-binding';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import d3 from 'd3';
@@ -9,13 +10,14 @@ import {fillColor} from './node-style';
 
 @customElement('node')
 @containerless()
-@inject(Element, BindingEngine, GraphTextService, TaskQueue, NodeCalculator)
+@inject(Element, BindingEngine, EventAggregator, GraphTextService, TaskQueue, NodeCalculator)
 export class Node {
   @bindable data;
 
-  constructor(element, bindingEngine, graphTextService, taskQueue, nodeCalculator) {
+  constructor(element, bindingEngine, eventAggregator, graphTextService, taskQueue, nodeCalculator) {
     this.element = element;
     this.bindingEngine = bindingEngine;
+    this.eventAggregator = eventAggregator;
     this.graphTextService = graphTextService;
     this.taskQueue = taskQueue;
     this.nodeCalculator = nodeCalculator;
@@ -81,6 +83,9 @@ export class Node {
     this.yChangeSub = this.bindingEngine.propertyObserver(this.displayNode, 'y').subscribe((newValue, oldValue) => {
       this.animateY(this.$node, oldValue, newValue);
     });
+
+    this.$node.on('mouseenter.node', this.handleMouseIn.bind(this));
+    this.$node.on('mouseleave.node', this.handleMouseOut.bind(this));
   }
 
   animateX(selector, fromPos, toPos) {
@@ -95,6 +100,14 @@ export class Node {
       {attr: {transform: `translate(${this.displayNode.x}, ${fromPos})`}},
       {attr: {transform: `translate(${this.displayNode.x}, ${toPos})`}, ease: Power1.easeIn}
     );
+  }
+
+  handleMouseIn() {
+    this.eventAggregator.publish('node.hover.in', this.displayNode);
+  }
+
+  handleMouseOut() {
+    this.eventAggregator.publish('node.hover.out', this.displayNode);
   }
 
   /**
@@ -131,6 +144,8 @@ export class Node {
   unregisterEvents() {
     this.xChangeSub.dispose();
     this.yChangeSub.dispose();
+    this.$node.off('mouseenter.node');
+    this.$node.off('mouseleave.node');
   }
 
 }
