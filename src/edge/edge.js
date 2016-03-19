@@ -90,23 +90,31 @@ export class Edge {
     return this.edgeStyle.strokeColor(this.displayEdge.edgeKind);
   }
 
-  // This may vary with highlight status?
-  edgeWidth() {
-    return 1;
+  get edgeWidth() {
+    if (this.displayEdge.highlight) {
+      return 10;
+    } else {
+      return 1;
+    }
   }
 
   registerEvents() {
-    this.nodeHoverInSub = this.eventAggregator.subscribe('node.hover.in', this.highlightEdges);
-    this.nodeHoverOutSub = this.eventAggregator.subscribe('node.hover.out', this.unHighlightEdges);
+    this.nodeHoverInSub = this.eventAggregator.subscribe('node.hover.in', this.highlightEdges.bind(this));
+    this.nodeHoverOutSub = this.eventAggregator.subscribe('node.hover.out', this.unHighlightEdges.bind(this));
   }
 
   highlightEdges(node) {
-    console.log(`=== HIGHLIGHT EDGES FOR NODE: ${node.displayName}`);
+    if (this.displayEdge.source.id === node.id || this.displayEdge.target.id === node.id) {
+      console.log(`=== SHOULD HIGHLIGHT ${node.id}`);
+      this.displayEdge.highlight = true;
+    }
   }
 
   unHighlightEdges(node) {
-    console.log(`=== UN HIGHLIGHT EDGES FOR NODE: ${node.displayName}`);
-
+    if (this.displayEdge.source.id === node.id || this.displayEdge.target.id === node.id) {
+      console.log(`=== SHOULD UNHIGHLIGHT ${node.id}`);
+      this.displayEdge.highlight = false;
+    }
   }
 
   detached() {
