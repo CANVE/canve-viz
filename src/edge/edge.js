@@ -38,7 +38,7 @@ export class Edge {
     return `#edge-path-${this.displayEdge.source.id}-${this.displayEdge.target.id}`;
   }
 
-  // FIXME Detect if need to flip the text to not be upside down http://stackoverflow.com/questions/16672569/d3-js-upside-down-path-text
+  // FIXME handle upside down https://github.com/CANVE/canve-viz/issues/54
   get edgePathForText() {
     return `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
   }
