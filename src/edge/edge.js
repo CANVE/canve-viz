@@ -9,7 +9,7 @@ const EDGE_ANIMATE_EASE = Power1.easeIn;
 const EDGE_ANIMATE_DELAY = 1;
 
 const HIGHLIGHT_COLOR_SOURCE = 'orange';
-const HIGHLIGHT_COLOR_TARGET = 'yellow';
+const HIGHLIGHT_COLOR_TARGET = 'yellow';  // FIXME yellow is hard to read on white
 const HIGHLIGHT_WIDTH = 5;
 
 @customElement('edge')
@@ -34,6 +34,16 @@ export class Edge {
     }
   }
 
+  get edgePathId() {
+    return `#edge-path-${this.displayEdge.source.id}-${this.displayEdge.target.id}`;
+  }
+
+  // FIXME Detect if need to flip the text to not be upside down http://stackoverflow.com/questions/16672569/d3-js-upside-down-path-text
+  get edgePathForText() {
+    return `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
+  }
+
+  // FIXME Now that have switched from line to path, redo animation to animate path, GSAP may have plugin for this
   attached() {
     // Selector
     this.$edge = $(`#edge-${this.displayEdge.source.id}-${this.displayEdge.target.id}`);

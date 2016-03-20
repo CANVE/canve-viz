@@ -1,15 +1,25 @@
 <template>
 
   <svg>
-    <line class="edge" id="edge-${displayEdge.source.id}-${displayEdge.target.id}"
-      x1="${displayEdge.source.x}"
-      y1="${displayEdge.source.y}"
-      x2="${displayEdge.target.x}"
-      y2="${displayEdge.target.y}"
+    <defs>
+      <path id="${edgePathId}"
+        d="${edgePathForText}"/>
+    </defs>
+    <path class="edge" id="edge-${displayEdge.source.id}-${displayEdge.target.id}"
+      d="M${displayEdge.source.x} ${displayEdge.source.y} L${displayEdge.target.x} ${displayEdge.target.y}"
       stroke-dasharray="${edgeStrokeDashArray()}"
       stroke="${edgeColor}"
-      stroke-width="${edgeWidth}">
-    </line>
+      stroke-width="${edgeWidth}"/>
+    <text
+      font-size="14"
+      x="40"
+      y="100"
+      stroke="${edgeColor}">
+        <textPath xlink:href="#${edgePathId}">
+          ${displayEdge.edgeKind}
+        </textPath>
+    </text>
+
   </svg>
 
 </template>
