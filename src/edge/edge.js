@@ -1,14 +1,20 @@
 import {inject, customElement, bindable, containerless} from 'aurelia-framework';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import {EdgeStyle} from './edge-style';
 
 const EDGE_ANIMATE_DURATION = 0.5;
 const EDGE_ANIMATE_EASE = Power1.easeIn;
+const EDGE_ANIMATE_DELAY = 1;
+
+const HIGHLIGHT_COLOR_SOURCE = 'orange';
+const HIGHLIGHT_COLOR_TARGET = 'rgb(60, 234, 245)';
+const HIGHLIGHT_WIDTH = 5;
 
 @customElement('edge')
 @containerless
-@inject(Element, EdgeStyle)
+@inject(Element, EventAggregator, EdgeStyle)
 export class Edge {
   @bindable data;
   @bindable sourcex;
@@ -16,8 +22,9 @@ export class Edge {
   @bindable targetx;
   @bindable targety;
 
-  constructor(element, edgeStyle) {
+  constructor(element, eventAggregator, edgeStyle) {
     this.element = element;
+    this.eventAggregator = eventAggregator;
     this.edgeStyle = edgeStyle;
   }
 
@@ -27,6 +34,16 @@ export class Edge {
     }
   }
 
+  get edgePathId() {
+    return `#edge-path-${this.displayEdge.source.id}-${this.displayEdge.target.id}`;
+  }
+
+  // FIXME handle upside down https://github.com/CANVE/canve-viz/issues/54
+  get edgePathForText() {
+    return `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
+  }
+
+  // FIXME Now that have switched from line to path, redo animation to animate path, GSAP may have plugin for this
   attached() {
     // Selector
     this.$edge = $(`#edge-${this.displayEdge.source.id}-${this.displayEdge.target.id}`);
@@ -34,16 +51,18 @@ export class Edge {
     // Animate edge target from source point
     TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
       attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
-      ease: EDGE_ANIMATE_EASE
+      ease: EDGE_ANIMATE_EASE,
+      delay: EDGE_ANIMATE_DELAY
     });
 
+    this.registerEvents();
   }
 
   sourcexChanged(newVal, oldVal) {
     if (newVal && oldVal) {
       TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
         attr: {x1: oldVal},
-        ease: EDGE_ANIMATE_EASE,
+        ease: EDGE_ANIMATE_EASE
       });
     }
   }
@@ -52,7 +71,7 @@ export class Edge {
     if (newVal && oldVal) {
       TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
         attr: {y1: oldVal},
-        ease: EDGE_ANIMATE_EASE,
+        ease: EDGE_ANIMATE_EASE
       });
     }
   }
@@ -83,13 +102,54 @@ export class Edge {
     return this.edgeStyle.strokeDash(this.displayEdge.edgeKind);
   }
 
-  edgeColor() {
-    return this.edgeStyle.strokeColor(this.displayEdge.edgeKind);
+  get edgeColor() {
+    if (this.displayEdge.highlightSource) {
+        return HIGHLIGHT_COLOR_SOURCE;
+    } else if (this.displayEdge.highlightTarget) {
+      return HIGHLIGHT_COLOR_TARGET;
+    } else {
+      return this.edgeStyle.strokeColor(this.displayEdge.edgeKind);
+    }
   }
 
-  // This may vary with highlight status?
-  edgeWidth() {
-    return 1;
+  get edgeWidth() {
+    if (this.displayEdge.highlightSource || this.displayEdge.highlightTarget) {
+      return HIGHLIGHT_WIDTH;
+    } else {
+      return 1;
+    }
+  }
+
+  registerEvents() {
+    this.nodeHoverInSub = this.eventAggregator.subscribe('node.hover.in', this.highlightEdges.bind(this));
+    this.nodeHoverOutSub = this.eventAggregator.subscribe('node.hover.out', this.unHighlightEdges.bind(this));
+  }
+
+  highlightEdges(node) {
+    if (this.displayEdge.source.id === node.id) {
+      this.displayEdge.highlightSource = true;
+    }
+    if (this.displayEdge.target.id === node.id) {
+      this.displayEdge.highlightTarget = true;
+    }
+  }
+
+  unHighlightEdges(node) {
+    if (this.displayEdge.source.id === node.id) {
+      this.displayEdge.highlightSource = false;
+    }
+    if (this.displayEdge.target.id === node.id) {
+      this.displayEdge.highlightTarget = false;
+    }
+  }
+
+  detached() {
+    this.deregisterEvents();
+  }
+
+  deregisterEvents() {
+    this.nodeHoverInSub.dispose();
+    this.nodeHoverOutSub.dispose();
   }
 
 }

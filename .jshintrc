@@ -13,6 +13,7 @@
     "beforeEach": false,
     "it": false,
     "expect": false,
+    "spyOn": false,
     "TweenLite": false,
     "Linear": false,
     "Elastic": false,

@@ -1,3 +1,14 @@
+/* FIXME https://github.com/CANVE/canve-viz/issues/55 */
+/* Animate edges but this breaks dash styling to indicate edgeKind */
 .edge {
-  stroke-opacity: .6
+  stroke-opacity: .6;
+  /*stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 5s linear forwards;*/
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
