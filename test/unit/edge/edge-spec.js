@@ -52,4 +52,36 @@ describe('Edge', function() {
 
   });
 
+  describe('highlightEdges', () => {
+
+    it('Sets edge to be highlighted as source', () => {
+      // Given
+      let node = { id: '111'};
+      let displayEdge = { source: {id: '111'}, target: {id: '222'}};
+
+      // When
+      edge.dataChanged(displayEdge);
+      edge.highlightEdges(node);
+
+      // Then
+      expect(edge.displayEdge.highlightSource).toBe(true);
+      expect(edge.displayEdge.highlightTarget).toBeUndefined();
+    });
+
+    it('Sets edge to be highlighted as target', () => {
+      // Given
+      let node = { id: '222'};
+      let displayEdge = { source: {id: '111'}, target: {id: '222'}};
+
+      // When
+      edge.dataChanged(displayEdge);
+      edge.highlightEdges(node);
+
+      // Then
+      expect(edge.displayEdge.highlightTarget).toBe(true);
+      expect(edge.displayEdge.highlightSource).toBeUndefined();
+    });
+
+  });
+
 });
