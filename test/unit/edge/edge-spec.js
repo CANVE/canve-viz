@@ -34,7 +34,7 @@ describe('Edge', function() {
       edge.dataChanged(displayEdge);
 
       // Then
-      expect(edge.edgeColor).toEqual('yellow');
+      expect(edge.edgeColor).toEqual('rgb(60, 234, 245)');
     });
 
     it('Returns color based on edge style', () => {

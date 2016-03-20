@@ -9,7 +9,7 @@ const EDGE_ANIMATE_EASE = Power1.easeIn;
 const EDGE_ANIMATE_DELAY = 1;
 
 const HIGHLIGHT_COLOR_SOURCE = 'orange';
-const HIGHLIGHT_COLOR_TARGET = 'yellow';  // FIXME yellow is hard to read on white
+const HIGHLIGHT_COLOR_TARGET = 'rgb(60, 234, 245)';
 const HIGHLIGHT_WIDTH = 5;
 
 @customElement('edge')
