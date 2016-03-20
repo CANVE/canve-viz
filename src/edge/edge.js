@@ -6,6 +6,7 @@ import {EdgeStyle} from './edge-style';
 
 const EDGE_ANIMATE_DURATION = 0.5;
 const EDGE_ANIMATE_EASE = Power1.easeIn;
+const EDGE_ANIMATE_DELAY = 1;
 
 const HIGHLIGHT_COLOR_SOURCE = 'orange';
 const HIGHLIGHT_COLOR_TARGET = 'yellow';
@@ -40,7 +41,8 @@ export class Edge {
     // Animate edge target from source point
     TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
       attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
-      ease: EDGE_ANIMATE_EASE
+      ease: EDGE_ANIMATE_EASE,
+      delay: EDGE_ANIMATE_DELAY
     });
 
     this.registerEvents();
@@ -50,7 +52,7 @@ export class Edge {
     if (newVal && oldVal) {
       TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
         attr: {x1: oldVal},
-        ease: EDGE_ANIMATE_EASE,
+        ease: EDGE_ANIMATE_EASE
       });
     }
   }
@@ -59,7 +61,7 @@ export class Edge {
     if (newVal && oldVal) {
       TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
         attr: {y1: oldVal},
-        ease: EDGE_ANIMATE_EASE,
+        ease: EDGE_ANIMATE_EASE
       });
     }
   }
