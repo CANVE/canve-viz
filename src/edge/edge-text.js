@@ -27,7 +27,8 @@ export class EdgeText {
     let angle1 = Math.atan2(point1.y - fixedPoint.y, point1.x - fixedPoint.x),
       angle2 = Math.atan2(point2.y - fixedPoint.y, point2.x - fixedPoint.x);
 
-    return (angle1 - angle2) * (180/Math.PI);
+    let angleInDegrees =  (angle1 - angle2) * (180/Math.PI);
+    return Math.abs(angleInDegrees);
   }
 
 }
