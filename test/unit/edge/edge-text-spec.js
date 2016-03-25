@@ -15,7 +15,7 @@ describe('EdgeText', function() {
 
   describe('angleInDegreesBetweenPoints', () => {
 
-    it('Returns 90 degrees', () => {
+    it('Returns 270 degrees', () => {
       // Given
       let point1 = new PointModel(0, 0);
       let point2 = new PointModel(1, 1);
@@ -25,10 +25,10 @@ describe('EdgeText', function() {
       let result = edgeText.angleInDegreesBetweenPoints(point1, point2, fixedPoint);
 
       // Then
-      expect(result).toEqual(90);
+      expect(result).toEqual(270);
     });
 
-    it('Returns 90 degrees (absolute value)', () => {
+    it('Returns 90 degrees', () => {
       // Given
       let point1 = new PointModel(1, 0);
       let point2 = new PointModel(0, 1);

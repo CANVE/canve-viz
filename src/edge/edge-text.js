@@ -15,14 +15,12 @@ export class EdgeText {
   * Between 271 and 360 is right side up
   */
   isUpsideDown(sourceX, sourceY, targetX, targetY) {
-    let sourcePoint = new PointModel(sourceX, sourceY, this.graphPresentationModel.height),
-      targetPoint = new PointModel(targetX, targetY, this.graphPresentationModel.height),
-      sourcePrimePoint = new PointModel(this.graphPresentationModel.width, sourcePoint.y, this.graphPresentationModel.height),
+    let targetPoint = new PointModel(targetX, targetY, this.graphPresentationModel.height),
+      sourcePrimePoint = new PointModel(this.graphPresentationModel.width, sourceY, this.graphPresentationModel.height),
       fixedPoint = new PointModel(sourceX, sourceY, this.graphPresentationModel.height),
       response = false;
 
     let angle = this.angleInDegreesBetweenPoints(sourcePrimePoint, targetPoint, fixedPoint);
-    console.log(`=== angle: ${angle}`);
 
     if (this.isNumberBetweenInclusive(angle, 91, 270)) {
       response = true;
@@ -37,7 +35,12 @@ export class EdgeText {
       angle2 = Math.atan2(point2.y - fixedPoint.y, point2.x - fixedPoint.x);
 
     let angleInDegrees =  (angle1 - angle2) * (180/Math.PI);
-    return Math.abs(angleInDegrees);
+    
+    if (angleInDegrees < 0) {
+      return Math.abs(angleInDegrees);
+    } else {
+      return 360 - Math.abs(angleInDegrees);
+    }
   }
 
   isNumberBetweenInclusive(num, startVal, endVal) {
