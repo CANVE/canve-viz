@@ -17,7 +17,7 @@ export class EdgeText {
   isUpsideDown(sourceX, sourceY, targetX, targetY) {
     let sourcePoint = new PointModel(sourceX, sourceY, this.graphPresentationModel.height),
       targetPoint = new PointModel(targetX, targetY, this.graphPresentationModel.height),
-      sourcePrimePoint = new PointModel(sourcePoint.x + 2, sourcePoint.y, this.graphPresentationModel.height),
+      sourcePrimePoint = new PointModel(this.graphPresentationModel.width, sourcePoint.y, this.graphPresentationModel.height),
       fixedPoint = new PointModel(sourceX, sourceY, this.graphPresentationModel.height),
       response = false;
 
