@@ -7,8 +7,8 @@ describe('EdgeText', function() {
 
   beforeEach( () => {
     mockGraphPresentationModel = {
-      width: 800,
-      height: 600
+      width: 100,
+      height: 100
     };
     edgeText = new EdgeText(mockGraphPresentationModel);
   });
@@ -59,11 +59,32 @@ describe('EdgeText', function() {
 
   describe('isUpsideDown', () => {
 
-    // wip
-    xit('Returns true if given points would show text path as upside down', () => {
-      // width="1340" height="693"
-      // M638.5238852389741 428.9279798025884 L431.15192958012284 393.63176497853
+    it('Returns false when target point is above and to the right of source point', () => {
+      let sourceX = 50;
+      let sourceY = 50;
+      let targetX = 75;
+      let targetY = 25;
+
+      // When
+      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+
+      // Then
+      expect(result).toBe(false);
     });
+
+    it('Returns true when target point is above and to the left of source point', () => {
+      let sourceX = 50;
+      let sourceY = 50;
+      let targetX = 25;
+      let targetY = 25;
+
+      // When
+      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+
+      // Then
+      expect(result).toBe(true);
+    });
+
 
   });
 
