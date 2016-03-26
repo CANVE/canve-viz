@@ -3,7 +3,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import {EdgeStyle} from './edge-style';
-import {EdgeText} from './edge-text';
+import {EdgeTextService} from './edge-text-service';
 
 const EDGE_ANIMATE_DURATION = 0.5;
 const EDGE_ANIMATE_EASE = Power1.easeIn;
@@ -15,7 +15,7 @@ const HIGHLIGHT_WIDTH = 5;
 
 @customElement('edge')
 @containerless
-@inject(Element, EventAggregator, EdgeStyle, EdgeText)
+@inject(Element, EventAggregator, EdgeStyle, EdgeTextService)
 export class Edge {
   @bindable data;
   @bindable sourcex;
@@ -23,11 +23,11 @@ export class Edge {
   @bindable targetx;
   @bindable targety;
 
-  constructor(element, eventAggregator, edgeStyle, edgeText) {
+  constructor(element, eventAggregator, edgeStyle, edgeTextService) {
     this.element = element;
     this.eventAggregator = eventAggregator;
     this.edgeStyle = edgeStyle;
-    this.edgeText = edgeText;
+    this.edgeTextService = edgeTextService;
   }
 
   dataChanged(newVal) {
@@ -41,7 +41,7 @@ export class Edge {
   }
 
   get edgePathForText() {
-    if (this.edgeText.isUpsideDown(this.displayEdge.source.x, this.displayEdge.source.y, this.displayEdge.target.x, this.displayEdge.target.y)) {
+    if (this.edgeTextService.isUpsideDown(this.displayEdge.source.x, this.displayEdge.source.y, this.displayEdge.target.x, this.displayEdge.target.y)) {
       return `M${this.displayEdge.target.x} ${this.displayEdge.target.y} L${this.displayEdge.source.x} ${this.displayEdge.source.y}`;
     } else {
       return `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;

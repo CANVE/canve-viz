@@ -3,7 +3,7 @@ import {PointModel} from '../models/point-model';
 import {GraphPresentationModel} from '../models/graph-presentation-model';
 
 @inject(GraphPresentationModel)
-export class EdgeText {
+export class EdgeTextService {
 
   constructor(graphPresentationModel) {
     this.graphPresentationModel = graphPresentationModel;
@@ -35,7 +35,7 @@ export class EdgeText {
       angle2 = Math.atan2(point2.y - fixedPoint.y, point2.x - fixedPoint.x);
 
     let angleInDegrees =  (angle1 - angle2) * (180/Math.PI);
-    
+
     if (angleInDegrees < 0) {
       return Math.abs(angleInDegrees);
     } else {

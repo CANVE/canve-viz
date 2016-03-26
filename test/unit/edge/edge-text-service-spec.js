@@ -1,8 +1,8 @@
-import {EdgeText} from '../../../src/edge/edge-text';
+import {EdgeTextService} from '../../../src/edge/edge-text-service';
 import {PointModel} from '../../../src/models/point-model';
 
-describe('EdgeText', function() {
-  let edgeText;
+describe('EdgeTextService', function() {
+  let edgeTextService;
   let mockGraphPresentationModel;
 
   beforeEach( () => {
@@ -10,7 +10,7 @@ describe('EdgeText', function() {
       width: 100,
       height: 100
     };
-    edgeText = new EdgeText(mockGraphPresentationModel);
+    edgeTextService = new EdgeTextService(mockGraphPresentationModel);
   });
 
   describe('angleInDegreesBetweenPoints', () => {
@@ -22,7 +22,7 @@ describe('EdgeText', function() {
       let fixedPoint = new PointModel(1, 0);
 
       // When
-      let result = edgeText.angleInDegreesBetweenPoints(point1, point2, fixedPoint);
+      let result = edgeTextService.angleInDegreesBetweenPoints(point1, point2, fixedPoint);
 
       // Then
       expect(result).toEqual(270);
@@ -35,7 +35,7 @@ describe('EdgeText', function() {
       let fixedPoint = new PointModel(0, 0);
 
       // When
-      let result = edgeText.angleInDegreesBetweenPoints(point1, point2, fixedPoint);
+      let result = edgeTextService.angleInDegreesBetweenPoints(point1, point2, fixedPoint);
 
       // Then
       expect(result).toEqual(90);
@@ -49,7 +49,7 @@ describe('EdgeText', function() {
       let fixedPoint = new PointModel(638, 428, svgHeight);
 
       // When
-      let result = edgeText.angleInDegreesBetweenPoints(point1, point2, fixedPoint);
+      let result = edgeTextService.angleInDegreesBetweenPoints(point1, point2, fixedPoint);
 
       // Then
       expect(result).toBeWithinRange(170, 171);
@@ -66,7 +66,7 @@ describe('EdgeText', function() {
       let targetY = 25;
 
       // When
-      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+      let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
 
       // Then
       expect(result).toBe(false);
@@ -79,7 +79,7 @@ describe('EdgeText', function() {
       let targetY = 75;
 
       // When
-      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+      let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
 
       // Then
       expect(result).toBe(false);
@@ -92,7 +92,7 @@ describe('EdgeText', function() {
       let targetY = 50;
 
       // When
-      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+      let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
 
       // Then
       expect(result).toBe(false);
@@ -105,7 +105,7 @@ describe('EdgeText', function() {
       let targetY = 25;
 
       // When
-      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+      let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
 
       // Then
       expect(result).toBe(false);
@@ -118,7 +118,7 @@ describe('EdgeText', function() {
       let targetY = 25;
 
       // When
-      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+      let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
 
       // Then
       expect(result).toBe(true);
@@ -131,7 +131,7 @@ describe('EdgeText', function() {
       let targetY = 75;
 
       // When
-      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+      let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
 
       // Then
       expect(result).toBe(true);
@@ -144,7 +144,7 @@ describe('EdgeText', function() {
       let targetY = 50;
 
       // When
-      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+      let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
 
       // Then
       expect(result).toBe(true);
@@ -157,7 +157,7 @@ describe('EdgeText', function() {
       let targetY = 100;
 
       // When
-      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+      let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
 
       // Then
       expect(result).toBe(true);
