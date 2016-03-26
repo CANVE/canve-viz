@@ -97,6 +97,26 @@ export class Edge {
     }
   }
 
+  get edgeTextColor() {
+    if (this.isHighlighted()) {
+      return 'rgba(80, 83, 81, 0.9)';
+    } else {
+      return 'rgba(120, 120, 120, 0.5)';
+    }
+  }
+
+  get edgeTextSize() {
+    if (this.isHighlighted()) {
+      return '15';
+    } else {
+      return '14';
+    }
+  }
+
+  isHighlighted() {
+    return this.displayEdge.highlightSource || this.displayEdge.highlightTarget;
+  }
+
   registerEvents() {
     this.nodeHoverInSub = this.eventAggregator.subscribe('node.hover.in', this.highlightEdges.bind(this));
     this.nodeHoverOutSub = this.eventAggregator.subscribe('node.hover.out', this.unHighlightEdges.bind(this));
