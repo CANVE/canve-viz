@@ -28,7 +28,6 @@ export class Edge {
     this.eventAggregator = eventAggregator;
     this.edgeStyle = edgeStyle;
     this.edgeTextService = edgeTextService;
-    this._edgeTextXPos = 40;
   }
 
   dataChanged(newVal) {
@@ -52,70 +51,29 @@ export class Edge {
   }
 
   get edgePathForText() {
-    // if (this.edgeTextService.isUpsideDown(this.displayEdge.source.x, this.displayEdge.source.y, this.displayEdge.target.x, this.displayEdge.target.y)) {
-    //   return `M${this.displayEdge.target.x} ${this.displayEdge.target.y} L${this.displayEdge.source.x} ${this.displayEdge.source.y}`;
-    // } else {
-    //   return `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
-    // }
     return this._edgeTextPath;
   }
 
   attached() {
     // Selector
     this.$edge = $(`#edge-${this.displayEdge.source.id}-${this.displayEdge.target.id}`);
-
-    // Animate edge target from source point
-    // TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-    //   attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
-    //   ease: EDGE_ANIMATE_EASE,
-    //   delay: EDGE_ANIMATE_DELAY
-    // });
-
     this.registerEvents();
   }
 
   sourcexChanged(newVal, oldVal) {
     this.calculateEdgeTextPath();
-    // if (newVal && oldVal) {
-    //   TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-    //     attr: {x1: oldVal},
-    //     ease: EDGE_ANIMATE_EASE
-    //   });
-    // }
   }
 
   sourceyChanged(newVal, oldVal) {
     this.calculateEdgeTextPath();
-    // if (newVal && oldVal) {
-    //   TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-    //     attr: {y1: oldVal},
-    //     ease: EDGE_ANIMATE_EASE
-    //   });
-    // }
   }
 
   targetxChanged(newVal, oldVal) {
     this.calculateEdgeTextPath();
-    // if (newVal && oldVal) {
-    //   TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-    //     attr: {x2: oldVal},
-    //     ease: EDGE_ANIMATE_EASE
-    //   });
-    // }
   }
 
-  /**
-   * Edge y2 is already bound to newVal,
-   * therefore animate FROM oldVal.
-   */
   targetyChanged(newVal, oldVal) {
     this.calculateEdgeTextPath();
-    // if (newVal && oldVal) {
-    //   TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-    //     attr: {y2: oldVal},
-    //     ease: EDGE_ANIMATE_EASE
-    //   });
-    // }
   }
 
   edgeStrokeDashArray() {
@@ -143,7 +101,6 @@ export class Edge {
   registerEvents() {
     this.nodeHoverInSub = this.eventAggregator.subscribe('node.hover.in', this.highlightEdges.bind(this));
     this.nodeHoverOutSub = this.eventAggregator.subscribe('node.hover.out', this.unHighlightEdges.bind(this));
-    this.nodeExpandRadiusSub = this.eventAggregator.subscribe('node.expand.radius', this.adjustEdgeText.bind(this));
   }
 
   highlightEdges(node) {
@@ -162,16 +119,6 @@ export class Edge {
     if (this.displayEdge.target.id === node.id) {
       this.displayEdge.highlightTarget = false;
     }
-  }
-
-  adjustEdgeText(node) {
-    if (this.displayEdge.source.id === node.id) {
-      this._edgeTextXPos = node.expandedRadius + 2;
-    }
-  }
-
-  get edgeTextXPos() {
-    return this._edgeTextXPos;
   }
 
   detached() {

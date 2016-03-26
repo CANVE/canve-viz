@@ -12,10 +12,11 @@
       stroke-width="${edgeWidth}"/>
     <text
       font-size="14"
-      x="${edgeTextXPos}"
-      y="100"
+      x="0"
+      y="0"
+      text-anchor="middle"
       stroke="#787878">
-        <textPath xlink:href="#${edgePathId}">
+        <textPath xlink:href="#${edgePathId}" startOffset="50%">
           ${displayEdge.edgeKind}
         </textPath>
     </text>

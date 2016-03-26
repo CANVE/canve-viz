@@ -49,7 +49,6 @@ export class Node {
     let svgRect = this.$node[0].getBBox();
     this.displayNode.expandedRadius = this.nodeCalculator.radius(svgRect, this.nodeFontSize);
     this.displayNode.centerTextAtY = this.nodeCalculator.centerVertically(svgRect);
-    this.eventAggregator.publish('node.expand.radius', this.displayNode);
     this.animateRadius();
   }
 

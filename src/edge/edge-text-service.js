@@ -46,10 +46,4 @@ export class EdgeTextService {
     return num >= startVal && num <= endVal;
   }
 
-  lengthBetweenPoints(sourceX, sourceY, targetX, targetY) {
-    let firstPart = Math.pow((targetX - sourceX), 2);
-    let secondPart = Math.pow((targetY - sourceY), 2);
-    return Math.sqrt(firstPart + secondPart);
-  }
-
 }
