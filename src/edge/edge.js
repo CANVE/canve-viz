@@ -39,7 +39,6 @@ export class Edge {
 
   calculateEdgeTextPath() {
     if (this.edgeTextService.isUpsideDown(this.displayEdge.source.x, this.displayEdge.source.y, this.displayEdge.target.x, this.displayEdge.target.y)) {
-      this._isUpsideDown = true;
       this._edgeTextPath = `M${this.displayEdge.target.x} ${this.displayEdge.target.y} L${this.displayEdge.source.x} ${this.displayEdge.source.y}`;
     } else {
       this._edgeTextPath = `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
@@ -128,7 +127,6 @@ export class Edge {
   deregisterEvents() {
     this.nodeHoverInSub.dispose();
     this.nodeHoverOutSub.dispose();
-    this.nodeExpandRadiusSub.dispose();
   }
 
 }
