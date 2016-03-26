@@ -1,4 +1,5 @@
 import {inject, customElement, bindable, containerless} from 'aurelia-framework';
+import {computedFrom} from 'aurelia-binding';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
@@ -49,6 +50,7 @@ export class Edge {
     return `#edge-path-${this.displayEdge.source.id}-${this.displayEdge.target.id}`;
   }
 
+  @computedFrom('_edgeTextPath')
   get edgePathForText() {
     return this._edgeTextPath;
   }
