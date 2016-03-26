@@ -85,6 +85,32 @@ describe('EdgeText', function() {
       expect(result).toBe(false);
     });
 
+    it('Returns false when target point is to the right of soure point and on the same y plane', () => {
+      let sourceX = 50;
+      let sourceY = 50;
+      let targetX = 75;
+      let targetY = 50;
+
+      // When
+      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+
+      // Then
+      expect(result).toBe(false);
+    });
+
+    it('Returns false when target point is above soure point and on the same x plane', () => {
+      let sourceX = 50;
+      let sourceY = 50;
+      let targetX = 50;
+      let targetY = 25;
+
+      // When
+      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+
+      // Then
+      expect(result).toBe(false);
+    });
+
     it('Returns true when target point is above and to the left of source point', () => {
       let sourceX = 50;
       let sourceY = 50;
@@ -111,6 +137,31 @@ describe('EdgeText', function() {
       expect(result).toBe(true);
     });
 
+    it('Returns true when target point is to the left of source point and on the same y plane', () => {
+      let sourceX = 50;
+      let sourceY = 50;
+      let targetX = 25;
+      let targetY = 50;
+
+      // When
+      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+
+      // Then
+      expect(result).toBe(true);
+    });
+
+    it('Returns true when target point is below source point and on the same x plane', () => {
+      let sourceX = 50;
+      let sourceY = 50;
+      let targetX = 50;
+      let targetY = 100;
+
+      // When
+      let result = edgeText.isUpsideDown(sourceX, sourceY, targetX, targetY);
+
+      // Then
+      expect(result).toBe(true);
+    });
 
   });
 
