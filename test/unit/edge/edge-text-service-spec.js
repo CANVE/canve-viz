@@ -60,10 +60,9 @@ describe('EdgeTextService', function() {
   describe('isUpsideDown', () => {
 
     it('Returns false when target point is above and to the right of source point', () => {
-      let sourceX = 50;
-      let sourceY = 50;
-      let targetX = 75;
-      let targetY = 25;
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 75, targetY = 25;
 
       // When
       let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
@@ -73,10 +72,9 @@ describe('EdgeTextService', function() {
     });
 
     it('Returns false when target point is below and to the right of source point', () => {
-      let sourceX = 50;
-      let sourceY = 50;
-      let targetX = 75;
-      let targetY = 75;
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 75, targetY = 75;
 
       // When
       let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
@@ -86,10 +84,9 @@ describe('EdgeTextService', function() {
     });
 
     it('Returns false when target point is to the right of soure point and on the same y plane', () => {
-      let sourceX = 50;
-      let sourceY = 50;
-      let targetX = 75;
-      let targetY = 50;
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 75, targetY = 50;
 
       // When
       let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
@@ -99,10 +96,9 @@ describe('EdgeTextService', function() {
     });
 
     it('Returns false when target point is above soure point and on the same x plane', () => {
-      let sourceX = 50;
-      let sourceY = 50;
-      let targetX = 50;
-      let targetY = 25;
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 50, targetY = 25;
 
       // When
       let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
@@ -112,10 +108,9 @@ describe('EdgeTextService', function() {
     });
 
     it('Returns true when target point is above and to the left of source point', () => {
-      let sourceX = 50;
-      let sourceY = 50;
-      let targetX = 25;
-      let targetY = 25;
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 25, targetY = 25;
 
       // When
       let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
@@ -125,10 +120,9 @@ describe('EdgeTextService', function() {
     });
 
     it('Returns true when target point is below and to the left of source point', () => {
-      let sourceX = 50;
-      let sourceY = 50;
-      let targetX = 25;
-      let targetY = 75;
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 25, targetY = 75;
 
       // When
       let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
@@ -138,10 +132,9 @@ describe('EdgeTextService', function() {
     });
 
     it('Returns true when target point is to the left of source point and on the same y plane', () => {
-      let sourceX = 50;
-      let sourceY = 50;
-      let targetX = 25;
-      let targetY = 50;
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 25, targetY = 50;
 
       // When
       let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
@@ -151,16 +144,43 @@ describe('EdgeTextService', function() {
     });
 
     it('Returns true when target point is below source point and on the same x plane', () => {
-      let sourceX = 50;
-      let sourceY = 50;
-      let targetX = 50;
-      let targetY = 100;
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 50, targetY = 100;
 
       // When
       let result = edgeTextService.isUpsideDown(sourceX, sourceY, targetX, targetY);
 
       // Then
       expect(result).toBe(true);
+    });
+
+  });
+
+  describe('calculatePath', () => {
+
+    it('Returns a path from source to target when not upside down', () => {
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 75, targetY = 50;
+
+      // When
+      let result = edgeTextService.calculatePath(sourceX, sourceY, targetX, targetY);
+
+      // Then
+      expect(result).toEqual('M50 50 L75 50');
+    });
+
+    it('Returns a path from target to source when is upside down', () => {
+      // Given
+      let sourceX = 50, sourceY = 50,
+        targetX = 25, targetY = 75;
+
+      // When
+      let result = edgeTextService.calculatePath(sourceX, sourceY, targetX, targetY);
+
+      // Then
+      expect(result).toEqual('M25 75 L50 50');
     });
 
   });

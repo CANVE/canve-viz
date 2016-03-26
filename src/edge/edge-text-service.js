@@ -9,6 +9,14 @@ export class EdgeTextService {
     this.graphPresentationModel = graphPresentationModel;
   }
 
+  calculatePath(sourceX, sourceY, targetX, targetY) {
+    if (this.isUpsideDown(sourceX, sourceY, targetX, targetY)) {
+      return `M${targetX} ${targetY} L${sourceX} ${sourceY}`;
+    } else {
+      return `M${sourceX} ${sourceY} L${targetX} ${targetY}`;
+    }
+  }
+
   /**
   * Any angle between 0 and 90 (inclusive) is right side up
   * Between 91 and 270 is upside down

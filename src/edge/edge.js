@@ -39,11 +39,14 @@ export class Edge {
   }
 
   calculateEdgeTextPath() {
-    if (this.edgeTextService.isUpsideDown(this.displayEdge.source.x, this.displayEdge.source.y, this.displayEdge.target.x, this.displayEdge.target.y)) {
-      this._edgeTextPath = `M${this.displayEdge.target.x} ${this.displayEdge.target.y} L${this.displayEdge.source.x} ${this.displayEdge.source.y}`;
-    } else {
-      this._edgeTextPath = `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
-    }
+    // if (this.edgeTextService.isUpsideDown(this.displayEdge.source.x, this.displayEdge.source.y, this.displayEdge.target.x, this.displayEdge.target.y)) {
+    //   this._edgeTextPath = `M${this.displayEdge.target.x} ${this.displayEdge.target.y} L${this.displayEdge.source.x} ${this.displayEdge.source.y}`;
+    // } else {
+    //   this._edgeTextPath = `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
+    // }
+    this._edgeTextPath = this.edgeTextService.calculatePath(
+      this.displayEdge.source.x, this.displayEdge.source.y,
+      this.displayEdge.target.x, this.displayEdge.target.y);
   }
 
   get edgePathId() {
