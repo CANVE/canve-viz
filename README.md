@@ -86,6 +86,8 @@ To run the tests once and exit:
   gulp test
   ```
 
+The tests are run with [Karma](https://karma-runner.github.io/0.13/index.html) and written in [Jasmine](http://jasmine.github.io/). Additional [Jasmine Matchers](https://github.com/JamieMason/Jasmine-Matchers) are also used.
+
 ## Running The E2E Tests
 Integration tests are performed with [Protractor](http://angular.github.io/protractor/#/).
 

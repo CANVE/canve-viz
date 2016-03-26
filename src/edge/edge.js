@@ -1,8 +1,10 @@
 import {inject, customElement, bindable, containerless} from 'aurelia-framework';
+import {computedFrom} from 'aurelia-binding';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import {EdgeStyle} from './edge-style';
+import {EdgeTextService} from './edge-text-service';
 
 const EDGE_ANIMATE_DURATION = 0.5;
 const EDGE_ANIMATE_EASE = Power1.easeIn;
@@ -14,7 +16,7 @@ const HIGHLIGHT_WIDTH = 5;
 
 @customElement('edge')
 @containerless
-@inject(Element, EventAggregator, EdgeStyle)
+@inject(Element, EventAggregator, EdgeStyle, EdgeTextService)
 export class Edge {
   @bindable data;
   @bindable sourcex;
@@ -22,80 +24,60 @@ export class Edge {
   @bindable targetx;
   @bindable targety;
 
-  constructor(element, eventAggregator, edgeStyle) {
+  constructor(element, eventAggregator, edgeStyle, edgeTextService) {
     this.element = element;
     this.eventAggregator = eventAggregator;
     this.edgeStyle = edgeStyle;
+    this.edgeTextService = edgeTextService;
   }
 
   dataChanged(newVal) {
     if (newVal) {
       this.displayEdge = newVal;
+      this.calculateEdgeTextPath();
     }
+  }
+
+  calculateEdgeTextPath() {
+    // if (this.edgeTextService.isUpsideDown(this.displayEdge.source.x, this.displayEdge.source.y, this.displayEdge.target.x, this.displayEdge.target.y)) {
+    //   this._edgeTextPath = `M${this.displayEdge.target.x} ${this.displayEdge.target.y} L${this.displayEdge.source.x} ${this.displayEdge.source.y}`;
+    // } else {
+    //   this._edgeTextPath = `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
+    // }
+    this._edgeTextPath = this.edgeTextService.calculatePath(
+      this.displayEdge.source.x, this.displayEdge.source.y,
+      this.displayEdge.target.x, this.displayEdge.target.y);
   }
 
   get edgePathId() {
     return `#edge-path-${this.displayEdge.source.id}-${this.displayEdge.target.id}`;
   }
 
-  // FIXME handle upside down https://github.com/CANVE/canve-viz/issues/54
+  @computedFrom('_edgeTextPath')
   get edgePathForText() {
-    return `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
+    return this._edgeTextPath;
   }
 
-  // FIXME Now that have switched from line to path, redo animation to animate path, GSAP may have plugin for this
   attached() {
     // Selector
     this.$edge = $(`#edge-${this.displayEdge.source.id}-${this.displayEdge.target.id}`);
-
-    // Animate edge target from source point
-    TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-      attr: {x2: this.displayEdge.source.x, y2: this.displayEdge.source.y},
-      ease: EDGE_ANIMATE_EASE,
-      delay: EDGE_ANIMATE_DELAY
-    });
-
     this.registerEvents();
   }
 
   sourcexChanged(newVal, oldVal) {
-    if (newVal && oldVal) {
-      TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-        attr: {x1: oldVal},
-        ease: EDGE_ANIMATE_EASE
-      });
-    }
+    this.calculateEdgeTextPath();
   }
 
   sourceyChanged(newVal, oldVal) {
-    if (newVal && oldVal) {
-      TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-        attr: {y1: oldVal},
-        ease: EDGE_ANIMATE_EASE
-      });
-    }
+    this.calculateEdgeTextPath();
   }
 
   targetxChanged(newVal, oldVal) {
-    if (newVal && oldVal) {
-      TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-        attr: {x2: oldVal},
-        ease: EDGE_ANIMATE_EASE
-      });
-    }
+    this.calculateEdgeTextPath();
   }
 
-  /**
-   * Edge y2 is already bound to newVal,
-   * therefore animate FROM oldVal.
-   */
   targetyChanged(newVal, oldVal) {
-    if (newVal && oldVal) {
-      TweenLite.from(this.$edge[0], EDGE_ANIMATE_DURATION, {
-        attr: {y2: oldVal},
-        ease: EDGE_ANIMATE_EASE
-      });
-    }
+    this.calculateEdgeTextPath();
   }
 
   edgeStrokeDashArray() {
@@ -118,6 +100,26 @@ export class Edge {
     } else {
       return 1;
     }
+  }
+
+  get edgeTextColor() {
+    if (this.isHighlighted()) {
+      return 'rgba(80, 83, 81, 0.9)';
+    } else {
+      return 'rgba(120, 120, 120, 0.5)';
+    }
+  }
+
+  get edgeTextSize() {
+    if (this.isHighlighted()) {
+      return '15';
+    } else {
+      return '14';
+    }
+  }
+
+  isHighlighted() {
+    return this.displayEdge.highlightSource || this.displayEdge.highlightTarget;
   }
 
   registerEvents() {

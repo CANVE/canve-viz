@@ -12,6 +12,7 @@
     "describe": false,
     "beforeEach": false,
     "it": false,
+    "xit": false,
     "expect": false,
     "spyOn": false,
     "TweenLite": false,
