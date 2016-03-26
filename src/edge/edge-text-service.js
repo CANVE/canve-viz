@@ -27,7 +27,6 @@ export class EdgeTextService {
     }
 
     return response;
-
   }
 
   angleInDegreesBetweenPoints(point1, point2, fixedPoint) {
@@ -45,6 +44,12 @@ export class EdgeTextService {
 
   isNumberBetweenInclusive(num, startVal, endVal) {
     return num >= startVal && num <= endVal;
+  }
+
+  lengthBetweenPoints(sourceX, sourceY, targetX, targetY) {
+    let firstPart = Math.pow((targetX - sourceX), 2);
+    let secondPart = Math.pow((targetY - sourceY), 2);
+    return Math.sqrt(firstPart + secondPart);
   }
 
 }

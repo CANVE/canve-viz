@@ -2,7 +2,7 @@ import {Edge} from '../../../src/edge/edge';
 
 describe('Edge', function() {
   const edgeStyleColor = 'grey';
-  let edge, mockElement, mockEventAggregator, mockEdgeStyle;
+  let edge, mockElement, mockEventAggregator, mockEdgeStyle, mockEdgeTextService;
 
   beforeEach( () => {
     mockElement = {};
@@ -10,7 +10,10 @@ describe('Edge', function() {
     mockEdgeStyle = {
       strokeColor: function() { return edgeStyleColor; }
     };
-    edge = new Edge(mockElement, mockEventAggregator, mockEdgeStyle);
+    mockEdgeTextService = {
+      isUpsideDown: function() { return 'M0,0L10,10'; }
+    };
+    edge = new Edge(mockElement, mockEventAggregator, mockEdgeStyle, mockEdgeTextService);
   });
 
   describe('edgeColor', () => {
@@ -18,9 +21,7 @@ describe('Edge', function() {
     it('Returns highlight color for source', () => {
       // Given
       let displayEdge = { edgeKind: 'extends', highlightSource: true };
-
-      // When
-      edge.dataChanged(displayEdge);
+      edge.displayEdge = displayEdge;
 
       // Then
       expect(edge.edgeColor).toEqual('orange');
@@ -29,9 +30,7 @@ describe('Edge', function() {
     it('Returns highlight color for target', () => {
       // Given
       let displayEdge = { edgeKind: 'extends', highlightTarget: true };
-
-      // When
-      edge.dataChanged(displayEdge);
+      edge.displayEdge = displayEdge;
 
       // Then
       expect(edge.edgeColor).toEqual('rgb(60, 234, 245)');
@@ -41,9 +40,7 @@ describe('Edge', function() {
       // Given
       spyOn(mockEdgeStyle, 'strokeColor').and.callThrough();
       let displayEdge = { edgeKind: 'extends'};
-
-      // When
-      edge.dataChanged(displayEdge);
+      edge.displayEdge = displayEdge;
 
       // Then
       expect(edge.edgeColor).toEqual(edgeStyleColor);
@@ -58,9 +55,9 @@ describe('Edge', function() {
       // Given
       let node = { id: '111'};
       let displayEdge = { source: {id: '111'}, target: {id: '222'}};
+      edge.displayEdge = displayEdge;
 
       // When
-      edge.dataChanged(displayEdge);
       edge.highlightEdges(node);
 
       // Then
@@ -72,9 +69,9 @@ describe('Edge', function() {
       // Given
       let node = { id: '222'};
       let displayEdge = { source: {id: '111'}, target: {id: '222'}};
+      edge.displayEdge = displayEdge;
 
       // When
-      edge.dataChanged(displayEdge);
       edge.highlightEdges(node);
 
       // Then
