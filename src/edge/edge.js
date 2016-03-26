@@ -3,6 +3,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import $ from 'jquery';
 import 'npm:gsap@1.18.0/src/minified/TweenMax.min.js';
 import {EdgeStyle} from './edge-style';
+import {EdgeText} from './edge-text';
 
 const EDGE_ANIMATE_DURATION = 0.5;
 const EDGE_ANIMATE_EASE = Power1.easeIn;
@@ -14,7 +15,7 @@ const HIGHLIGHT_WIDTH = 5;
 
 @customElement('edge')
 @containerless
-@inject(Element, EventAggregator, EdgeStyle)
+@inject(Element, EventAggregator, EdgeStyle, EdgeText)
 export class Edge {
   @bindable data;
   @bindable sourcex;
@@ -22,10 +23,11 @@ export class Edge {
   @bindable targetx;
   @bindable targety;
 
-  constructor(element, eventAggregator, edgeStyle) {
+  constructor(element, eventAggregator, edgeStyle, edgeText) {
     this.element = element;
     this.eventAggregator = eventAggregator;
     this.edgeStyle = edgeStyle;
+    this.edgeText = edgeText;
   }
 
   dataChanged(newVal) {
@@ -38,9 +40,12 @@ export class Edge {
     return `#edge-path-${this.displayEdge.source.id}-${this.displayEdge.target.id}`;
   }
 
-  // FIXME handle upside down https://github.com/CANVE/canve-viz/issues/54
   get edgePathForText() {
-    return `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
+    if (this.edgeText.isUpsideDown(this.displayEdge.source.x, this.displayEdge.source.y, this.displayEdge.target.x, this.displayEdge.target.y)) {
+      return `M${this.displayEdge.target.x} ${this.displayEdge.target.y} L${this.displayEdge.source.x} ${this.displayEdge.source.y}`;
+    } else {
+      return `M${this.displayEdge.source.x} ${this.displayEdge.source.y} L${this.displayEdge.target.x} ${this.displayEdge.target.y}`;
+    }
   }
 
   // FIXME Now that have switched from line to path, redo animation to animate path, GSAP may have plugin for this
